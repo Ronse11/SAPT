@@ -1,0 +1,230 @@
+/* @media print {
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    .no-print {
+        display: none !important;
+      }
+  } */
+
+
+
+  
+
+
+
+
+
+
+.bordered {
+    border: 2px solid black; /* Adjust the border style as needed */
+}
+
+.highlight-border {
+    border: 3px solid #6f8088; /* Blue border for highlighting */
+}
+
+.adjWidth {
+    min-width: 7rem;
+}
+
+button {
+    cursor: default;
+}
+
+table {
+    /* border-spacing: 0; */
+    transition: transform 0.2s ease;
+    border-collapse: collapse;
+    border-spacing: 0;
+    table-layout: auto;
+}
+table td {
+    outline: none;
+    text-align: center;
+    /* padding: 3px 0 3px 0; */
+    /* overflow: auto; */
+    vertical-align: middle;
+}
+table th {
+    padding: 0;
+}
+/* #total, #percent, #plus, #totalScore {
+    width: 4ch;
+    min-width: 4ch;
+    max-width: 5ch;
+    transition: width 0.2s;
+    background: transparent;
+} */
+.added {
+    outline: 2.4px solid #6f8088;
+    outline-offset: -1px;
+}
+.blurred, .blured {
+    outline: 2.4px solid #6f8088;
+    outline-offset: -1px;
+}
+/* .a-col {
+    min-width: 2.5rem;
+    border: 1px solid #ccc;
+} */
+/* .selected2 {
+    border: 3px solid #6f8088;
+} */
+/* .selected2 {
+    outline: 3px solid #6f8088;
+    outline-offset: -1px;
+} */
+ 
+.selected.not-top {
+    border-top: none;
+    /* background: rgb(247, 246, 246); */
+    /* background-color: rgba(0, 0, 0, 0.1); */
+}
+.selected.not-bottom {
+    border-bottom: none;
+    /* background: rgb(247, 246, 246); */
+    /* background-color: rgba(0, 0, 0, 0.1); */
+}
+.selected.not-left {
+    border-left: none;
+    /* background: rgb(247, 246, 246); */
+    /* background-color: rgba(0, 0, 0, 0.1); */
+}
+.selected.not-right {
+    border-right: none;
+    /* background: rgb(247, 246, 246); */
+    /* background-color: rgba(0, 0, 0, 0.1); */
+
+}
+.selected.top-border {
+    border-top: 3px solid #6f8088;
+}
+.selected.bottom-border {
+    border-bottom: 3px solid #6f8088;
+}
+.selected.left-border {
+    border-left: 3px solid #6f8088;
+}
+.selected.right-border {
+    border-right: 3px solid #6f8088;
+}
+/* td:focus {
+    outline: 3px solid #6f8088;
+    outline-offset: -1px;
+} */
+/* FOR SELECTED CELL/S */
+/* td.selected {
+    background-color: #efefef9d;
+    caret-color: transparent;
+    outline: 3px solid #6f8088;
+    outline-offset: -1px;
+} */
+/* .highlight {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 255, 0.1);
+    border: 3px solid #6f8088;
+    box-sizing: border-box;
+    pointer-events: none;
+} */
+/* .column {
+    border-top: none;
+    border-right: 0.25px solid #8a8686;
+    border-bottom: 0.25px solid #8a8686;
+    border-left: 0.25px solid #8a8686;
+    padding-bottom: 0px;
+}
+.row {
+    border-left: none;
+    border-right: 0.25px solid #8a8686;
+    border-bottom: 0.25px solid #8a8686;
+    border-top: 0.25px solid #8a8686;
+    min-width: 2rem;
+    z-index: 99;
+} */
+.header-table {
+    margin-bottom: 0;
+}
+/* .t-ble {
+    min-width: 90rem;
+    max-width: 200rem;
+} */
+/* .t-names {
+    min-width: 17rem;
+    border: 1px solid #ccc;
+    padding-left: 1rem;
+    white-space: nowrap;
+}
+.t-ID {
+    min-width: 10rem;
+    border: 1px solid #ccc;
+    padding: 0 1rem;
+    white-space: nowrap;
+} */
+
+
+
+.cursor-cell {
+    /* outline: none; */
+    /* caret-color: transparent; */
+    /* border: 1px solid #ccc; */
+    min-width: 4.5rem;
+    white-space: nowrap;
+    padding: 0 9px;
+    /* position: relative; */
+}
+/* .student-cell {
+    caret-color: transparent;
+    border: 1px solid #ccc;
+    min-width: 4rem;
+    white-space: nowrap;
+    padding: 0 7px;
+    position: relative;
+} */
+/* .highlight-cell {
+    caret-color: transparent;
+    border: 1px solid #000;
+    min-width: 4rem;
+    white-space: nowrap;
+    padding: 0 7px;
+} */
+/* .temp-cell {
+    caret-color: transparent;
+    border: 1px solid #ccc;
+    white-space: nowrap;
+    padding: 0 7px;
+} */
+/* .cursor-cell:focus {
+    outline: none;
+} */
+/* .cursor-cell.typing {
+    caret-color: black;
+} */
+
+/* .cursor-cell:hover {
+    border: 3px solid #6f8088;
+    background-color: rgb(247, 246, 246);
+} */
+/* .high-cell:hover,
+.high-cell.active {
+    background-color: rgba(35, 170, 35, 0.7); 
+    cursor: cell; 
+} */
+/* .percent-cell:hover,
+.percent-cell.active {
+    background-color: darkgray; 
+    cursor: cell;
+}
+.percent-total-cell:hover,
+.percent-total-cell.active {
+    background-color: rgb(123, 122, 122);
+    cursor: cell;
+} */
+.merged-hidden {
+    display: none; /* Hide cell without affecting layout */
+}
