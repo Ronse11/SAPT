@@ -140,11 +140,7 @@ class TableController extends Controller
             'rating-table' => TableRatings::class
         ];
     
-        // Log the incoming request data
-        Log::info('Received createSkills request:', $request->all());
-    
         if (!array_key_exists($tableId, $tableModels)) {
-            Log::error('Invalid table ID:', ['tableId' => $tableId]);
             return response()->json(['message' => 'Invalid table ID.'], 400);
         }
     
@@ -152,7 +148,6 @@ class TableController extends Controller
     
         try {
             $tabledata = $model::create([
-                // 'id' => $request->uniqueId,
                 'teacher_id' => $teacherID,
                 'room_id' => $request->room_id,
                 'student_name' => $request->student_name,
@@ -163,10 +158,8 @@ class TableController extends Controller
                 'colspan' => $request->colspan,
             ]);
     
-            Log::info('Skill created successfully:', ['id' => $tabledata->id]);
             return response()->json(['id' => $tabledata->id], 200);
         } catch (\Exception $e) {
-            Log::error('Error creating skill:', ['error' => $e->getMessage()]);
             return response()->json(['message' => 'Error Content: ' . $e->getMessage()], 500);
         }       
     }

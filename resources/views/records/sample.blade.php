@@ -19,7 +19,7 @@
 
         @php 
             $totalColumn = $totalRowCol ? $totalRowCol->total_column : 26;
-            $totalRow = $totalRowCol ? $totalRowCol->total_row : 50;
+            $totalRow = $totalRowCol ? $totalRowCol->total_row : 40;
 
             $endingRow = 0;
             if($selectedRow) {

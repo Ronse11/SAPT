@@ -615,12 +615,6 @@ private function structuredPastedText($pastedText) {
 
     public function updateContentCell(Request $request, $id)
     {
-        Log::info('Request received', [
-            'id' => $id,
-            'tableId' => $request->input('tableId'),
-            'content' => $request->input('content'),
-        ]);
-    
         $tableId = $request->input('tableId');
         $tableModels = [
             'main-table' => TableSkills::class,
@@ -629,7 +623,6 @@ private function structuredPastedText($pastedText) {
         ];
     
         if (!array_key_exists($tableId, $tableModels)) {
-            Log::error('Invalid table ID');
             return response()->json(['message' => 'Invalid table ID.'], 400);
         }
     
@@ -638,8 +631,6 @@ private function structuredPastedText($pastedText) {
         try {
             $cell = $model::findOrFail($id);  // If ID is missing or invalid, this will fail
     
-            Log::info('Cell found:', ['id' => $id]);
-    
             $cell->update([
                 'content' => $request->input('content'),
                 'merged' => $request->input('merged'),
@@ -647,10 +638,8 @@ private function structuredPastedText($pastedText) {
                 'rowspan' => $request->input('rowspan')
             ]);
     
-            Log::info('Cell updated successfully');
             return response()->json(['message' => 'Cell updated successfully.'], 200);
         } catch (\Exception $e) {
-            Log::error('Error updating cell: ' . $e->getMessage());
             return response()->json(['message' => 'Error updating cell: ' . $e->getMessage()], 500);
         }
     }

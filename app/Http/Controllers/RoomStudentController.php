@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Category;
 use App\Helpers\RoomHelper;
 use App\Models\Folders;
 use App\Models\Invitations;
@@ -206,10 +207,9 @@ class RoomStudentController extends Controller
         $skills = TableSkills::where('room_id', $decodeID)
         ->whereRaw('TRIM(student_name) = ?', [trim($student->school_name)])
         ->get();
-
-    
+        
         $roomID = TableSkills::where('room_id', $decodeID)->get();
-
+        
         $getStartingRow = TableSelectedRowCol::where('table_id', $tableId)->where('room_id', $decodeID)->first();
         
         if(!$getStartingRow) {
@@ -227,8 +227,13 @@ class RoomStudentController extends Controller
         
         $nameInUser = $student->school_name;
         $getNames = StudentNames::where('room_id', $decodeID)->where('name_3', $nameInUser)->first();
+        
+        $quizzesColumns = Category::getQuizzesRelated($decodeID, $startingRow);
+        $sequences = Category::columns();
+        $organized = Category::organizedData($skills, $startRow, $sequences);
+        $notif = Category::notification($quizzesColumns, $organized, $doneCheck);
 
-        return view('studentRecords.studentRecord', ['skills' => $skills, 'encodedId' => $encodedId, 'startRow' => $startRow, 'data' => $roomID, 'room' => $room, 'nameAsStudent' => $getNames, 'student' => $student, 'id' => $id, 'doneCheck' => $doneCheck]);
+        return view('studentRecords.studentRecord', ['skills' => $skills, 'encodedId' => $encodedId, 'data' => $roomID, 'room' => $room, 'nameAsStudent' => $getNames, 'student' => $student, 'id' => $id, 'doneCheck' => $doneCheck, 'quizzesColumns' => $quizzesColumns, 'sequences' => $sequences, 'organized' => $organized, 'notif' => $notif]);
     }
 
     // SHOW STUDENT ATTENDANCE

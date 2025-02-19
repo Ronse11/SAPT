@@ -20,16 +20,15 @@ export function handleCellBlur(event, tableId, initialContent) {
     let rowspan = cell.getAttribute('rowspan');
     let colspan = cell.getAttribute('colspan');
     let merged = colspan > 1;
+    let dataFormula = cell.getAttribute('data-formula');
 
 
     // Debounce to prevent multiple rapid-fire requests
     clearTimeout(cell.blurTimeout);
     cell.blurTimeout = setTimeout(() => {
         // Deletion logic: if content is empty and there is an ID
-        if (content.length === 0 && id) {
+        if (content.length === 0 && id && !dataFormula) {
             let url = `/delete-skills/${id}`;
-
-            console.log(`Deleting skill at ${url}`);
 
             fetch(url, {
                 method: 'DELETE',
@@ -77,8 +76,6 @@ export function handleCellBlur(event, tableId, initialContent) {
 
         // Set the correct URL depending on the presence of an ID
         let url = id ? `/update-content-cell/${id}` : '/create-skills';
-
-        console.log(url)
 
         // Send the POST request
         fetch(url, {

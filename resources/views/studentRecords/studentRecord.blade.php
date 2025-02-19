@@ -56,69 +56,20 @@
                     </div>
                     <div class="h-[55%] flex gap-8 rounded-xl p-4">
                         <div class="flex-1 overflow-x-auto whitespace-nowrap">
-                            @php
-                                $isDone = [];
-                            @endphp
 
                             @if($skills->isEmpty() ) 
                                 <h1>No Records Yet!</h1>
                             @else 
                                 @php
-                                    $nextSequence = function($index) {
-                                        if ($index < 26) {
-                                            return chr($index + ord('A'));
-                                        } else {
-                                            $index -= 26;
-                                            $firstChar = chr(floor($index / 26) + ord('A'));
-                                            $secondChar = chr(($index % 26) + ord('A'));
-                                            return $firstChar . $secondChar;
-                                        }
-                                    };
-                    
-                                    $sequences = [];
-                                    for ($i = 0; $i <= 104; $i++) {  // Adjust the count as needed
-                                        $sequences[] = $nextSequence($i);
-                                    }
-
-                                    $organizedData = [];
-                                    foreach ($skills as $cell) {
-                                        $organizedData[$cell->column] = $cell;
-                                    }
-                    
-                                    $organizedRows = [];
-                                    // Here we are assuming $startRow is a collection of rows
-                                    foreach ($startRow as $row) {
-
-                                        $organizedRows[] = $row;
-                                    }
-                    
-                                    // Determine the maximum column index that has content
-                                    $maxColIndex = 0;
-                                    foreach ($organizedRows as $row) {
-                                        $column = $row->column ?? null;
-                                        if ($column !== null) {
-                                            $index = array_search($column, $sequences);
-                                            if ($index !== false && $index > $maxColIndex) {
-                                                $maxColIndex = $index;
-                                            }
-                                        }
-                                    }
-                    
-                                    foreach ($organizedData as $column => $cell) {
-                                        $index = array_search($column, $sequences);
-                                        if ($index !== false && $index > $maxColIndex) {
-                                            $maxColIndex = $index;
-                                        }
-                                    }
-                    
                                     $rowspanTrack = [];
                                 @endphp
-                    
+
+                                <h1>{{$notif}}</h1>
                                 <table class=" h-full">
                                     <thead>
 
-                                        @if (!$organizedRows)
-                                            @php $maxCol = $maxColIndex + 1; @endphp
+                                        @if (!$organized['organizedRows'])
+                                            @php $maxCol = $organized['maxColIndex'] + 1; @endphp
 
                                             <tr>
                                                 <td class=" border border-sgline text-center py-2 px-4 font-semibold" colspan="{{ $maxCol }}">
@@ -130,7 +81,7 @@
                                         @php
                                             // Group rows by their row number
                                             $groupedRows = [];
-                                            foreach ($organizedRows as $row) {
+                                            foreach ($organized['organizedRows'] as $row) {
                                                 $groupedRows[$row->row][] = $row;
                                             }
                                         
@@ -163,7 +114,7 @@
                                         @foreach ($groupedRows as $rowKey => $rows)
                                             <tr>
                                                 @php $colIndex = 0; @endphp
-                                                @while ($colIndex <= $maxColIndex)
+                                                @while ($colIndex <= $organized['maxColIndex'])
                                                     @php
                                                         $column = $sequences[$colIndex];
                                                         $rowData = collect($rows)->firstWhere('column', $column);
@@ -217,7 +168,7 @@
                                                 $names = [$nameAsStudent->name_1 ?? '#', $nameAsStudent->name_2 ?? '', $nameAsStudent->name_3];
                                             @endphp
                                             
-                                            @while ($colIndex <= $maxColIndex)
+                                            @while ($colIndex <= $organized['maxColIndex'])
                                                 @if ($colIndex < 3) 
                                                     <td class="text-center border border-sgline px-8"> {{$names[$colIndex] ?? ''}} </td>
                                                     @php
@@ -227,7 +178,6 @@
                                                 @endif
                                                 @php
                                                     $column = $sequences[$colIndex];
-                                                    
                                                     // Handle first three columns with names
                                     
                                                     // Check if rowspan is set and skip this column if necessary
@@ -237,7 +187,7 @@
                                                         continue;
                                                     }
                                                     // Retrieve the cell content if available
-                                                    $cell = $organizedData[$column] ?? null;
+                                                    $cell = $organized['organizedData'][$column] ?? null;
                                                     
                                                     $isDone = in_array($column, $doneCheck);
                                                     $text = $isDone ? 'Absent' : 'Not yet recorded';
