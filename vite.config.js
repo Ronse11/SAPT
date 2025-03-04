@@ -12,7 +12,7 @@ export default defineConfig({
       },
     plugins: [
         laravel({
-            input: ['resources/css/app.css', 'resources/css/breakPoint.css', 'resources/js/app.js', 'resources/js/navigation.js', 'resources/js/users.js'],
+            input: ['resources/css/app.css', 'resources/css/breakPoints.css', 'resources/js/app.js', 'resources/js/navigation.js', 'resources/js/users.js'],
             refresh: true,
         }),
     ],
