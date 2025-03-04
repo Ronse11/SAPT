@@ -16,6 +16,7 @@ class RoomHelper
     public static function generateRoomStudentUrl($room)
     {
         $encodedId = HelperFunctions::base64_url_encode($room->room_id);
-        return route('student.room', ['id' => $encodedId]);
+        // return route('student.room', ['id' => $encodedId]);
+        return route('studentRecord.room', [ 'id' => $encodedId, 'key' => 'main-table']);
     }
 }

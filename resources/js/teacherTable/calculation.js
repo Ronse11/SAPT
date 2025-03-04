@@ -711,7 +711,8 @@ document.addEventListener('DOMContentLoaded', function () {
     
                 try {
                     let result = evaluate(rowFormula);
-                    result = Math.round(result * 100) / 100;
+                    result = Math.round(result);
+                    // result = Math.round(result * 100) / 100;
     
                     let tableName = firstSelectedCell.closest('table').id;
                     const tableSelect = document.querySelector(`#${tableName}`);
@@ -763,7 +764,8 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             let result;
             result = evaluate(rowFormula);
-            result = Math.round(result * 100) / 100;
+            result = Math.round(result);
+            // result = Math.round(result * 100) / 100;
 
             const resultCell = table.querySelector(`.cursor-cell[data-column="${firstSelectedCol}"][data-row="${row}"]`);
 
@@ -1120,7 +1122,8 @@ document.addEventListener('DOMContentLoaded', function () {
     
                                 try {
                                     result = evaluate(updatedFormula);
-                                    result = Math.round(result * 100) / 100;  // Round to 2 decimal places
+                                    result = Math.round(result); 
+                                    // result = Math.round(result * 100) / 100; 
                                     updates.push({ formulaCell, result });
                                 } catch (error) {
                                     updates.push({ formulaCell, result: 'Invalid!' });
@@ -1227,7 +1230,8 @@ document.addEventListener('DOMContentLoaded', function () {
     
                                     try {
                                         involvedResult = evaluate(updatednewInvolvedFormula);
-                                        involvedResult = Math.round(involvedResult * 100) / 100; // Round to 2 decimal places
+                                        involvedResult = Math.round(involvedResult);
+                                        // involvedResult = Math.round(involvedResult * 100) / 100;
                                         includesCol.textContent = involvedResult;
                                         // updatesInvolved.push({includesCol, involvedResult});
                                     } catch (error) {

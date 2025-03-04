@@ -228,7 +228,7 @@ class RoomStudentController extends Controller
         $nameInUser = $student->school_name;
         $getNames = StudentNames::where('room_id', $decodeID)->where('name_3', $nameInUser)->first();
         
-        $quizzesColumns = Category::getQuizzesRelated($decodeID, $startingRow);
+        $quizzesColumns = Category::getQuizzesRelated($decodeID, $startingRow, $student->school_name);
         $sequences = Category::columns();
         $organized = Category::organizedData($skills, $startRow, $sequences);
         $notif = Category::notification($quizzesColumns, $organized, $doneCheck);

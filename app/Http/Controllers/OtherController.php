@@ -110,7 +110,7 @@ class OtherController extends Controller
 
                     if ($cell->isFormula()) {
                         // If it's a formula, get the calculated value
-                        $value = $cell->getCalculatedValue();
+                        $value = round($cell->getCalculatedValue()); 
                         $formula = $cell->getValue();
                     } else {
                         // If it's not a formula, get the raw value
@@ -213,7 +213,8 @@ class OtherController extends Controller
                 // Initialize arrays to keep track of rows
             
                 // Check if the value matches a name
-                if (preg_match('/^[A-Za-z]+(?:-[A-Za-z]+)?(?: [A-Za-z]+)?, [A-Za-z]+(?: [A-Za-z]+)* [A-Za-z]\.?$/i', trim($cell['value']))) {
+                if (preg_match('/^[A-Za-z]+(?:-[A-Za-z]+)?(?: [A-Za-z]+)?, [A-Za-z]+(?: [A-Za-z]+)* [A-Za-z]\.?$/i', trim($cell['value'])) || 
+                    preg_match('/^[A-Za-z]+, [A-Za-z](?:\.[A-Za-z])*(?: [A-Za-z])?$/i', trim($cell['value']))) {
                     // Format the name to add a period to single-letter initials
                     $formattedName = $this->formatName($cell['value']);
                 

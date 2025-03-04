@@ -173,10 +173,13 @@ table th {
     /* outline: none; */
     /* caret-color: transparent; */
     /* border: 1px solid #ccc; */
-    min-width: 4.5rem;
+    min-width: 1.8rem;
     white-space: nowrap;
     padding: 0 9px;
     /* position: relative; */
+}
+.grade-cell {
+    cursor: cell;
 }
 /* .student-cell {
     caret-color: transparent;
