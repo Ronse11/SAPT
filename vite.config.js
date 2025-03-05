@@ -66,6 +66,8 @@ export default defineConfig({
               'resources/js/teacherTable/merging.js',
               'resources/js/teacherTable/sample.js',
               'resources/js/teacherTable/tableTab.js',  
+
+              'resources/images/saptlogo.svg',
             
             ],
               
