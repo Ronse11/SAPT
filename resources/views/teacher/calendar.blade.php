@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Calendar</title>
-    <link rel="icon" href="{{ Vite::asset('resources/images/saptfavicon.svg')  }}">
+    <link rel="icon" href="{{ asset('images/saptlogo.svg') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link href='https://cdn.jsdelivr.net/npm/@fullcalendar/core/main.css' rel='stylesheet' />
