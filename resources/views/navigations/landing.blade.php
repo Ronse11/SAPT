@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Student Academic Performance Tracker</title>
-<<<<<<< HEAD
-
-=======
     <link rel="icon" href="{{ asset('images/saptlogo.svg') }}">
->>>>>>> d0be9b5 (Change the location of the logo)
 
     @vite(['resources/css/app.css'])
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
