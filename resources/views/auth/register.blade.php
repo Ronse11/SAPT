@@ -22,7 +22,7 @@
                         @csrf
                         {{-- Username --}}
                         <div class=" pb-6">
-                            <input type="text" id="username" name="username" class=" min-w-96 outline-mainText py-3 px-5 rounded-md bg-transparent border-2 border-subtText @error('username') ring-1 ring-red-500 @enderror" placeholder="Username" value="{{old('username')}}" autocomplete="off">
+                            <input type="text" id="username" name="username" class=" md:min-w-96 w-80 outline-mainText py-3 px-5 rounded-md bg-transparent border-2 border-subtText @error('username') ring-1 ring-red-500 @enderror" placeholder="Username" value="{{old('username')}}" autocomplete="off">
                             <label for="username"></label>
                             @error('username')
                                 <p class=" text-red-500 text-sm"> {{$message}} </p>
@@ -31,7 +31,7 @@
 
                         {{-- Email --}}
                         <div class=" pb-6">
-                            <input type="text" id="email" name="email" class=" min-w-96 outline-mainText py-3 px-5 rounded-md bg-transparent border-2 border-subtText  @error('email') ring-1 ring-red-500 @enderror" placeholder="Email" value="{{old('email')}}" autocomplete="off">
+                            <input type="text" id="email" name="email" class=" md:min-w-96 w-80 outline-mainText py-3 px-5 rounded-md bg-transparent border-2 border-subtText  @error('email') ring-1 ring-red-500 @enderror" placeholder="Email" value="{{old('email')}}" autocomplete="off">
                             <label for="email"></label>
                             @error('email')
                             <p class=" text-red-500 text-sm"> {{$message}} </p>
@@ -40,7 +40,7 @@
 
                         {{-- Password --}}
                         <div class=" pb-6 relative">
-                            <input type="password" id="password" name="password" class="pass min-w-96 outline-mainText py-3 px-5 rounded-md bg-transparent border-2 border-subtText @error('password') ring-1 ring-red-500 @enderror" placeholder="Create password">
+                            <input type="password" id="password" name="password" class="pass md:min-w-96 w-80 outline-mainText py-3 px-5 rounded-md bg-transparent border-2 border-subtText @error('password') ring-1 ring-red-500 @enderror" placeholder="Create password">
                             <label for="password"></label>
                             <i class="bx bxs-show absolute right-5 top-4 cursor-pointer text-xl text-subtText"></i>
                             @error('password')
@@ -50,13 +50,13 @@
 
                         {{-- Submit Button --}}
                         <div class=" pb-2">
-                            <button class="min-w-96 outline-sky-300 py-3 px-4 rounded-md bg-mainText text-bgcolor border-2 border-mainText hover:bg-bgcolor hover:text-mainText">Continue</button>
+                            <button class="md:min-w-96 w-80 outline-sky-300 py-3 px-4 rounded-md bg-mainText text-bgcolor border-2 border-mainText hover:bg-bgcolor hover:text-mainText">Continue</button>
                         </div>
 
-                        <div class=" min-w-96">
+                        <div class=" md:min-w-96 w-80">
                             <h1 class=" text-center text-sm py-2">Already have an account? <a href="{{ route('login') }}" class=" text-mainText">Login</a></h1>
                         </div>
-                        <div class=" pb-2 min-w-96">
+                        <div class=" pb-2 md:min-w-96 w-80">
                             <h1 class=" text-center text-sm py-2">OR</h1>
                         </div>
                         {{-- OAuth --}}

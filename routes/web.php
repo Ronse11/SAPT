@@ -153,7 +153,9 @@ Route::middleware(['auth', 'no-cache'])->group(function() {
     Route::post('/save-merged-cell', [UsefulController::class, 'saveMergedCell']);
     Route::post('/update-merged-cell/{id}', [UsefulController::class, 'updateMergedCell']);
     Route::post('/update-content-cell/{id}', [UsefulController::class, 'updateContentCell']);
+    Route::post('/bulk-update-content-cell', [UsefulController::class, 'bulkUpdateCells']);
     Route::post('/save-calculated-cell', [UsefulController::class, 'saveCalculatedContentCell']);
+    Route::post('/bulk-update-cells', [UsefulController::class, 'saveCalculatedContentCell']);
     // Update Student Names
     Route::post('/update-studentNames/{id}', [UsefulController::class, 'updateStudentCell']);
     // Route::post('/update-merged-cell/{id}', [UsefulController::class, 'updateAttendance']);
@@ -268,6 +270,12 @@ Route::middleware(['auth', 'role:Teacher', 'no-cache'])->group(function() {
     Route::post('/teacher-room/records/total-cols-rows/{id}', [TableButtonsController::class, 'totalRowsCols'])->name('total-row-col');
     // Saving Donec Checked
     Route::post('/saved-done-check/{id}', [TableButtonsController::class, 'doneCheck']);
+
+    // Performing Formula for Rating Table
+    Route::post('/apply-formula/grading-sheet', [UsefulController::class, 'getFormulaForRating']);
+    Route::post('/apply-units', [UsefulController::class, 'getUnits']);
+    Route::post('/apply-sem', [UsefulController::class, 'getSem']);
+    Route::post('/save-number-grade', [UsefulController::class, 'getNumberGrade']);
 
 });
 

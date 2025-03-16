@@ -1019,7 +1019,7 @@
                                                     </th> --}}
                 
                                             
-                                                    @for ($col = 0; $col < count($sequences); $col++)
+                                                    @for ($col = 0; $col < count($columnLabels); $col++)
                                                         @php
                                                             // if ($names->has($row - ($selectedRow->row ?? 101))) {
                                                             //     $cell = $organizedStudent[$names[$row - $selected]->name_3][$sequences[$col]] ?? null;
@@ -1040,9 +1040,9 @@
                                                                 }
                                                             }
             
-                                                            $textCondition = $row >= $selected && $row <= $endingRow && ( $allName2Null ? $col == $colCount : $col == $colCount+1 );
+                                                            $textCondition = ( $allName2Null ? $col == $colCount+1 : $col == $colCount );
                                                         @endphp
-                                                        <td id="cell" class=" h-auto student-cell cursor-cell border-t border-b border-l border-r border-t-cursor  border-b-cursor  border-l-cursor  border-r-cursor caret-transparent {{ $textCondition  ? 'text-start pl-4 w-60 text-[12.5px]' : 'text-center text-[11px]' }}"
+                                                        <td id="cell" class=" h-auto student-cell cursor-cell border-t border-b border-l border-r border-t-cursor  border-b-cursor  border-l-cursor  border-r-cursor caret-transparent {{ $textCondition  ? 'text-start pl-2 w-60 text-[12.5px]' : 'text-center text-[11px]' }}"
                                                             contenteditable="true"
                                                             @if($col == 0 && $names->has($row - ($selectedRow->row ?? $numberOfStudents+$selected+1)))
                                                                 data-room-student="{{ $names[$row-$selected]->name_3 }}"
@@ -1056,7 +1056,7 @@
                                                                 data-room-student="{{ $teacher->teacher_name }}"
                                                             @endif             
                                                             data-row="{{ $row }}"
-                                                            data-column="{{ $sequences[$col]}}"
+                                                            data-column="{{ $columnLabels[$col]}}"
                                                             data-id="{{ $cell->id ?? '' }}"
                                                             data-merged="{{ ($rowspan > 1 || $colspan > 1) ? 'true' : 'false' }}"
                                                             @if($rowspan >= 1) rowspan="{{ $rowspan }}" @endif
@@ -1065,10 +1065,10 @@
             
                                 
                                                             
-                                                            @if ($row >= $selected && $row <= $endingRow)
-                                                                @if ($col == $colCount)
+                                                            {{-- @if ($row >= $selected && $row <= $endingRow) --}}
+                                                                @if ($col == 0)
                                                                     {{ $name1Counter++ }}
-                                                                @elseif ($col == $colCount+1)
+                                                                @elseif ($col == 1)
                                                                     {{ $selected ? ($names[$row - $selected]->name_3 ?? '') : '' }}
                                                                     {{-- {{ $allName2Null ? '' : ($names[$row - $selected]->name_3 ?? '') }} --}}
                                                                 @elseif ($col == $colCount+18)
@@ -1076,9 +1076,9 @@
                                                                 @else
                                                                     {{ $cell->content ?? '' }}
                                                                 @endif
-                                                            @else
+                                                            {{-- @else
                                                                 {{ $cell->content ?? '' }}
-                                                            @endif
+                                                            @endif --}}
                                                         
                                                             
                                                         

@@ -74,11 +74,5 @@ export default defineConfig({
             refresh: true,
         }),
     ],
-    server: {
-      strictPort: true,
-      hmr: {
-          host: 'https://sapt-production.up.railway.app/', // Replace with your Railway domain
-      },
-  },
 });
 

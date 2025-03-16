@@ -25,72 +25,74 @@ document.querySelectorAll('td[contenteditable]').forEach(function(td) {
 });
 // ENDDDDDD
 
+
+
 // ZOOM-IN AND OUT START!
-let zoomLevel = 1;
-const minZoomLevel = 0.5;
-const maxZoomLevel = 2;
-let mainTable, zoomContainer, maxTableWidth, maxTableHeight, maxZoomOutWidth, maxZoomOutHeight;
+// let zoomLevel = 1;
+// const minZoomLevel = 0.5;
+// const maxZoomLevel = 2;
+// let mainTable, zoomContainer, maxTableWidth, maxTableHeight, maxZoomOutWidth, maxZoomOutHeight;
 
-// Defer layout-related calculations until after page load and only when needed
-function calculateTableDimensions() {
-    mainTable = document.querySelector('.main-table');
-    zoomContainer = document.querySelector('.zoom-container');
+// // Defer layout-related calculations until after page load and only when needed
+// function calculateTableDimensions() {
+//     mainTable = document.querySelector('.main-table');
+//     zoomContainer = document.querySelector('.zoom-container');
 
-    // Defer scrollWidth and scrollHeight calculation to avoid reflow on load
-    maxTableWidth = mainTable.scrollWidth;
-    maxTableHeight = mainTable.scrollHeight;
-    maxZoomOutWidth = window.innerWidth / maxTableWidth;
-    maxZoomOutHeight = window.innerHeight / maxTableHeight;
-}
+//     // Defer scrollWidth and scrollHeight calculation to avoid reflow on load
+//     maxTableWidth = mainTable.scrollWidth;
+//     maxTableHeight = mainTable.scrollHeight;
+//     maxZoomOutWidth = window.innerWidth / maxTableWidth;
+//     maxZoomOutHeight = window.innerHeight / maxTableHeight;
+// }
 
-function zoom(event) {
-    if (event.ctrlKey) {
-        event.preventDefault();
+// function zoom(event) {
+//     if (event.ctrlKey) {
+//         event.preventDefault();
 
-        if (!mainTable || !zoomContainer) {
-            // If dimensions haven't been calculated yet, do so now
-            calculateTableDimensions();
-        }
+//         if (!mainTable || !zoomContainer) {
+//             // If dimensions haven't been calculated yet, do so now
+//             calculateTableDimensions();
+//         }
 
-        // Get the current cursor position relative to the zoomContainer
-        const rect = zoomContainer.getBoundingClientRect();
-        const cursorX = event.clientX - rect.left;
-        const cursorY = event.clientY - rect.top;
+//         // Get the current cursor position relative to the zoomContainer
+//         const rect = zoomContainer.getBoundingClientRect();
+//         const cursorX = event.clientX - rect.left;
+//         const cursorY = event.clientY - rect.top;
 
-        // Calculate the offset of the cursor relative to the table's scroll position
-        const offsetX = (cursorX + zoomContainer.scrollLeft) / zoomLevel;
-        const offsetY = (cursorY + zoomContainer.scrollTop) / zoomLevel;
+//         // Calculate the offset of the cursor relative to the table's scroll position
+//         const offsetX = (cursorX + zoomContainer.scrollLeft) / zoomLevel;
+//         const offsetY = (cursorY + zoomContainer.scrollTop) / zoomLevel;
 
-        // Adjust the zoom level
-        zoomLevel += event.deltaY * -0.01;
-        zoomLevel = Math.min(Math.max(minZoomLevel, zoomLevel), maxZoomLevel);
+//         // Adjust the zoom level
+//         zoomLevel += event.deltaY * -0.01;
+//         zoomLevel = Math.min(Math.max(minZoomLevel, zoomLevel), maxZoomLevel);
 
-        // Handle max zoom out based on table dimensions
-        if (zoomLevel <= maxZoomOutWidth && zoomLevel <= maxZoomOutHeight) {
-            zoomLevel = Math.min(maxZoomOutWidth, maxZoomOutHeight);
-        }
+//         // Handle max zoom out based on table dimensions
+//         if (zoomLevel <= maxZoomOutWidth && zoomLevel <= maxZoomOutHeight) {
+//             zoomLevel = Math.min(maxZoomOutWidth, maxZoomOutHeight);
+//         }
 
-        requestAnimationFrame(() => {
-            // Apply the zoom scaling
-            mainTable.style.transform = `scale(${zoomLevel})`;
-            mainTable.style.transformOrigin = 'left top';
+//         requestAnimationFrame(() => {
+//             // Apply the zoom scaling
+//             mainTable.style.transform = `scale(${zoomLevel})`;
+//             mainTable.style.transformOrigin = 'left top';
 
-            // Recalculate the scroll positions to maintain the cursor's position
-            const newScrollLeft = offsetX * zoomLevel - cursorX;
-            const newScrollTop = offsetY * zoomLevel - cursorY;
+//             // Recalculate the scroll positions to maintain the cursor's position
+//             const newScrollLeft = offsetX * zoomLevel - cursorX;
+//             const newScrollTop = offsetY * zoomLevel - cursorY;
 
-            // Apply the new scroll positions
-            zoomContainer.scrollLeft = newScrollLeft;
-            zoomContainer.scrollTop = newScrollTop;
+//             // Apply the new scroll positions
+//             zoomContainer.scrollLeft = newScrollLeft;
+//             zoomContainer.scrollTop = newScrollTop;
 
-            let parentHeight = zoomContainer.parentElement.offsetHeight;
-            document.querySelector('.t-ble').style.height = `${parentHeight}px`;
-        });
-    }
-}
+//             let parentHeight = zoomContainer.parentElement.offsetHeight;
+//             document.querySelector('.t-ble').style.height = `${parentHeight}px`;
+//         });
+//     }
+// }
 
-// Add zoom functionality on wheel event
-document.querySelector('.zoom-container').addEventListener('wheel', zoom, { passive: false });
+// // Add zoom functionality on wheel event
+// document.querySelector('.zoom-container').addEventListener('wheel', zoom, { passive: false });
 // ZOOM-IN AND OUT END!
 
 
@@ -148,52 +150,71 @@ class TableHandler {
     }
 
     navigateWithArrowKeys(event) {
-        if(event.key === 'Shift') return;
-        
+        if (event.key === 'Shift') return;
+
         let cell = event.target;
         let row = parseInt(cell.getAttribute('data-row'));
-        let column = cell.getAttribute('data-column').charCodeAt(0);
+        let columnLetter = cell.getAttribute('data-column');
+        let column = this.columnToIndex(columnLetter);
         let nextCell;
-    
+
         // Remove border classes from the current cell
         cell.classList.remove('selected', 'top-border', 'bottom-border', 'left-border', 'right-border');
-    
+
         switch (event.key) {
             case 'ArrowUp':
                 do {
                     row--;
-                    nextCell = document.querySelector(`td[data-row="${row}"][data-column="${String.fromCharCode(column)}"]`);
+                    nextCell = document.querySelector(`td[data-row="${row}"][data-column="${this.indexToColumn(column)}"]`);
                 } while (row > 0 && (!nextCell || nextCell.getAttribute('data-merged') === 'true'));
                 break;
             case 'ArrowDown':
                 do {
                     row++;
-                    nextCell = document.querySelector(`td[data-row="${row}"][data-column="${String.fromCharCode(column)}"]`);
-                } while (row <= 26 && (!nextCell || nextCell.getAttribute('data-merged') === 'true'));
+                    nextCell = document.querySelector(`td[data-row="${row}"][data-column="${this.indexToColumn(column)}"]`);
+                } while (row <= 70 && (!nextCell || nextCell.getAttribute('data-merged') === 'true'));
                 break;
             case 'ArrowLeft':
                 do {
                     column--;
-                    nextCell = document.querySelector(`td[data-row="${row}"][data-column="${String.fromCharCode(column)}"]`);
-                } while (column >= 65 && (!nextCell || nextCell.getAttribute('data-merged') === 'true'));
+                    nextCell = document.querySelector(`td[data-row="${row}"][data-column="${this.indexToColumn(column)}"]`);
+                } while (column > 0 && (!nextCell || nextCell.getAttribute('data-merged') === 'true'));
                 break;
             case 'ArrowRight':
                 do {
                     column++;
-                    nextCell = document.querySelector(`td[data-row="${row}"][data-column="${String.fromCharCode(column)}"]`);
-                } while (column <= 90 && (!nextCell || nextCell.getAttribute('data-merged') === 'true'));
+                    nextCell = document.querySelector(`td[data-row="${row}"][data-column="${this.indexToColumn(column)}"]`);
+                } while (column <= 104 && (!nextCell || nextCell.getAttribute('data-merged') === 'true'));
                 break;
         }
-    
+
         if (nextCell) {
             event.preventDefault();
             nextCell.focus();
-    
+
             // Add border classes to the newly selected cell
             nextCell.classList.add('selected', 'top-border', 'bottom-border', 'left-border', 'right-border');
 
             this.lastSelectedCell = nextCell;
         }
+    }
+
+    columnToIndex(column) {
+        let index = 0;
+        for (let i = 0; i < column.length; i++) {
+            index = index * 26 + (column.charCodeAt(i) - 64);
+        }
+        return index;
+    }
+
+    indexToColumn(index) {
+        let column = "";
+        while (index > 0) {
+            let remainder = (index - 1) % 26;
+            column = String.fromCharCode(65 + remainder) + column;
+            index = Math.floor((index - 1) / 26);
+        }
+        return column;
     }
 
     handleCellClick(event) {

@@ -49,6 +49,139 @@ class OtherController extends Controller
     
 
     // IMPORTING FUNCTIONS STARTS HERE!!!!!!!!!!!!!!!!!!!!
+    // public function getHighlightedCells($filePath)
+    // {
+    //     $spreadsheet = IOFactory::load($filePath);
+    //     $sheet = $spreadsheet->getActiveSheet();
+    //     $highlightedCells = [];
+    //     $hiddenCells = [];
+    //     $mergedCellsMap = [];
+    //     $allFormula = [];
+    
+    //     // Precompute merged cells and their ranges
+    //     foreach ($sheet->getMergeCells() as $range) {
+    //         [$startCoord, $endCoord] = explode(':', $range);
+    
+    //         $startCol = preg_replace('/\d/', '', $startCoord); // Extract column as string
+    //         $startRow = (int)preg_replace('/[A-Z]/i', '', $startCoord); // Extract row
+    //         $endCol = preg_replace('/\d/', '', $endCoord);
+    //         $endRow = (int)preg_replace('/[A-Z]/i', '', $endCoord);
+    
+    //         $rowspan = $endRow - $startRow + 1;
+    //         $colspan = Coordinate::columnIndexFromString($endCol) - Coordinate::columnIndexFromString($startCol) + 1;
+    
+    //         // Add merged range details
+    //         $mergedCellsMap[$range] = [
+    //             'rowspan' => $rowspan,
+    //             'colspan' => $colspan,
+    //             'startRow' => $startRow,
+    //             'startCol' => $startCol,
+    //             'endRow' => $endRow,
+    //             'endCol' => $endCol,
+    //         ];
+    
+    //         // Mark all cells in the range except the top-left as hidden cells
+    //         for ($row = $startRow; $row <= $endRow; $row++) {
+    //             for ($col = Coordinate::columnIndexFromString($startCol); $col <= Coordinate::columnIndexFromString($endCol); $col++) {
+    //                 $colLetter = Coordinate::stringFromColumnIndex($col);
+    //                 $coord = $colLetter . $row;
+    
+    //                 if ($coord !== $startCoord) { // Exclude the top-left cell
+    //                     $hiddenCells[$coord] = [
+    //                         'row' => $row,
+    //                         'col' => $colLetter,
+    //                         'main_cell' => $startCoord, // Reference the main cell
+    //                     ];
+    //                 }
+    //             }
+    //         }
+    //     }
+    
+    //     // Iterate through each cell in the sheet
+    //     foreach ($sheet->getRowIterator() as $row) {
+    //         foreach ($row->getCellIterator() as $cell) {
+    //             $cellCoord = $cell->getCoordinate();
+    //             $style = $sheet->getStyle($cellCoord);
+    //             $fill = $style->getFill();
+    
+    //             // Check if the cell has a background color (highlighted)
+    //             if ($fill->getFillType() !== \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_NONE) {
+    //                 // $value = $cell->getValue();
+
+    //                 if ($cell->isFormula()) {
+    //                     // If it's a formula, get the calculated value
+    //                     $value = round($cell->getCalculatedValue()); 
+    //                     $formula = $cell->getValue();
+    //                 } else {
+    //                     // If it's not a formula, get the raw value
+    //                     $value = $cell->getValue();
+    //                 }
+    
+    //                 // Get row and column indices
+    //                 $rowIdx = $cell->getRow();
+    //                 $colIdx = $cell->getColumn(); // Keep column as a string (e.g., 'A', 'B')
+    
+    //                 // Default rowspan and colspan
+    //                 $rowspan = 1;
+    //                 $colspan = 1;
+    
+    //                 // Check merged cell map for rowspan/colspan
+    //                 $isMainCell = true;
+    //                 foreach ($mergedCellsMap as $range => $dimensions) {
+    //                     if (
+    //                         $rowIdx >= $dimensions['startRow'] && $rowIdx <= $dimensions['endRow'] &&
+    //                         $colIdx >= $dimensions['startCol'] && $colIdx <= $dimensions['endCol']
+    //                     ) {
+    //                         $rowspan = $dimensions['rowspan'];
+    //                         $colspan = $dimensions['colspan'];
+    //                         $isMainCell = !isset($hiddenCells[$cellCoord]); // Hidden cells are not main cells
+    //                         break;
+    //                     }
+    //                 }
+
+    //                 if ($cell->isFormula()) {
+    //                     $allFormula[] = [
+    //                         'value' => $formula,
+    //                         'table_id' => 'main-table',
+    //                         'column' => $colIdx,
+    //                         'row' => $rowIdx,
+    //                     ];
+    //                 }
+    
+    //                 // Separate main cells and hidden cells
+    //                 if ($isMainCell) {
+    //                     $highlightedCells[] = [
+    //                         'value' => $value,
+    //                         'row' => $rowIdx,
+    //                         'col' => $colIdx,
+    //                         'rowspan' => $rowspan,
+    //                         'colspan' => $colspan,
+    //                     ];
+    //                 }
+    //             }
+    //         }
+    //     }
+    
+    //     // Convert hiddenCells map to an array
+    //     $hiddenCellsData = [];
+    //     foreach ($hiddenCells as $coord => $hiddenCell) {
+    //         $hiddenCellsData[] = [
+    //             'value' => $value,
+    //             'row' => $hiddenCell['row'],
+    //             'col' => $hiddenCell['col'],
+    //             'rowspan' => $rowspan,
+    //             'colspan' => $colspan,
+    //             'main_cell' => $hiddenCell['main_cell'], // Reference to the main cell
+    //         ];
+    //     }
+    
+    //     return [
+    //         'main_cells' => $highlightedCells,
+    //         'hidden_cells' => $hiddenCellsData,
+    //         'formula_cells' => $allFormula
+    //     ];
+    // }
+
     public function getHighlightedCells($filePath)
     {
         $spreadsheet = IOFactory::load($filePath);
@@ -57,19 +190,19 @@ class OtherController extends Controller
         $hiddenCells = [];
         $mergedCellsMap = [];
         $allFormula = [];
-    
+
         // Precompute merged cells and their ranges
         foreach ($sheet->getMergeCells() as $range) {
             [$startCoord, $endCoord] = explode(':', $range);
-    
-            $startCol = preg_replace('/\d/', '', $startCoord); // Extract column as string
-            $startRow = (int)preg_replace('/[A-Z]/i', '', $startCoord); // Extract row
+
+            $startCol = preg_replace('/\d/', '', $startCoord);
+            $startRow = (int)preg_replace('/[A-Z]/i', '', $startCoord);
             $endCol = preg_replace('/\d/', '', $endCoord);
             $endRow = (int)preg_replace('/[A-Z]/i', '', $endCoord);
-    
+
             $rowspan = $endRow - $startRow + 1;
             $colspan = Coordinate::columnIndexFromString($endCol) - Coordinate::columnIndexFromString($startCol) + 1;
-    
+
             // Add merged range details
             $mergedCellsMap[$range] = [
                 'rowspan' => $rowspan,
@@ -79,89 +212,76 @@ class OtherController extends Controller
                 'endRow' => $endRow,
                 'endCol' => $endCol,
             ];
-    
+
             // Mark all cells in the range except the top-left as hidden cells
             for ($row = $startRow; $row <= $endRow; $row++) {
                 for ($col = Coordinate::columnIndexFromString($startCol); $col <= Coordinate::columnIndexFromString($endCol); $col++) {
                     $colLetter = Coordinate::stringFromColumnIndex($col);
                     $coord = $colLetter . $row;
-    
+
                     if ($coord !== $startCoord) { // Exclude the top-left cell
                         $hiddenCells[$coord] = [
                             'row' => $row,
                             'col' => $colLetter,
-                            'main_cell' => $startCoord, // Reference the main cell
+                            'main_cell' => $startCoord,
                         ];
                     }
                 }
             }
         }
-    
+
         // Iterate through each cell in the sheet
         foreach ($sheet->getRowIterator() as $row) {
             foreach ($row->getCellIterator() as $cell) {
                 $cellCoord = $cell->getCoordinate();
-                $style = $sheet->getStyle($cellCoord);
-                $fill = $style->getFill();
-    
-                // Check if the cell has a background color (highlighted)
-                if ($fill->getFillType() !== \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_NONE) {
-                    // $value = $cell->getValue();
 
-                    if ($cell->isFormula()) {
-                        // If it's a formula, get the calculated value
-                        $value = round($cell->getCalculatedValue()); 
-                        $formula = $cell->getValue();
-                    } else {
-                        // If it's not a formula, get the raw value
-                        $value = $cell->getValue();
-                    }
-    
-                    // Get row and column indices
-                    $rowIdx = $cell->getRow();
-                    $colIdx = $cell->getColumn(); // Keep column as a string (e.g., 'A', 'B')
-    
-                    // Default rowspan and colspan
-                    $rowspan = 1;
-                    $colspan = 1;
-    
-                    // Check merged cell map for rowspan/colspan
-                    $isMainCell = true;
-                    foreach ($mergedCellsMap as $range => $dimensions) {
-                        if (
-                            $rowIdx >= $dimensions['startRow'] && $rowIdx <= $dimensions['endRow'] &&
-                            $colIdx >= $dimensions['startCol'] && $colIdx <= $dimensions['endCol']
-                        ) {
-                            $rowspan = $dimensions['rowspan'];
-                            $colspan = $dimensions['colspan'];
-                            $isMainCell = !isset($hiddenCells[$cellCoord]); // Hidden cells are not main cells
-                            break;
-                        }
-                    }
+                if ($cell->isFormula()) {
+                    $value = number_format($cell->getCalculatedValue(), 2, '.', '');
+                    $formula = $cell->getValue();
+                } else {
+                    $value = $cell->getValue();
+                }
 
-                    if ($cell->isFormula()) {
-                        $allFormula[] = [
-                            'value' => $formula,
-                            'table_id' => 'main-table',
-                            'column' => $colIdx,
-                            'row' => $rowIdx,
-                        ];
+                $rowIdx = $cell->getRow();
+                $colIdx = $cell->getColumn();
+                $rowspan = 1;
+                $colspan = 1;
+
+                // Check merged cell map for rowspan/colspan
+                $isMainCell = true;
+                foreach ($mergedCellsMap as $range => $dimensions) {
+                    if (
+                        $rowIdx >= $dimensions['startRow'] && $rowIdx <= $dimensions['endRow'] &&
+                        $colIdx >= $dimensions['startCol'] && $colIdx <= $dimensions['endCol']
+                    ) {
+                        $rowspan = $dimensions['rowspan'];
+                        $colspan = $dimensions['colspan'];
+                        $isMainCell = !isset($hiddenCells[$cellCoord]);
+                        break;
                     }
-    
-                    // Separate main cells and hidden cells
-                    if ($isMainCell) {
-                        $highlightedCells[] = [
-                            'value' => $value,
-                            'row' => $rowIdx,
-                            'col' => $colIdx,
-                            'rowspan' => $rowspan,
-                            'colspan' => $colspan,
-                        ];
-                    }
+                }
+
+                if ($cell->isFormula()) {
+                    $allFormula[] = [
+                        'value' => $formula,
+                        'table_id' => 'main-table',
+                        'column' => $colIdx,
+                        'row' => $rowIdx,
+                    ];
+                }
+
+                if ($isMainCell) {
+                    $highlightedCells[] = [
+                        'value' => $value,
+                        'row' => $rowIdx,
+                        'col' => $colIdx,
+                        'rowspan' => $rowspan,
+                        'colspan' => $colspan,
+                    ];
                 }
             }
         }
-    
+
         // Convert hiddenCells map to an array
         $hiddenCellsData = [];
         foreach ($hiddenCells as $coord => $hiddenCell) {
@@ -171,16 +291,17 @@ class OtherController extends Controller
                 'col' => $hiddenCell['col'],
                 'rowspan' => $rowspan,
                 'colspan' => $colspan,
-                'main_cell' => $hiddenCell['main_cell'], // Reference to the main cell
+                'main_cell' => $hiddenCell['main_cell'],
             ];
         }
-    
+
         return [
             'main_cells' => $highlightedCells,
             'hidden_cells' => $hiddenCellsData,
             'formula_cells' => $allFormula
         ];
     }
+
     
     public function importHighlighted(Request $request, $id)
     {
@@ -192,10 +313,6 @@ class OtherController extends Controller
         
             $file = $request->file('file');
             $filePath = $file->getPathName();
-
-            // $columnNameStart = $request->input('inputColumnName');
-            // $columnStart = $request->input('inputColumn');
-            // $rowStart = $request->input('inputRow');
         
             $cellData = $this->getHighlightedCells($filePath);
 
@@ -206,25 +323,42 @@ class OtherController extends Controller
             $rowIds = [];
             $masterList = [];
             $rowStart = null;
+            $firstNameColumn = null;
             $numberRows = 1;
             
 
             foreach ($cellData['main_cells'] as $cell) {
                 // Initialize arrays to keep track of rows
+                $value = trim($cell['value']);
             
-                // Check if the value matches a name
-                if (preg_match('/^[A-Za-z]+(?:-[A-Za-z]+)?(?: [A-Za-z]+)?, [A-Za-z]+(?: [A-Za-z]+)* [A-Za-z]\.?$/i', trim($cell['value'])) || 
-                    preg_match('/^[A-Za-z]+, [A-Za-z](?:\.[A-Za-z])*(?: [A-Za-z])?$/i', trim($cell['value']))) {
-                    // Format the name to add a period to single-letter initials
-                    $formattedName = $this->formatName($cell['value']);
+                if (preg_match('/^
+                    (?:[A-Za-zÀ-ÖØ-öø-ÿ]+(?:-[A-Za-zÀ-ÖØ-öø-ÿ]+)?(?:\s[A-Za-zÀ-ÖØ-öø-ÿ]+){0,2})  # Last name (1-3 words, allows hyphens)
+                    ,\s[A-Za-zÀ-ÖØ-öø-ÿ]+(?:\s[A-Za-zÀ-ÖØ-öø-ÿ]+)*                              # First name (1+ words)
+                    (?:\s[A-Za-zÀ-ÖØ-öø-ÿ](?:\.)?)?                                             # Middle initial (optional, with or without a period)
+                    (?:\s(JR|SR|II|III|IV))?                                                    # Suffix (optional)
+                    /ix', $value)) {
+            
+            
+            
                 
+                $col = $cell['col']; // Assign column inside the condition
+
+                // Set the first name column if not already set
+                if ($firstNameColumn === null) {
+                    $firstNameColumn = $col;
+                }
+
+                // Extract names only from the detected first name column
+                if ($col === $firstNameColumn) {
+                    $formattedName = $this->formatName($value);
                     $rowNames[$cell['row']] = $formattedName;
                     $masterList[$cell['row']]['name_3'] = $formattedName;
-                
+
                     if ($rowStart === null) {
-                        $rowStart = $cell['row']; // Get the row of the first name
+                        $rowStart = $cell['row']; // Set the starting row
                     }
                 }
+            }
                 
             
                 // Check if the value matches an ID

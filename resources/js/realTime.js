@@ -1,252 +1,284 @@
-// GETTING THE SUM OF EACH ROWS
-function getTotals() {
-    $('tr').each(function() {
-        let sum = 0;
-        let totalCell = $(this).find('.total-cell');
-                
-        // Iterate over each editable cell in the row
-        $(this).find('td[chosen-column="column"]').each(function() {
-            // Get the content of the cell and add it to the sum if it's a number
-            let cellContent = $(this).text();
-            if (!isNaN(cellContent) && cellContent.trim() !== "") {
-                sum += parseFloat(cellContent);
-            }
-        });
-
-
+        if (columnMatch) {
+            columnMatch.forEach(cols => {
+                operationACache.forEach(operationCell => {
+                    const operationRow = operationCell.dataset.row;
+                    
+                    const cacheKey = `${cols}-${operationRow}`;
+                    if (!cellCache.has(cacheKey)) {
+                        const involvedCell = table.querySelector(`[data-column='${cols}'][data-row='${operationRow}']`);
+                        cellCache.set(cacheKey, involvedCell);
+                    }
     
-        // Update the total cell with the calculated sum
-        if (totalCell.length) {
-            if(sum === 0) {
-                sum = '';
-            }             
-            totalCell.text(sum);         
-        }
-    });
-}
+                    const involvedCell = cellCache.get(cacheKey);
+                    if (!involvedCell) return;
+    
+                    involvedCell.addEventListener('keydown', function(event) {
+                        const currentCell = event.target;
+                        const tableId = currentCell.closest('table').id;
+                        const id = currentCell.getAttribute('data-id');
+                        const formulaId = currentCell.getAttribute('data-column');
+                        const roomID = table.getAttribute('data-room-id');
+                        const formula = currentCell.getAttribute('data-formula');
+    
+                        if(event.key === 'Backspace' && formula) {
+                            currentCell.textContent = '';
+                            if(currentCell.hasAttribute('data-formula')) {
+                                currentCell.removeAttribute('data-formula');
+    
+                                let skillUrl = `/delete-skills/${id}`;
+                                let formulaUrl = `/delete-formula/${formulaId}`;
+                                
+                                
+                                Promise.all([
+                                    fetch(skillUrl, {
+                                        method: 'DELETE',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                        },
+                                        body: JSON.stringify({ tableId: tableId })
+                                    }),
+                                    fetch(formulaUrl, {
+                                        method: 'DELETE',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                        },
+                                        body: JSON.stringify({ tableId: tableId, roomId: roomID, formula: formula })
+                                    })
+                                ])
+                                .then(responses => Promise.all(responses.map(res => res.json())))
+                                .then(data => {
+                                    console.log('Skill and formula deleted:', data);
+                                    currentCell.removeAttribute('data-id');
+                                })
+                                .catch(error => console.error('Error:', error));
+                                
+                            }
+                        }
+                    });
+    
+                    involvedCell.addEventListener('focus', function(event) {
+                        let currentCell = event.target;
+                        // Capture the initial content and its length before user makes any changes
+                        originalContent = currentCell.textContent.trim();
+                        originalContentLength = originalContent.length;
+                    });
+    
+                    involvedCell.addEventListener('blur', (event) => {
+                        let currentCell = event.target;
+                        
+                        const updatedContent = currentCell.textContent.trim();
+                        const updatedContentLength = updatedContent.length;
+    
+                        if(originalContent !== updatedContent || originalContentLength !== updatedContentLength) {
+                            const row = event.target.getAttribute('data-row');
+                            const targetCell = event.target.getAttribute('data-column');
+    
+                            // let checkFormula = null;
+    
+                            // let subFormula = formula.substring(1);
+                            // if (subFormula.startsWith('SUM')) {
+                            //     checkFormula = formula.substring(4);
+                            //     checkFormula = expandRange(checkFormula).join('+');
+                            // } else {
+                            //     checkFormula = formula.substring(1);
+                            // }
+    
+    
+                            
+                            const formulaCells = [...table.querySelectorAll(`[data-formula='${formula}'][data-row='${row}']`)];
+                            // Process all formula cells in a batch
+                            const updates = [];
+                            // const updatesInvolved = [];
+                            
+                            formulaCells.forEach(formulaCell => {
+                                let updatedFormula = newFormula;
+                                // const colsWithFormula = formulaCell.dataset.column;
+                                // console.log(formulaCell);
+    
+                                columnMatch.forEach(colToReplace => {
+                                    const cacheKey = `${row}-${colToReplace}`;
+                                    if (!cellCache.has(cacheKey)) {
+                                        const cellContent = table.querySelector(`[data-row='${row}'][data-column='${colToReplace}']`);
+                                        cellCache.set(cacheKey, cellContent);
+                                    }
+                                    
+                                    let cellContent = cellCache.get(cacheKey);
+                                    
+                                    if (!cellContent || cellContent.textContent === "") {
+                                        updatedFormula = updatedFormula.replace(colToReplace, "0");
+                                    } else {
+                                        cellContent = cellContent.textContent.trim();
+                                        updatedFormula = updatedFormula.replace(colToReplace, cellContent);
+                                    }
+                                });
+    
+                                try {
+                                    result = evaluate(updatedFormula);
+                                    result = result.toFixed(2); 
+                                    // result = Math.round(result); 
+                                    // result = Math.round(result * 100) / 100; 
+                                    updates.push({ formulaCell, result });
+                                } catch (error) {
+                                    updates.push({ formulaCell, result: 'Invalid!' });
+                                }
+                            });
+    
+                            const roomID = table.getAttribute('data-room-id');
+    
+                            // Apply all updates to the DOM in one go (batch processing)
+                            updates.forEach(({ formulaCell, result }) => {
+                                formulaCell.textContent = result;
+    
+                                let id = formulaCell.getAttribute('data-id');
+                                let row = formulaCell.getAttribute('data-row');
+                                let column = formulaCell.getAttribute('data-column');
+                                let studentCell = table.querySelector(`td[data-row="${row}"][data-column="A"]`);
+                                let student_name = studentCell ? studentCell.getAttribute('data-room-student') : null;
+    
+                                let results = {
+                                    tableId: table.id,
+                                    content: result,
+                                    room_id: roomID,
+                                    student_name: student_name,
+                                    merged: false,
+                                    rowspan: 1,
+                                    colspan: 1,
+                                    row: row,
+                                    column: column
+                                }
+                                
+                                const url = id ? `/update-content-cell/${id}` : '/save-calculated-cell';
+                                fetch(url, {            
+                                method: "POST",
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                },
+                                body: JSON.stringify(results)    
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    console.log("Server Response:", data);
+                        
+                                    // If there's no ID, update the cell with the returned ID from the server
+                                    if (!id && data.ids) {
+                                        cell.setAttribute('data-id', data.ids);
+                                        console.log(data.ids);
+    
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error("Error:", error);
+                                });
+                            });
+    
+                            // Involved cell calculation batch starts here
+                            const involvedCols = [...table.querySelectorAll(`[data-formula][data-row='${row}']`)]
+                            .filter(cell => !cell.dataset.formula.startsWith("if"));    
+                            
+                            involvedCols.forEach(includesCol => {
+                                const targetFormula = includesCol.dataset.formula;
+                                let checkInvolveFormula = null;
+    
+                                let subFormula = targetFormula.substring(1);
+                                if (subFormula.startsWith('SUM')) {
+                                    checkInvolveFormula = targetFormula.substring(4);
+                                    checkInvolveFormula = expandRange(checkInvolveFormula).join('+');
+                                } else {
+                                    checkInvolveFormula = targetFormula.substring(1);
+                                }
+    
+                                
+                                // if (!checkInvolveFormula.includes(targetCell)) {
+                                    // console.log(includesCol);
+                                    let newInvolvedFormula = null;
+                                    // const subFormula = targetFormula.substring(1);
+                                    if (subFormula.startsWith('SUM')) {
+                                        newInvolvedFormula = targetFormula.substring(4);
+                                        newInvolvedFormula = expandRange(newInvolvedFormula).join('+');
+                                    } else {
+                                        newInvolvedFormula = targetFormula.substring(1);
+                                    }
+    
+                                    // console.log(newInvolvedFormula);
+    
+                                    let updatednewInvolvedFormula = newInvolvedFormula;
+                                    const matchTargetFormula = newInvolvedFormula.match(/[A-Z]{1,2}/g);
+    
+                                    matchTargetFormula.forEach(matchCol => {
+                                        const cacheKey = `${row}-${matchCol}`;
+                                        if (!cellCache.has(cacheKey)) {
+                                            const getTargetCols = table.querySelector(`[data-row='${row}'][data-column='${matchCol}']`);
+                                            cellCache.set(cacheKey, getTargetCols);
+                                        }
+                                        
+                                        let getTargetCols = cellCache.get(cacheKey);
+
+                                        if (!getTargetCols || getTargetCols.textContent === "") {
+                                            updatednewInvolvedFormula = updatednewInvolvedFormula.replace(matchCol, "0");
+                                        } else {
+                                            // let getTargetCol = getTargetCols.textContent.trim();
+                                            let getTargetCol = getTargetCols.getAttribute("data-original");
+
+                                            updatednewInvolvedFormula = updatednewInvolvedFormula.replace(matchCol, getTargetCol);
+                                        }
+                                    });
+    
+                                    try {
+
+                                        involvedResult = evaluate(updatednewInvolvedFormula);
+                                        involvedResult = involvedResult.toFixed(2);
+                                        let roundedResult = Math.round(involvedResult);
+
+                                        includesCol.textContent = roundedResult;
+                                        includesCol.removeAttribute("data-original");
+                                        includesCol.setAttribute("data-original", involvedResult);
+                                    } catch (error) {
+                                        includesCol.textContent = 'Invalidss!';
+                                        return;
+                                    }
+    
+
+                                    let id = includesCol.getAttribute('data-id');
+                                    let involvedResults = {
+                                        tableId: table.id,
+                                        content: involvedResult,
+                                        colspan: 1,
+                                        rowspan: 1,
+                                        merged: false
+                                    }
+
+                                    // MAKE ALL THE UPDATE AND INSERTION OF DATAS INTO BULK FO FASTER SAVING INTO DATABASE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+                                    fetch(`/update-content-cell/${id}`, {            
+                                    method: "POST",
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                    },
+                                    body: JSON.stringify(involvedResults)    
+                                    })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        console.log("Server Response:", data);
+                            
+                                        // If there's no ID, update the cell with the returned ID from the server
+                                        if (!id && data.ids) {
+                                            cell.setAttribute('data-id', data.ids);
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error("Error:", error);
+                                    });
+    
+                                // }
 
 
-// GETTING THE PS OF EACH ROWS
-function getPS() {
-    $('tr').each(function() {
-        let ps = 0;
-        let totalPS = $(this).find('.total-ps');
-                
-        // Iterate over each editable cell in the row
-        $(this).find('td[chosen-ps="column"]').each(function() {
-            // Get the content of the cell and add it to the sum if it's a number
-            let cellContent = $(this).text();
-            // Get the total of the HIGHEST POSSIBLE SCORE
-            $('tr').find('td[chosen-total-number="column"]').each(function() {
-                let total = $(this).text();
-                if (!isNaN(cellContent) && cellContent.trim() !== "") {
-                    ps = (parseFloat(cellContent) / parseFloat(total)) * 100;
-                }
+                            });
+                        }
+                    });
+                });
             });
-        });
-    
-        // Update the total cell with the calculated sum
-        if (totalPS.length) {
-            const tPs = ps.toString().split('.');
-            if(tPs.length === 1 || tPs[1].length === 1) {
-                totalPS.text(ps);
-            } else {
-                totalPS.text(ps.toFixed(2));
-            }
         }
-    });
-}
-
-// GETTING THE WS OF EACH ROWS
-function getWS() {
-    $('tr').each(function() {
-        let ws = 0;
-        let totalWS = $(this).find('.total-ws');
-                
-        // Iterate over each editable cell in the row
-        $(this).find('td[chosen-ws="column"]').each(function() {
-            // Get the content of the cell and add it to the sum if it's a number
-            let cellContent = $(this).text();
-            $('tr').find('td[chosen-percent-quiz="column"]').each(function() {
-                let wholePercent = $(this).text();
-                let percentQuiz = parseFloat(wholePercent) / 100;
-                if (!isNaN(cellContent) && cellContent.trim() !== "") {
-                    ws = parseFloat(cellContent) * percentQuiz;
-                }
-            });
-        });
-    
-        // Update the total cell with the calculated sum
-        if (totalWS.length) {
-            const tWS = ws.toString().split('.');
-            if(tWS.length === 1 || tWS[1].length === 1) {
-                totalWS.text(ws);
-            } else {
-                totalWS.text(ws.toFixed(2));
-            }
-        }
-    });
-}
-
-// GETTING THE PS OF EXAM ROWS
-function getPsExam() {
-    $('tr').each(function() {
-        let psExam = 0;
-        let totalPsExam = $(this).find('.total-ps-exam');
-                
-        // Iterate over each editable cell in the row
-        $(this).find('td[chosen-ps-exam="column"]').each(function() {
-            let cellScore = $(this).text();
-            // Get the total of the HIGHEST POSSIBLE SCORE
-            $('tr').find('td[chosen-total-score="column"]').each(function() {
-                let totalScore = $(this).text();
-                if (!isNaN(cellScore) && cellScore.trim() !== "") {
-                    psExam = (parseFloat(cellScore) / totalScore) * 100;
-                }
-            });
-        });
-
-        // Update the total cell with the calculated sum
-        if (totalPsExam.length) {
-            const exam = psExam.toString().split('.');
-            if(exam.length === 1 || exam[1].length === 1) {
-                totalPsExam.text(psExam);
-            } else {
-                totalPsExam.text(psExam.toFixed(2));
-            }
-        }
-    });
-}
-
-// GETTING THE WS OF WRITTEN IN EXAM
-function getWsExam() {
-    $('tr').each(function() {
-        let wsExam = 0;
-        let totalWsExam = $(this).find('.total-ws-exam');
-                
-        // Iterate over each editable cell in the row
-        $(this).find('td[chosen-ws-exam="column"]').each(function() {
-            let cellContent = $(this).text();
-            $('tr').find('td[chosen-percent-exam="column"]').each(function() {
-                let wholePercent = $(this).text();
-                let percentExam = parseFloat(wholePercent) / 100;
-
-                if (!isNaN(cellContent) && cellContent.trim() !== "") {
-                    wsExam = parseFloat(cellContent) * percentExam;
-                }
-            });
-        });
-    
-        // Update the total cell with the calculated sum
-        if (totalWsExam.length) {
-            const tWsExam = wsExam.toString().split('.');
-            if(tWsExam.length === 1 || tWsExam[1].length === 1) {
-                totalWsExam.text(wsExam);
-            } else {
-                totalWsExam.text(wsExam.toFixed(2));
-            }
-        }
-    });
-}
-
-// GETTING THE KNOWLEDGE PERCENT
-function getKExam() {
-    $('tr').each(function() {
-        let knowledge = 0;
-        let totalKnowledge = $(this).find('.total-knowledge');
-        let cKnowledge;
-        let qKnowledge;
-        let eKnowledge;
-
-        $('tr').find('td[chosen-percent-knowledge="column"]').each(function() {
-            cKnowledge = parseFloat($(this).text());
-        });
-
-        $(this).find('td[quiz-ws-knowledge="column"]').each(function() {
-            qKnowledge = parseFloat($(this).text());
-        });
-
-        $(this).find('td[exam-ws-knowledge="column"]').each(function() {
-            eKnowledge = parseFloat($(this).text());
-        });
-
-        $(this).find('.total-knowledge').each(function() {    
-            if (!isNaN(qKnowledge)) {                
-                knowledge = ((qKnowledge + eKnowledge) / 100) * cKnowledge;
-            }
-        });
-        
-        // Update the total cell with the calculated sum
-        if (totalKnowledge.length) {
-            const tKnowledge = knowledge.toString().split('.');
-            if(tKnowledge.length === 1 || tKnowledge[1].length === 1) {
-                totalKnowledge.text(knowledge);
-            } else {
-                totalKnowledge.text(knowledge.toFixed(2));
-            }
-        }
-        
-    });
-}
-
-
-    
-$(document).ready(function() {
-    // QUIZZES
-    getTotals();
-    getPS();
-    getWS();
-
-    // WRITTEN  EXAM
-    getPsExam();
-    getWsExam();
-
-    // KNOWLEDGE PERCENT
-    getKExam();
-            
-    // RECALCULATE THE DATA WHENEVER THE ROWS OF QUIZZES IS CHANGED
-    $('td[chosen-column="column"]').on('input', function() {
-        // QUIZZES
-        getTotals();
-        getPS();
-        getWS();
-    });
-    $('td[chosen-percent-quiz="column"]').on('input', function() {
-        // QUIZZES
-        getWS();
-    });
-
-    // RECALCULATE THE DATA WHENEVER THE ROWS OF EXAM SCORE IS CHANGED
-    $('td[chosen-ps-exam="column"]').on('input', function() {
-        // WRITTEN  EXAM
-        getPsExam();
-        getWsExam();
-        getKExam();
-    });
-    $('td[chosen-percent-exam="column"]').on('input', function() {
-        // WRITTEN  EXAM
-        getWsExam();
-    });
-});
-
-
-$(document).ready(function() {
-    $('.student-cell').hover(function() {
-        $(this).toggleClass('active');
-    });
-});
-$(document).ready(function() {
-    $('.high-cell').hover(function() {
-        $(this).toggleClass('active');
-    });
-});
-$(document).ready(function() {
-    $('.percent-cell').hover(function() {
-        $(this).toggleClass('active');
-    });
-});
-$(document).ready(function() {
-    $('.percent-total-cell').hover(function() {
-        $(this).toggleClass('active');
-    });
-});

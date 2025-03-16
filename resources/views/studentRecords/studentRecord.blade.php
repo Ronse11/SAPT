@@ -37,9 +37,9 @@
         </header> --}}
 
         {{-- Body --}}
-        <section class=" w-full h-full flex px-14 py-8">
+        <section class=" w-full h-full flex md:px-14 px-3 py-8">
 
-            <div class="bg-gray-50 rounded-2xl px-4 pb-6 w-60 flex flex-col justify-between border border-sgline">
+            <div class="bg-gray-50 rounded-2xl px-4 pb-6 w-60 cp:flex hidden flex-col justify-between border border-sgline">
 
                 <div>
                     <div class="h-20 flex items-center mb-4 border-b border-sgline">
@@ -100,11 +100,11 @@
             <div class="  flex-1 overflow-y-auto overflow-scrolls">
                 {{-- overflow-y-auto overflow-scrolls --}}
 
-                <div class=" w-full h-full flex flex-col gap-4 px-8 rounded-3xl">
+                <div class=" w-full h-full flex flex-col gap-8 md:px-8 px-4 rounded-3xl">
 
 
-                    <div class=" h-20 flex items-center justify-between px-8 rounded-2xl border border-sgline">
-                        <h1 class=" text-3xl font-bold text-mainText">Records</h1>
+                    <div class=" md:h-20 h-16 flex items-center justify-between md:px-8 px-3 rounded-lg border border-sgline">
+                        <h1 class=" md:text-3xl text-xl font-bold text-mainText">Records</h1>
                         <div>
                             {{-- <button class="btn-user text-3xl w-9 h-9 rounded-full cp:text-2xl bg-mainText">
                                 <h1 class=" text-2xl text-bgcolor">{{ substr(auth()->user()->username, 0, 1) }}</h1>
@@ -116,22 +116,22 @@
                             </div> --}}
 
                             <button id="toggleButton" 
-                            class="relative w-44 h-10 bg-gray-200 rounded-full flex items-center transition-all duration-300 ease-in-out">
+                            class="relative w-32 h-7 bg-gray-200 rounded-full flex items-center transition-all duration-300 ease-in-out">
                             <!-- Active Indicator -->
                             <span id="activeIndicator" 
-                                class="absolute left-1 w-[48%] h-8 bg-mainText rounded-full transition-all duration-300 ease-in-out"></span>
+                                class="absolute left-1 w-[48%] h-5 bg-mainText rounded-full transition-all duration-300 ease-in-out"></span>
                             
                             <!-- Chart Tab (Default Active) -->
                             <span id="chartTab" 
                                 class="relative w-1/2 h-full flex items-center justify-center text-white font-semibold transition-all duration-300 ease-in-out z-10">
-                                <i class='bx bxs-doughnut-chart' ></i>
-                                <h3 class=" text-[.8rem] ml-1 font-light">Chart</h3>
+                                <i class=' text-[.7rem] bx bxs-doughnut-chart' ></i>
+                                <h3 class=" text-[.7rem] ml-1 font-light">Chart</h3>
                             </span>
                             <!-- Table Tab -->
                             <span id="tableTab" 
                                 class="relative w-1/2 h-full flex items-center justify-center text-gray-700 font-semibold transition-all duration-300 ease-in-out z-10">
-                                <i class='bx bxs-square'></i>
-                                <h3 class=" text-[.8rem] ml-1 font-light">Table</h3>
+                                <i class='text-[.7rem] bx bxs-square '></i>
+                                <h3 class=" text-[.7rem] ml-1 font-light">Table</h3>
                             </span>
                         </button>
 
@@ -142,9 +142,82 @@
                     <div class=" flex-1 flex flex-col">
                         <!-- Chart Section (Initially Hidden) -->
                         <div id="chartSection" class="flex-1 flex flex-col">
-                            <div id="quizTabsContainer" class="flex-1 flex flex-col gap-4 ">
+                            <div id="quizTabsContainer" class="flex-1 flex flex-col gap-4">
+                                <div class="flex-1 flex flex-col gap-4">
+                                    <div class="rounded-lg border border-sgline p-4">
+                                        <div class="flex-1">
+                                            <div class="mb-4 font-semibold text-base">
+                                                <h1 class="">Class Details</h1>
+                                            </div>
+                                            <div class="pl-2 flex gap-4 text-sm opacity-90">
+                                                <div class=" flex flex-col gap-1">
+                                                    <h1 class=" font-medium opacity-85">Subject Code</h1>
+                                                    <h1 class=" font-medium opacity-85">Class Name</h1>
+                                                    <h1 class=" font-medium opacity-85">C/Y/S</h1>
+                                                    <h1 class=" font-medium opacity-85">Instructor</h1>
+                                                </div>
+                                                <div class=" flex flex-col gap-1">
+                                                    <h1>:</h1>
+                                                    <h1>:</h1>
+                                                    <h1>:</h1>
+                                                    <h1>:</h1>
+                                                </div>
+                                                <div class=" flex flex-col gap-1">
+                                                    <h1>{{ $roomData->class_name }}</h1>
+                                                    <h1>{{ $roomData->subject }}</h1>
+                                                    <h1>{{ $roomData->section }}</h1>
+                                                    <h1>{{ $roomData->teacher_name }}</h1>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex gap-4">
+                                        <div class=" flex-1 rounded-lg border border-sgline p-4">
+                                            <h1 class=" font-semibold text-base">Mid Term</h1>
+                                            @if(!empty($getMidTerm->content))
+                                                @if(round($getMidTerm->content) >= 75)
+                                                <h1>Passed</h1>
+                                                @else
+                                                <h1>Failed</h1>
+                                                @endif
+                                            @else
+                                                <h1>No Mid Term Found</h1>
+                                            @endif
+                                        </div>
+                                        <div class="flex-1 rounded-lg border border-sgline p-4">
+                                            <h1 class=" font-semibold text-base">Final Term</h1>
+                                            @if(!empty($getFinalTerm->content))
+                                                @if(round($getFinalTerm->content) >= 75)
+                                                <h1>Passed</h1>
+                                                @else
+                                                <h1>Failed</h1>
+                                                @endif
+                                            @else
+                                                <h1>No Final Term Found</h1>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <div class="flex gap-4">
+                                        <div class="flex-1 rounded-lg border border-sgline p-4">
+                                            <h1 class=" font-semibold text-base">Final Term</h1>
+                                            @if(!empty($getMidTerm->content) && !empty($getFinalTerm->content))
+                                                @if(round((($getMidTerm->content * .4) + ($getFinalTerm->content * .6))) >= 75)
+                                                <h1>Passed</h1>
+
+                                                @else
+                                                <h1>Failed</h1>
+                                                @endif
+                                            @else
+                                                <h1>No Final Grade Found</h1>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <!-- Tabs -->
-                                <div id="quizTabs" class="flex space-x-2 py-4 px-8 rounded-md">
+                                {{-- <div id="quizTabs" class="flex space-x-2 py-4 px-8 rounded-md">
                                     @php 
                                         $groupedData = [];
                                         $currentGroup = null;
@@ -246,24 +319,25 @@
     
                                         @endforeach
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                     
                         <!-- Table Section -->
-                        <div id="tableSection" class="mt-4 hidden">
-                            <div class="h-[24rem] flex justify-center gap-8 rounded-xl p-4">
-                                <div class=" whitespace-nowrap overflow-x-auto py-8">
+                        <div id="tableSection" class="mt-4 hidden flex-1">
+                            <div class=" h-full flex justify-center gap-8 rounded-xl p-8 border border-sgline">
+                                <div class=" whitespace-nowrap overflow-x-auto pb-4">
         
                                     @if($skills->isEmpty() ) 
                                         <h1>No Records Yet!</h1>
                                     @else 
                                         @php
                                             $rowspanTrack = [];
+                                            $existCol = [];
                                         @endphp
         
                                         <h1>{{$notif}}</h1>
-                                        <table class=" h-full">
+                                        <table class="">
                                             <thead>
         
                                                 @if (!$organized['organizedRows'])
@@ -325,11 +399,19 @@
         
                                                                 $rowspan = $rowData->rowspan ?? 1;
                                                                 $colspan = $rowData->colspan ?? 1;
+
+
+                                                                if($rowData){
+                                                                    $existCol[] = $rowData->column;
+                                                                    $isDone = in_array($existCol, $doneCheck);
+                                                                    $text = $isDone ? 'Absent' : 'Not yet recorded';
+                                                                }
+
                                                             @endphp
         
                                                 
                                                             @if ($rowData)
-                                                                <th column="{{ $rowData->column ?? '' }}" rowspan="{{ $rowspan }}" colspan="{{ $colspan }}" class="text-center px-10 py-1 border border-sgline">
+                                                                <th column="{{ $rowData->column ?? '' }}" rowspan="{{ $rowspan }}" colspan="{{ $colspan }}" class="text-center px-5 py-1 border border-sgline">
                                                                     {{ $rowData->content ?? '' }}
                                                                 </th>
                                                                 @php
@@ -358,7 +440,7 @@
                                             
                                             </thead>
                             
-                                            <tbody>
+                                            <tbody class="">
                                                 <tr>
                                                     @php 
                                                         $colIndex = 0; 
@@ -366,9 +448,10 @@
                                                         $names = [$nameAsStudent->name_1 ?? '#', $nameAsStudent->name_2 ?? $nameAsStudent->name_3, $nameAsStudent->name_3];
                                                     @endphp
                                                     
+
                                                     @while ($colIndex <= $organized['maxColIndex'])
                                                         @if ($colIndex < $nameColCount) 
-                                                            <td class="text-center border border-sgline px-8"> {{$names[$colIndex] ?? ''}} </td>
+                                                            <td class="text-center border border-sgline px-3 py-5"> {{$names[$colIndex] ?? ''}} </td>
                                                             @php
                                                             $colIndex++;
                                                             continue;
@@ -386,15 +469,23 @@
                                                             }
                                                             // Retrieve the cell content if available
                                                             $cell = $organized['organizedData'][$column] ?? null;
+                                                            // dd($existCol);
+
                                                             
-                                                            $isDone = in_array($column, $doneCheck);
-                                                            $text = $isDone ? 'Absent' : 'Not yet recorded';
+                                                            // $isDone = in_array($column, $doneCheck);
+                                                            // $text = $isDone ? 'Absent' : 'Not yet recorded';
                                                         @endphp
                                                         
                                                         {{-- Render cell for remaining columns --}}
                                                         @if ($column)
-                                                            <td class="text-center border border-sgline px-10" >
-                                                                {{ $cell->content ?? $text }}
+                                                            <td class="text-center border border-sgline px-5 py-5">
+                                                                {{-- {{ $cell->content ?? $text }} --}}
+
+                                                            @if (!empty($cell) && is_numeric($cell->content))
+                                                                {{ round($cell->content) }}
+                                                            @else
+                                                                {{ $cell->content ?? '' }}
+                                                            @endif
                                                             </td>
                                                         @endif
                                             

@@ -1,5 +1,6 @@
 
 import { isFormulaActiveState } from "./calculation.js";
+// import { isFormulaActiveStateRating } from "./ratingTable.js";
 
 export function handleCellBlur(event, tableId, initialContent) {
 
@@ -7,7 +8,12 @@ export function handleCellBlur(event, tableId, initialContent) {
         return;
     }
 
+    // if(isFormulaActiveStateRating()) {
+    //     return;
+    // }
+
     let cell = event.target;
+    let student_name = null;
     const table = document.querySelector(`#${tableId}`);
     // Remove the border when the cell loses focus
     cell.classList.remove('selected2');
@@ -15,13 +21,20 @@ export function handleCellBlur(event, tableId, initialContent) {
     let row = cell.getAttribute('data-row');
     let column = cell.getAttribute('data-column');
     let content = cell.textContent.trim();
+    if (table.id == 'rating-table') {
+        student_name = table.querySelector(`td[data-row="${row}"][data-column="#1"]`).dataset.roomStudent;
+
+    } else {
+        student_name = table.querySelector(`td[data-row="${row}"][data-column="A"]`).dataset.roomStudent;
+
+    }
     let room_id = table.getAttribute('data-room-id');
-    let student_name = table.querySelector(`td[data-row="${row}"][data-column="A"]`).dataset.roomStudent;
     let rowspan = cell.getAttribute('rowspan');
     let colspan = cell.getAttribute('colspan');
     let merged = colspan > 1;
     let dataFormula = cell.getAttribute('data-formula');
 
+    cell.setAttribute('data-original', content);
 
     // Debounce to prevent multiple rapid-fire requests
     clearTimeout(cell.blurTimeout);
@@ -52,7 +65,7 @@ export function handleCellBlur(event, tableId, initialContent) {
         }
 
         // Prevent further processing if content contains '=' or hasn't changed
-        if (content.includes('=') || content === initialContent || content === '') {
+        if (content.includes('=') || content === initialContent || content === '' || cell.hasAttribute("data-p")) {
             return;
         }
 
@@ -68,6 +81,8 @@ export function handleCellBlur(event, tableId, initialContent) {
             colspan: colspan,
             tableId: tableId // Verify if this.tableId is available in context
         };
+
+        console.log(payload);
 
         if (!id) {
             payload.row = row;

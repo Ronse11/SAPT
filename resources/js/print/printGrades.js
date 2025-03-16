@@ -1,54 +1,42 @@
-// import printJS from "print-js";
-
-// function printGradingSheet() {
-//     const content = document.getElementById("printable-content");
-//     if (!content) {
-//         console.error("Printable content not found.");
-//         return;
-//     }
-
-//     // Force width to 100% for printing
-//     content.style.width = "100%";
-//     content.style.maxWidth = "100%";
-
-//     // Print the content
-//     printJS({
-//         printable: "printable-content",
-//         type: "html",
-//         targetStyles: ["*", ":hover"],
-//         style: `
-//             @media print {
-//                 #printable-content {
-//                     width: 100%;
-//                     max-width: 100%;
-//                     overflow: hidden;
-//                     page-break-inside: avoid;
-//                 }
-//             }
-//         `
-//     });
-// }
+import printJS from "print-js";
 
 
-function printDiv() {
-    const content = document.getElementById("printable-content").innerHTML;
-    const originalContent = document.body.innerHTML; // Store the original content
-    // const logoContainer = document.querySelector(".cpsuLogo"); // Target logo container
-
-    // // Temporarily adjust Tailwind classes for printing
-    // if (logoContainer) {
-    //     logoContainer.classList.remove("left-28");
-    //     logoContainer.classList.add("left-40"); // Adjust as needed
-    // }
-
-    document.body.innerHTML = content; // Replace body with only the printable content
-    window.print(); // Trigger print
-
-    // Restore original content and Tailwind classes after printing
-    document.body.innerHTML = originalContent;
-    location.reload();
-}
 
 // document.addEventListener('DOMContentLoaded', ()=> {
     document.getElementById("print-grade").addEventListener("click", printDiv);
 // }); 
+
+function printDiv() {
+    printJS({
+        printable: 'printable-content',
+        type: 'html',
+        css: 'https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css',
+        scanStyles: false,
+        style: `
+            @media print {
+    
+                /* Set text sizes */
+                h1, h2, h3 {
+                    font-size: 18px !important;
+                }
+                p, td, th {
+                    font-size: 14px !important;
+                }
+                td {
+                    border: 1px solid #cccccc;
+                }
+                /* Adjust Tailwind text classes */
+                .text-sm { font-size: 12px !important; }
+                .text-base { font-size: 14px !important; }
+                .text-lg { font-size: 16px !important; }
+                .text-xl { font-size: 18px !important; }
+                .text-2xl { font-size: 22px !important; }
+                .text-3xl { font-size: 26px !important; }
+                .text-4xl { font-size: 30px !important; }
+                .text-5xl { font-size: 36px !important; }
+            }
+        `
+    });
+}
+
+

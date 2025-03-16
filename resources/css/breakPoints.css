@@ -1,14 +1,3 @@
-/* .overflow-scrolls::-webkit-scrollbar {
-    width: 10px;
-}
-.overflow-scrolls::-webkit-scrollbar-track {
-    background-color: #f5f5f5;
-    border-radius: 10px;
-}
-.overflow-scrolls::-webkit-scrollbar-thumb {
-    background-color: #b7bfc3;
-    border-radius: 10px;
-} */
 
 
 
@@ -33,7 +22,6 @@
         grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 
-    /* Teacher Hero */
     .teacher-hero {
         grid-column: 3 / 17;
     }
@@ -44,51 +32,11 @@
 }
 
 @media screen and (max-width: 1700px) and (min-width: 1281px) {   
-    /* .sidebar {
-        transform: translateX(0);
-        transition: transform 1s ease-in-out;
-    }  */
-    /* .sidebar.close {
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        transition: width .5s ease-in-out;
-
-    } */
-    /* .sidebar-user {
-        transform: translateX(-900px);
-        transition: transform 1s ease-in-out;
-        background: #fefeff;
-    }  */
-    /* .sidebar-user.close-sidebar {
-        background: #fefeff;
-        transform: translateX(0);
-        transition: transform .3s ease-in-out;
-    } */
-    /* .hero { */
-        /* grid-column: 4 / 17; */
-        /* transition: grid-column-start 1s ease-in-out;
-        grid-column-start: 4;
-        grid-column-end: 17;
-
-    } */
-    /* .expand { */
-        /* grid-column: 1 / 17; */
-        /* transition: grid-column-start 1s ease-in-out; */
-        /* grid-column-start: 1; */
-        /* transition: grid-column-start 2s ease-in-out; */
-        /* grid-column-end: 17; */
-        /* padding-left: 2rem;
-
-    } */
-    
     
     .content-box.three {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
-    /* Teacher Hero */
     .teacher-hero {
         grid-column: 2 / 17;
         padding-left: 4rem;
@@ -119,17 +67,19 @@
     
 }
 
+@media screen and (max-width: 376px) {  /* Fixed missing px */
+    .sidebar {
+        display: none; /* Hide sidebar on small screens */
+    }
+    
+    .burger-menu {
+        display: block; /* Show burger button */
+        cursor: pointer;
+    }
+}
 
 
 /* Search CSS */
 .search-btn.search {
     background-color: rgb(254 254 255 / 1);
 }
-/* .class-item {
-    display: block;
-    opacity: 1;
-    transition: opacity 0.5s;
-}
-.class-item.hide {
-    opacity: 1;
-} */

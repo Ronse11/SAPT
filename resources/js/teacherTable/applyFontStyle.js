@@ -359,6 +359,7 @@ window.addEventListener('load', function() {
             'border-t-cursor', 'border-b-cursor', 'border-l-cursor', 'border-r-cursor',
             'bg-*'
         ];
+
     
             cellData.forEach(({ row, column, color_name, type }) => {
                 columnOfFirstRow = column;
@@ -392,6 +393,7 @@ window.addEventListener('load', function() {
         
             if (fontColor) {
                 const colorResult = colorReCondition(fontColor, cell,  firstCell);
+                console.log(colorResult);
                 applyFontStyle(cell, colorResult, fontColor);
             }
         }
@@ -415,13 +417,12 @@ window.addEventListener('load', function() {
 
             const formula = firstCell.getAttribute('data-formula');
 
-            if(!formula) {
-                return currentColor;
-            }
-
             const [firstColor, secColor] = separateColors(currentColor);
             
             const matchTrue = formula.match(/if\(.+?,(.+?),.+\)/);
+            if(!matchTrue) {
+                return currentColor;
+            }
             const matchTrueContent = matchTrue ? matchTrue[1].trim() : null;
             const conditionCellContent = cell.textContent.trim();
             const result = matchTrueContent === conditionCellContent;
@@ -439,10 +440,10 @@ window.addEventListener('load', function() {
         }
         
         function applyFontStyle(cell, colorResult, fontColor) {
+            cell.setAttribute('font-colors', fontColor);
             if (colorResult.startsWith('#')) {
                 cell.style.color = colorResult;
             }
-            cell.setAttribute('font-colors', fontColor);
         }
         
         function parseColors(color_name) {

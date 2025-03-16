@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\HelperFunctions;
 
 use App\Models\AttendanceTable;
+use App\Models\RatingSheet;
 use App\Models\Rooms;
 use App\Models\StudentNames;
 use App\Models\StudentRoom;
@@ -137,6 +138,7 @@ class UsefulController extends Controller
         $encodedID = HelperFunctions::base64_url_encode($room->id);
         // $encryptedRoomID = Crypt::encrypt($room->id);
         $roomID = TableSkills::where('room_id', $decyptedRoomID)->get();
+        $dataRatings = TableRatings::where('room_id', $decyptedRoomID)->get();
 
         $studentNames = StudentNames::where('room_id', $decyptedRoomID)->orderBy('name_3')->get();
         $studentName = StudentNames::where('room_id', $decyptedRoomID)->first();
@@ -163,9 +165,124 @@ class UsefulController extends Controller
         ->select('table_selected_row_col.*', 'student_names.name_3') // Select columns from both tables
         ->first();
 
-        // $sequences = $this->generateSequences(104);
+        $columnLabels = ['#1', 'Name', 'M.C', 'M.P', 'M.A', 'MidGr.','Mid.N.Eqv.', 'F.C', 'F.P', 'F.A','T.F.Gr.','F.N.Eqv.', 'Mid', 'Fin', 'FR.Eqv', 'FR.N.Eqv', 'Credits', 'Remarks', '#2'];
 
-        return view('records.sample', ['data' => $roomID, 'encodedID' => $encodedID, 'room' => $room, 'names' => $studentNames, 'name' => $studentName, 'teacher' => $teacherName, 'counts' => $count, 'selectedRow' => $selectedRow, 'presentColRow' => $presentColRow, 'usedFormula' => $formula, 'totalRowCol' => $totalRowCol, 'doneCheck' => $checkedCol]);
+        $getUnit = RatingSheet::where('table_id', 'unit')->where('room_id', $decyptedRoomID)->first();
+        $getSem = RatingSheet::where('table_id', 'SEM')->where('room_id', $decyptedRoomID)->first();
+
+        $getMidGr = RatingSheet::where('table_id', 'MidGr.')->where('room_id', $decyptedRoomID)->first();
+        $getFinGr = RatingSheet::where('table_id', 'T.F.Gr.')->where('room_id', $decyptedRoomID)->first();
+
+        return view('records.sample', ['data' => $roomID, 'dataRatings' => $dataRatings, 'encodedID' => $encodedID, 'room' => $room, 'names' => $studentNames, 'name' => $studentName, 'teacher' => $teacherName, 'counts' => $count, 'selectedRow' => $selectedRow, 'presentColRow' => $presentColRow, 'usedFormula' => $formula, 'totalRowCol' => $totalRowCol, 'doneCheck' => $checkedCol, 'columnLabels' => $columnLabels, 'unit' => $getUnit, 'sem' => $getSem, 'getMidGr' => $getMidGr, 'getFinGr' => $getFinGr]);
+    }
+
+    public function getFormulaForRating(Request $request) {
+        $userId = Auth::id();
+        $userName = Auth::user()->username;
+        $formula = $request->input('column'); // Example: "=D"
+        // $column = ltrim($formula, '='); // Remove '=' to get column name
+        // $teacherId = $request->input('teacher_id');
+        $roomId = $request->input('room_id');
+        $currentCol = $request->input('currentCol');
+
+        // Retrieve matching skills
+        $skills = TableSkills::where('column', $formula)
+        ->where('room_id', $roomId)
+        ->where('teacher_id', $userId)
+        ->where('student_name', '!=', $userName) // Exclude the current user's name
+        ->get();
+
+        if ($skills->isEmpty()) {
+            return response()->json(['error' => 'No matching records found'], 404);
+        }
+
+        // Prepare data for insertion
+        $ratings = $skills->map(function ($skill) use ($currentCol) {
+            return [
+                'teacher_id'   => $skill->teacher_id,
+                'room_id'      => $skill->room_id,
+                'student_name' => $skill->student_name,
+                'column'       => $currentCol,
+                'row'          => $skill->row,
+                'content'      => $skill->content,
+                'merged'       => $skill->merged,
+                'rowspan'      => $skill->rowspan,
+                'colspan'      => $skill->colspan,
+                'created_at'   => now(),
+                'updated_at'   => now(),
+            ];
+        })->toArray();
+
+        TableRatings::insert($ratings);
+
+        return response()->json(['message' => 'Formula applied successfully', 'data' => $ratings]);
+    }
+
+    public function getUnits(Request $request) {
+
+        $userId = Auth::id();
+        $unitValue = $request->input('unitValue');
+        $roomId = $request->input('room_id');
+
+        $existingUnit = RatingSheet::where('table_id', 'unit')->where('room_id', $roomId)->where('teacher_id', $userId)->first();
+
+        if ($existingUnit) {
+            $existingUnit->update(['column' => $unitValue]);
+        } else {
+            $insertUnit = [
+                'table_id' => 'unit',
+                'teacher_id' => $userId,
+                'room_id' => $roomId,
+                'column' => $unitValue
+            ];
+            // If not exists, insert a new row
+            RatingSheet::create($insertUnit);
+        }
+
+        return response()->json(['message' => 'Formula applied successfully', 'data' => $unitValue]);
+
+    }
+
+    public function getSem(Request $request) {
+        $userId = Auth::id();
+        $unitValue = $request->input('semValue');
+        $tableId = $request->input('table_id'); // Get dynamic table_id
+        $roomId = $request->input('room_id');
+    
+        if (!$unitValue || !$tableId || !$roomId) {
+            return response()->json(['error' => 'Missing required parameters'], 400);
+        }
+    
+        // Check if a record with the same table_id and room_id exists
+        $existingUnit = RatingSheet::where('table_id', $tableId)
+            ->where('room_id', $roomId)
+            ->where('teacher_id', $userId)
+            ->first();
+    
+        if ($existingUnit) {
+            // If exists, update the column
+            $existingUnit->update(['unit_column' => $unitValue]); 
+        } else {
+            // If not exists, insert a new row
+            RatingSheet::create([
+                'table_id' => $tableId, // Store dynamic table_id
+                'teacher_id' => $userId,
+                'room_id' => $roomId,
+                'column' => $unitValue
+            ]);
+        }
+    
+        return response()->json(['message' => 'Formula applied successfully', 'data' => $unitValue]);
+    }
+    
+
+    public function getNumberGrade(Request $request) {
+
+        $grades = $request->input('grades');
+        TableRatings::insert($grades);
+
+        return response()->json(['message' => 'Formula applied successfully']);
+    
     }
 
     public function getRoomID($id) {
@@ -474,7 +591,7 @@ private function structuredPastedText($pastedText) {
 
         $room = Rooms::where('id', $decyptedRoomID)->where('teacher_id', $userId)->first();
         $encodedID = HelperFunctions::base64_url_encode($room->id);
-        $roomID = TableSkills::where('room_id', $decyptedRoomID)->get();
+        $roomID = TableRatings::where('room_id', $decyptedRoomID)->get();
 
         $studentNames = StudentNames::where('room_id', $decyptedRoomID)->orderBy('name_3')->get();
         $studentName = StudentNames::where('room_id', $decyptedRoomID)->first();
@@ -494,9 +611,10 @@ private function structuredPastedText($pastedText) {
         ->select('table_selected_row_col.*', 'student_names.name_3') // Select columns from both tables
         ->first();
 
+        $columnLabels = ['#1', 'Name', 'M.C', 'M.P', 'M.A', 'MidGr.','Mid.N.Eqv.', 'F.C', 'F.P', 'F.A','T.F.Gr.','F.N.Eqv.', 'Mid%', 'Fin%', 'FR%Eqv.', 'FR.N.Eqv.', 'Credits', 'Remarks', '#2'];
         // $sequences = $this->generateSequences(104);
 
-        return view('records.ratings', ['data' => $roomID, 'encodedID' => $encodedID, 'room' => $room, 'names' => $studentNames, 'name' => $studentName, 'teacher' => $teacherName, 'counts' => $count, 'selectedRow' => $selectedRow, 'presentColRow' => $presentColRow, 'usedFormula' => $formula]);
+        return view('records.ratings', ['data' => $roomID, 'encodedID' => $encodedID, 'room' => $room, 'names' => $studentNames, 'name' => $studentName, 'teacher' => $teacherName, 'counts' => $count, 'selectedRow' => $selectedRow, 'presentColRow' => $presentColRow, 'usedFormula' => $formula, 'columnLabels' => $columnLabels]);
 
     }
 
@@ -656,7 +774,6 @@ private function structuredPastedText($pastedText) {
         ];
     
         if (!array_key_exists($tableId, $tableModels)) {
-            Log::error('Invalid table ID');
             return response()->json(['message' => 'Invalid table ID.'], 400);
         }
     
@@ -688,6 +805,97 @@ private function structuredPastedText($pastedText) {
             return response()->json(['message' => 'Error saving calculated cell: ' . $e->getMessage()], 500);
         }
     }
+
+
+    public function bulkUpdateCells(Request $request)
+    {
+        try {
+            $tableId = $request->input('tableId');
+            $cells = $request->input('cells');
+            $teacherId = Auth::id();
+    
+            $tableModels = [
+                'main-table' => TableSkills::class,
+                'attendance-table' => TableAttendance::class,
+                'rating-table' => TableRatings::class
+            ];
+    
+            if (!array_key_exists($tableId, $tableModels)) {
+                return response()->json(['message' => 'Invalid table ID.'], 400);
+            }
+    
+            $model = $tableModels[$tableId];
+    
+            $updatedIds = [];
+            $updateData = [];
+            $insertData = [];
+    
+            // Get all existing cell IDs from the request
+            $cellIds = array_filter(array_column($cells, 'id'));
+    
+            // Fetch existing IDs from the database
+            $existingIds = $model::whereIn('id', $cellIds)->pluck('id')->toArray();
+    
+            foreach ($cells as $cell) {
+                if (isset($cell['id']) && in_array($cell['id'], $existingIds)) {
+                    // Update existing cell
+                    $updateData[] = [
+                        'id' => $cell['id'],
+                        'teacher_id' => $teacherId,
+                        'content' => $cell['content'],
+                        'merged' => $cell['merged'] ?? 0,
+                        'colspan' => $cell['colspan'] ?? 1,
+                        'rowspan' => $cell['rowspan'] ?? 1,
+                        'updated_at' => now()
+                    ];
+                    $updatedIds[] = $cell['id'];
+                } else {
+                    // Insert new cell if ID is missing or not found
+                    $insertData[] = [
+                        'teacher_id' => $teacherId,
+                        'table_id' => $tableId,
+                        'content' => $cell['content'],
+                        'merged' => $cell['merged'] ?? 0,
+                        'colspan' => $cell['colspan'] ?? 1,
+                        'rowspan' => $cell['rowspan'] ?? 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ];
+                }
+            }
+    
+            // Bulk insert new records
+            if (!empty($insertData)) {
+                $model::insert($insertData);
+            }
+    
+            // Bulk update existing records
+            if (!empty($updateData)) {
+                foreach ($updateData as $data) {
+                    $model::where('id', $data['id'])->update([
+                        'content' => $data['content'],
+                        'merged' => $data['merged'],
+                        'colspan' => $data['colspan'],
+                        'rowspan' => $data['rowspan'],
+                        'updated_at' => $data['updated_at']
+                    ]);
+                }
+            }
+    
+            return response()->json([
+                'message' => 'Cells updated successfully.',
+                'ids' => $updatedIds
+            ]);
+    
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error updating cells.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    
 
     // public function updateAttendance(Request $request, $id)
     // {

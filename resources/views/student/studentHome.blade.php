@@ -145,9 +145,15 @@
             {{-- Body --}}
             <section id="hero" class="hero grid grid-cols-8 grid-rows-8 tablet:col-start-4 tablet:col-span-16 tablet:row-start-1 tablet:row-span-8 cp:col-start-2 cp:col-span-10 small-bp">
                 <div class="row-start-1 row-span-8 col-start-1 col-span-8 overflow-y-auto overflow-scrolls z-10 bg-bgcolor">
-                    <div class="header-holder w-full flex flex-col justify-center items-center h-[5.5rem] pr-8 pl-16 tablet:items-start sticky top-0 left-0 z-40 cp:gap-8 bg-bgcolor border-b border-sgline">
+                    <div class="header-holder w-full flex flex-col justify-center items-center h-[5.5rem] cp:pr-8 cp:pl-16 p-4 tablet:items-start sticky top-0 left-0 z-40 cp:gap-8 bg-bgcolor border-b border-sgline">
                         {{-- Header --}}
-                        <header class=" w-full row-start-1 row-span-1 flex justify-between items-center shadow tablet:shadow-none z-40">
+                        <header class=" w-full row-start-1 row-span-1 flex justify-between items-center tablet:shadow-none z-40">
+                            <div class="burger-menu hidden">
+                                <div class="flex gap-3 items-center">
+                                    <i class='bx bx-menu text-3xl text-mainText hover:text-subtText'></i>
+                                    <img class=" w-10 h-10 mb-1 mr-1" src="{{ Vite::asset('resources/images/saptlogo.svg') }}" alt="Logo">
+                                </div>
+                            </div>
                             <div class="w-search">
                                 <div class="show hidden justify-self-start w-full">
                                     <div class="flex w-full items-center justify-between">
@@ -170,8 +176,8 @@
                                 </div>
                             </div>
                             {{-- SEARCH SECTION HERE! --}}
-                            <div class=" h-full w-full row-start-1 row-span-1 flex items-center col-start-4 pr-16 z-40">
-                                <div class=" flex items-center h-12 w-full rounded-full relative ">
+                            <div class=" h-full w-full row-start-1 row-span-1 cp:flex hidden items-center col-start-4 pr-16 z-40">
+                                <div class=" cp:flex hidden items-center h-12 w-full rounded-full relative ">
                                     <i class="bx bx-search absolute font-semibold text-subtText text-2xl ml-5"></i>
                                     <label for="search"></label>
                                     <input type="text" name="search" id="search"
@@ -201,35 +207,35 @@
                     </div>
                     <div class="flex">
                         <div class="flex-1 flex flex-col relative">
-                            <div class="adjust-pleft flex items-center gap-4 w-full pt-8 pb-8 pl-16 sticky top-[5.5rem] left-0 bg-bgcolor z-10">
+                            <div class="adjust-pleft hidden cp:flex items-center gap-4 w-full pt-8 pb-8 pl-16 sticky top-[5.5rem] left-0 bg-bgcolor z-10">
                                 <h1 class=" text-4xl text-mainText font-semibold"> {{ auth()->user()->username }} </h1>
                                 <div class=" h-full border-r-2 border-mainText"></div>
                                 <h2 class=" text-xl text-mainText">Home > Student-Room</h2>
                             </div>
-                            <div id="class-list" class="content-box h-auto grid grid-cols-adjust px-16 mt-8 mb-8 tablet:grid-cols-2 md:grid-cols-2 3xl:grid-cols-3 gap-8">
+                            <div id="class-list" class="content-box h-auto grid grid-cols-adjust px-4 cp:px-16 cp:mt-8 mt-4 mb-8 tablet:grid-cols-2 md:grid-cols-2 3xl:grid-cols-3 cp:gap-8 gap-4">
                                 {{-- Class Box --}}
                                 {{-- @if (!$shareableLink) --}}
                                     @if ($roomsWithUrls->isEmpty() && $folders->isEmpty())
                                         <h1>No Data yet!</h1>
                                     @else
                                         @foreach ($roomsWithUrls as $room)
-                                            <div class="class-item h-[14rem] flex rounded-md shadow-md relative hover:-translate-y-1 transition hover:shadow-lg">
+                                            <div class="class-item h-[10rem] cp:h-[14rem] flex rounded-md shadow-md relative hover:-translate-y-1 transition hover:shadow-lg">
                                                 @php
                                                     $className = strlen($room->class_name) > 15 ? substr($room->class_name, 0, 15) . '...' : $room->class_name;
                                                     $subject = strlen($room->subject) > 28 ? substr($room->subject, 0, 28) . '...' : $room->subject;
                                                 @endphp
                                                 <div class=" flex-1 h-full border-2 border-mainText rounded-l-md">
-                                                    <div class=" w-full h-full flex flex-col justify-between bg-gray-100 file-vertical shadow-sm relative overflow-visible rounded-l-md p-5">
+                                                    <div class=" w-full h-full flex flex-col justify-between bg-gray-100 file-vertical shadow-sm relative overflow-visible rounded-l-md p-3 cp:p-5">
                                                         <div class=" w-full">
                                                             <div class=" w-full mb-1">
-                                                                <h3 class=" text-lg text-mainText">{{ $room->section }}</h3>
+                                                                <h3 class=" cp:text-lg text-base text-mainText">{{ $room->section }}</h3>
                                                             </div>
                                                             <div class=" w-full">
-                                                                <h3 class=" text-4xl text-mainText">{{ $className }}</h3>
+                                                                <h3 class=" cp:text-4xl text-3xl text-mainText">{{ $className }}</h3>
                                                             </div>
                                                         </div>
                                                         <div class=" w-full">
-                                                            <h3 class=" text-lg text-mainText">{{ $subject }}</h3>
+                                                            <h3 class=" cp:text-lg text-base text-mainText">{{ $subject }}</h3>
                                                         </div>
                                                         {{-- <div class="file-corner-fold bg-gray-300"></div> --}}
                                                     </div>
@@ -305,7 +311,7 @@
 
                             </div>
                         </div>
-                        <div class="w-[18%] flex mr-8 relative">
+                        <div class=" hidden w-[18%] cp:flex mr-8 relative">
                             <div class=" w-full ">
                                 <div class="sticky top-[5.5rem] right-0">
                                     <div class="absolute top-0 left-0 right-0 h-[88vh] mb-8">

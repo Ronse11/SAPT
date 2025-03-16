@@ -21,7 +21,7 @@
                         @csrf
                         {{-- Email --}}
                         <div class=" pb-6">
-                            <input type="text" id="email" name="email" class=" min-w-96 outline-mainText py-3 px-5 rounded-md bg-transparent border-2 border-subtText @error('email') ring-1 ring-red-500 @enderror" placeholder="Email" autocomplete="on">
+                            <input type="text" id="email" name="email" class="  md:min-w-96 w-80 outline-mainText py-3 px-5 rounded-md bg-transparent border-2 border-subtText @error('email') ring-1 ring-red-500 @enderror" placeholder="Email" autocomplete="on">
                             <label for="email"></label>
                             @error('email')
                                 <p class=" text-sm text-red-500 pb-4"> {{$message}} </p>
@@ -30,7 +30,7 @@
 
                         {{-- Password --}}
                         <div class=" pb-6 relative">
-                            <input type="password" id="password" name="password" class="pass min-w-96 outline-mainText py-3 px-5 rounded-md bg-transparent border-2 border-subtText @error('password') ring-1 ring-red-500 @enderror" placeholder="Password">
+                            <input type="password" id="password" name="password" class="pass  md:min-w-96 w-80 outline-mainText py-3 px-5 rounded-md bg-transparent border-2 border-subtText @error('password') ring-1 ring-red-500 @enderror" placeholder="Password">
                             <label for="password"></label>
                             <i class="bx bxs-show absolute right-5 top-4 cursor-pointer text-xl text-subtText"></i>
                             @error('password')
@@ -41,12 +41,12 @@
                             @enderror
                         </div>
                         <div class=" pb-2">
-                            <button class="min-w-96 outline-sky-300 py-3 px-4 rounded-md bg-mainText text-bgcolor border-2 border-mainText hover:bg-bgcolor hover:text-mainText">Continue</button>
+                            <button class=" md:min-w-96 w-80 outline-sky-300 py-3 px-4 rounded-md bg-mainText text-bgcolor border-2 border-mainText hover:bg-bgcolor hover:text-mainText">Continue</button>
                         </div>
-                        <div class="min-w-96">
+                        <div class=" md:min-w-96 w-80">
                             <h1 class=" text-center text-sm py-2">Don't have an account? <a href="{{ route('register') }}" class=" text-mainText">Signup</a></h1>
                         </div>
-                        <div class=" pb-2 min-w-96">
+                        <div class=" pb-2  md:min-w-96 w-80">
                             <h1 class=" text-center text-sm py-2">OR</h1>
                         </div>
                         <div class=" flex mb-6 w-full h-auto">

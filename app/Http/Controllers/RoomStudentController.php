@@ -6,6 +6,7 @@ use App\Helpers\Category;
 use App\Helpers\RoomHelper;
 use App\Models\Folders;
 use App\Models\Invitations;
+use App\Models\RatingSheet;
 use App\Models\Rooms;
 use App\Models\StudentNames;
 use App\Models\StudentRoom;
@@ -19,6 +20,7 @@ use App\Repositories\RoomStudentRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 
 class RoomStudentController extends Controller
 {
@@ -233,7 +235,16 @@ class RoomStudentController extends Controller
         $organized = Category::organizedData($skills, $startRow, $sequences);
         $notif = Category::notification($quizzesColumns, $organized, $doneCheck);
 
-        return view('studentRecords.studentRecord', ['skills' => $skills, 'encodedId' => $encodedId, 'data' => $roomID, 'room' => $room, 'nameAsStudent' => $getNames, 'student' => $student, 'id' => $id, 'doneCheck' => $doneCheck, 'quizzesColumns' => $quizzesColumns, 'sequences' => $sequences, 'organized' => $organized, 'notif' => $notif]);
+        $roomData = Rooms::where('id', $decodeID)->first();
+
+        $foundColumnMid = RatingSheet::where('room_id', $decodeID)->where('table_id', 'MidGr.')->value('column');
+        $foundColumnFinal = RatingSheet::where('room_id', $decodeID)->where('table_id', 'T.F.Gr.')->value('column');
+
+        $getMidTerm = TableSkills::where('room_id', $decodeID)->where('student_name', $nameInUser)->where('column', $foundColumnMid)->first();
+        $getFinalTerm = TableSkills::where('room_id', $decodeID)->where('student_name', $nameInUser)->where('column', $foundColumnFinal)->first();
+
+
+        return view('studentRecords.studentRecord', ['skills' => $skills, 'encodedId' => $encodedId, 'data' => $roomID, 'room' => $room, 'nameAsStudent' => $getNames, 'student' => $student, 'id' => $id, 'doneCheck' => $doneCheck, 'quizzesColumns' => $quizzesColumns, 'sequences' => $sequences, 'organized' => $organized, 'notif' => $notif, 'roomData' => $roomData, 'getMidTerm' => $getMidTerm, 'getFinalTerm' => $getFinalTerm]);
     }
 
     // SHOW STUDENT ATTENDANCE

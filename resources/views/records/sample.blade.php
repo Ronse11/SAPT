@@ -9,7 +9,7 @@
 
     <title>Class Record</title>
 
-    @vite(['resources/css/app.css', 'resources/css/breakPoints.css', 'resources/css/table.css', 'resources/js/app.js', 'resources/js/teacherTable/sample.js', 'resources/js/teacherTable/merging.js', 'resources/js/teacherTable/applyBorder.js', 'resources/js/teacherTable/addStudentsNames.js', 'resources/js/teacherTable/applyFontStyle.js', 'resources/js/teacherTable/applyColors.js', 'resources/js/teacherTable/calculation.js', 'resources/js/teacherTable/logic.js', 'resources/js/teacherTable/colorLogic.js', 'resources/js/teacherTable/dragSum.js', 'resources/js/teacherTable/adjustFontSize.js', 'resources/js/teacherTable/doneCheck.js', 'resources/js/imports/import.js', 'resources/js/imports/export.js', 'resources/js/print/print.js', 'resources/js/teacherTable/tableTab.js', 'resources/js/print/printGrades.js'])
+    @vite(['resources/css/app.css', 'resources/css/breakPoints.css', 'resources/css/table.css', 'resources/js/app.js', 'resources/js/teacherTable/sample.js', 'resources/js/teacherTable/merging.js', 'resources/js/teacherTable/applyBorder.js', 'resources/js/teacherTable/addStudentsNames.js', 'resources/js/teacherTable/applyFontStyle.js', 'resources/js/teacherTable/applyColors.js', 'resources/js/teacherTable/calculation.js', 'resources/js/teacherTable/logic.js', 'resources/js/teacherTable/colorLogic.js', 'resources/js/teacherTable/dragSum.js', 'resources/js/teacherTable/adjustFontSize.js', 'resources/js/teacherTable/doneCheck.js', 'resources/js/imports/import.js', 'resources/js/imports/export.js', 'resources/js/print/print.js', 'resources/js/teacherTable/tableTab.js', 'resources/js/teacherTable/ratingTable.js', 'resources/js/print/printGrades.js'])
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
 </head>
@@ -18,7 +18,7 @@
     <section class=" w-screen h-screen relative grid grid-cols-6 grid-rows-15 gap-x-16 gap-y-0 tablet:grid-cols-16 cp:grid-cols-12 bg-bgcolor">
 
         @php 
-            $totalColumn = $totalRowCol ? $totalRowCol->total_column : 26;
+            $totalColumn = $totalRowCol ? $totalRowCol->total_column : 40;
             $totalRow = $totalRowCol ? $totalRowCol->total_row : 40;
 
             $endingRow = 0;
@@ -794,27 +794,46 @@
 
 
         {{-- Nav Bar --}}
-        <div class=" absolute bottom-0 right-0 left-0 z-50">
-            <div class="flex bg-gray-100 gap-4 px-8 pb-2 border-t border-sgline">
-                <div class="recordTabDiv bg-bgcolor px-4 border-x border-b-4 border-mainText hover:border-b-4 hover:border-mainText">
-                    <button id="recordTab" class="cursor-pointer">Records</button>
-                </div>
-                <div class="px-4 hover:border-b-4 hover:border-mainText cursor-pointer">
-                    <a href="{{ route('attendance.room', [ 'id' => $encodedID, 'key' => 'attendance-table']) }}">Attendance</a>
-                </div>
-                <div class="ratingTabDiv px-4 hover:border-b-4 hover:border-mainText">
-                    <button id="ratingTab" class="cursor-pointer">Grading Sheet</button>
-                </div>
-            </div>
-        </div>
+        {{-- <div class=" absolute bottom-0 right-0 left-0 z-50">
+            <div class="flex">
+                <div class="flex bg-gray-100 gap-4 px-8 pb-2 border-t border-sgline">
+                    <div class="recordTabDiv bg-bgcolor px-4 border-x border-b-4 border-mainText hover:border-b-4 hover:border-mainText">
+                        <button id="recordTab" class="cursor-pointer">Records</button>
+                    </div>
+                    <div class="px-4 hover:border-b-4 hover:border-mainText cursor-pointer">
+                        <a href="{{ route('attendance.room', [ 'id' => $encodedID, 'key' => 'attendance-table']) }}">Attendance</a>
+                    </div>
+                    <div class="ratingTabDiv px-4 hover:border-b-4 hover:border-mainText">
+                        <button id="ratingTab" class="cursor-pointer">Grading Sheet</button>
+                    </div>
+                </div> --}}
+                {{-- <div class=" flex-1 flex items-center gap-2 bg-gray-100">
+
+                        <button class=" cursor-pointer bg-gray-300 px-2" data-col='M.C'>Mid-C</button>
+                        <button class=" cursor-pointer bg-gray-300 px-2" data-col='M.P'>Mid-P</button>
+                        <button class=" cursor-pointer bg-gray-300 px-2" data-col='M.A'>Mid-A</button>
+                        <button class=" cursor-pointer bg-gray-300 px-2" data-col='MidGr'>MidGr</button>
+                        <button class=" cursor-pointer bg-gray-300 px-2" data-col='Mid.N.Eqv.'>Mid.N.Eqv.</button>
+                        <button class=" cursor-pointer bg-gray-300 px-2" data-col='F.C'>Fin-C</button>
+                        <button class=" cursor-pointer bg-gray-300 px-2" data-col='F.P'>Fin-P</button>
+                        <button class=" cursor-pointer bg-gray-300 px-2" data-col='F.A'>Fin-A</button>
+                        <button class=" cursor-pointer bg-gray-300 px-2" data-col='T.F.Gr.'>T.F.Gr.</button>
+                        <button class=" cursor-pointer bg-gray-300 px-2" data-col='F.N.Eqv.'>F.N.Eqv.</button>
+                        <button class=" cursor-pointer bg-gray-300 px-2" data-col='Mid%'>Mid%</button>
+                        <button class=" cursor-pointer bg-gray-300 px-2" data-col='Fin%'>Fin%</button>
+                        <button class=" cursor-pointer bg-gray-300 px-2" data-col='FR%Eqv.'>FR%Eqv.</button>
+                        <button class=" cursor-pointer bg-gray-300 px-2" data-col='FR.N.Eqv.'>FR.N.Eqv.</button>
+                </div> --}}
+            {{-- </div>
+        </div> --}}
 
 
         {{-- Body --}}
         <section id="sample" class="teacher-choices row-start-2 col-start-1 col-span-6 cp:col-start-1 cp:col-span-16 cp:row-start-3 cp:row-span-13 small-bp">
             
 
-            <div class="row-start-3 w-full h-full overflow-x-auto zoom-container relative text-sm">
-                <div class="t-ble w-full">
+            <div class="row-start-3 w-full h-full overflow-x-auto relative text-sm">
+                <div class="t-ble w-full ">
                     {{-- If Condition Starts Here!!! --}}
                     <div id="logic" class="fixed inset-0 z-20 bg-transparent pointer-events-none hidden">
                         <div class="w-full h-full grid place-content-center pointer-events-none">
@@ -1171,43 +1190,49 @@
                     }
 
                     $organizedData = [];
-                    // $organizedData = [];
                     foreach ($data as $cell) {
                         $organizedData[$cell->row][$cell->column] = $cell;
                         $organizedStudent[$cell->student_name][$cell->column] = $cell;
                     }
 
+                    $organizedDataRatings = [];
+                    foreach ($dataRatings as $cell) {
+                        $organizedDataRatings[$cell->row][$cell->column] = $cell;
+                        $organizedDataStudent[$cell->student_name][$cell->column] = $cell;
+
+                    }
+
+
                     @endphp
 
 
-                    <table class="main-table w-full mb-[19px]" id="main-table" data-table="main-table" data-room-id="{{ $room->id }}" data-teacher-id="{{ $room->teacher_id }}" data-row-start="{{ $selected }}">
-            
+                    <div class=" zoom-container">
+                        <table class=" main-table w-full mb-[1.3rem]" id="main-table" data-table="main-table" data-room-id="{{ $room->id }}" data-teacher-id="{{ $room->teacher_id }}" data-row-start="{{ $selected }}">
+                
+                            <thead class="t-head sticky top-0 z-10">
+                                <tr>
+                                    <th class="border-none bg-sgcolorSub  pt-2"></th>
+                                    @for ($col = 0; $col < count($sequences); $col++)
+                                    @php
+                                        $columnValue = $sequences[$col];
+                                        $isDone = in_array($columnValue, $doneCheck);
+                                    @endphp
+                                    <th class=" font-normal text-sm pt-2 bg-sgcolorSub">
+                                        <div class="colHeader border-l cursor-pointer {{ $isDone ? 'bg-green-200' : 'bg-sgcolorSub' }} border-cursor w-full">
+                                            {{ $columnValue }}
+                                        </div>
+                                    </th>
+                                    @endfor
+                                </tr>
+                            </thead>
+                                        
+                                    
                             <tbody class="sub-table relative">
-                                <thead class="t-head sticky top-0 z-10">
-                                    <tr>
-                                        <th class="border-none bg-sgcolorSub sticky top-0 left-0 pt-2">
-                                        </th>
-                                        @for ($col = 0; $col < count($sequences); $col++)
-                                            @php
-                                                $columnValue = $sequences[$col];
-                                                $isDone = in_array($columnValue, $doneCheck);
-                                            @endphp
-                                            <th class=" font-normal text-sm pt-2 bg-sgcolorSub">
-                                                <div class="colHeader border-l cursor-pointer {{ $isDone ? 'bg-green-200' : 'bg-sgcolorSub' }} border-cursor w-full">
-                                                    {{ $columnValue }}
-                                                </div>
-                                            </th>
-                                        @endfor
-                                    </tr>
-                                </thead>
-                                
-                                </thead>
-            
                                 {{-- NEW TD FOR STUDENTS --}}
                                 @for ($row = 1; $row <= $totalRow; $row++)
-                                    <tr class="relative">
-                                        <th class="min-w-[2rem] h-[1.6rem] font-normal bg-sgcolorSub sticky left-0">
-                                            <div class=" w-full h-full border-t border-cursor text-sm grid place-content-center">
+                                    <tr class="">
+                                        <th class=" min-w-[2rem] h-[1.6rem] sticky left-0 font-normal bg-sgcolorSub ">
+                                            <div class=" h-full border-t border-cursor text-sm grid place-content-center">
                                                 {{ $row }}
                                             </div>
                                         </th>
@@ -1235,9 +1260,10 @@
                                                 }
 
                                                 $textCondition = $row >= $selected && $row <= $endingRow && ( $allName2Null ? $col == $colCount+1 : $col == $colCount+2 );
+                                                $textConditions = $selected ? ( $allName2Null ? $col == $colCount+1 : $col == $colCount+2 ) : null;
 
                                             @endphp
-                                            <td id="cell" class=" h-auto text-14px student-cell cursor-cell border-t border-b border-l border-r border-t-cursor  border-b-cursor  border-l-cursor  border-r-cursor caret-transparent {{ $textCondition  ? 'text-start' : 'text-center' }}"
+                                            <td id="cell" class=" h-auto text-14px student-cell cursor-cell border-t border-b border-l border-r border-t-cursor  border-b-cursor  border-l-cursor  border-r-cursor caret-transparent {{ $textCondition  ? 'text-start' : 'text-center' }} {{ $textConditions  ? 'text-start bg-bgcolor sticky left-[2rem]' : '  ' }}"
                                                 contenteditable="true"
                                                 @if($col == 0 && $names->has($row - ($selectedRow->row ?? $totalRow+1)))
                                                     data-room-student="{{ $names[$row-$selected]->name_3 }}"
@@ -1254,6 +1280,7 @@
                                                 data-column="{{ $sequences[$col]}}"
                                                 data-id="{{ $cell->id ?? '' }}"
                                                 data-merged="{{ ($rowspan > 1 || $colspan > 1) ? 'true' : 'false' }}"
+                                                data-original="{{$cell->content ?? ''}}"
                                                 @if($rowspan >= 1) rowspan="{{ $rowspan }}" @endif
                                                 @if($colspan >= 1) colspan="{{ $colspan }}" @endif
                                                 >
@@ -1271,7 +1298,11 @@
                                                     @elseif ($col == $colCount+2 && !$allName2Null)
                                                         {{ $names[$row - $selected]->name_3 ?? '' }}
                                                     @else
-                                                        {{ $cell->content ?? '' }}
+                                                        @if (!empty($cell) && is_numeric($cell->content))
+                                                            {{ round($cell->content) }}
+                                                        @else
+                                                            {{ $cell->content ?? '' }}
+                                                        @endif
                                                     @endif
                                                 @else
                                                     {{ $cell->content ?? '' }}
@@ -1282,10 +1313,10 @@
                                             </td>
                                         @endfor
                                     </tr>
-                                @endfor
-                            
+                                @endfor      
                             </tbody>
-                    </table>
+                        </table>
+                    </div>
 
 
 
@@ -1300,60 +1331,68 @@
                                 <div class=" w-[800px] flex justify-center bg-sgcolorBG">
                                     <div id="printable-content"class="print-container w-full h-auto bg-white ">
             
-                                        <div class=" w-auto flex flex-col whitespace-nowrap">
-                                            <div class=" flex-1 relative text-center">
-                                                <div class="cpsuLogo absolute top-0 left-[202px] w-14">
+                                        <div id="header" class="w-auto flex flex-col whitespace-nowrap">
+                                            <!-- Header with Logo & Title in Same Line -->
+                                            <div class="flex justify-center items-center space-x-4 mr-[52px]">
+                                                <!-- Logo -->
+                                                <div class="w-14">
                                                     <img src="{{ Vite::asset('resources/images/cpsubanner.png') }}" alt="CPSULOGO">
                                                 </div>
-                                                <h1 class=" pt-4 text-[13px] font-bold">CENTRAL PHILIPPINES STATE UNIVERSITY</h1>
+                                        
+                                                <div class="flex flex-col items-center mt-2">
+                                                    <h1 class="text-[13px] font-bold text-center">
+                                                        CENTRAL PHILIPPINES STATE UNIVERSITY
+                                                    </h1>
+                                                    <h1 class="font-light text-[12px]">Kabankalan City, Negros Occidental</h1>
+
+                                                </div>
                                             </div>
-                                            <div class=" flex-1 text-center">
-                                                <h1 class=" font-light text-[12px]">Kabankalan City, Negros Occidental</h1>
+
+                                            <div class="flex-1 text-center">
+                                                <h1 class="text-[13px] font-bold">GRADING SHEET</h1>
                                             </div>
-                                            <div class=" flex-1 text-center">
-                                                <h1 class=" text-[13px] font-bold">GRADING SHEET</h1>
-                                            </div>
-                                            <div class=" flex-1 flex text-[10px] mt-3">
-                                                <div class=" w-auto pr-12">
-                                                    <h1 class="">Subject Code: <span class="font-bold text-[11px]">{{$room->class_name}}</span></h1>
+                                        
+                                            <div class="flex-1 flex text-[10px] mt-3">
+                                                <div class="w-auto pr-12">
+                                                    <h1>Subject Code: <span class="font-bold text-[11px]">{{$room->class_name}}</span></h1>
                                                 </div>
                                                 <div class="w-auto">
                                                     <h1>Descriptive Title: <span class="font-bold text-[11px]">{{$room->subject}}</span></h1>
                                                 </div>
                                             </div>
-                                            <div class=" flex-1 flex text-[10px]">
-                                                <div class=" w-auto pr-12">
-                                                    <h1 class="">Course/Year/Section: <span class="font-bold text-[11px]">{{$room->section}}</span></h1>
+                                        
+                                            <div class="flex-1 flex text-[10px]">
+                                                <div class="w-auto pr-12">
+                                                    <h1>Course/Year/Section: <span class="font-bold text-[11px]">{{$room->section}}</span></h1>
                                                 </div>
-                                                <div class=" w-auto pr-12">
-                                                    <h1>Units: <span class="font-bold text-[11px]">3</span></h1>
+                                                <div class="w-auto pr-12 relative">
+                                                    <h1>Units: 
+                                                        <input type="text" id="units" name="units"
+                                                        class="font-bold text-[11px] border-b border-sgline outline-none"
+                                                        oninput="this.classList.toggle('border-b', this.value.trim() === '')"
+                                                        value="{{$unit->column ?? ''}}">                                                 
+                                                    </h1>
                                                 </div>
                                                 <div>
-                                                    <h1>Semester: <span class="font-bold text-[11px]">SECOND 2022-2023</span></h1>
+                                                    <h1>Semester: 
+                                                        <input type="text" id="semester" name="semester"
+                                                        class="font-bold text-[11px] border-b border-sgline outline-none"
+                                                        oninput="this.classList.toggle('border-b', this.value === '')"
+                                                        value="{{$sem->column ?? ''}}">                                                 
+                                                    </h1>
                                                 </div>
                                             </div>
-                                            <div class=" flex-1 text-[11px] text-center italic mt-1">
+                                        
+                                            <div class="flex-1 text-[11px] text-center italic mt-1">
                                                 <h1>(Grades must be written in <span class="font-bold">BLACK</span> or <span class="font-bold text-blue-600">BLUE</span> ink. <span class="font-bold">CONDITIONAL OR FAILURE</span> in <span class="font-bold text-red-600">RED</span> ink)</h1>
                                             </div>
                                         </div>
+                                        
+                                        
             
                                         <table class="rating-table w-full" id="rating-table" data-table="rating-table" data-room-id="{{ $room->id }}" data-teacher-id="{{ $room->teacher_id }}" data-row-start="{{ $selected }}">
                         
                                             <tbody class="sub-table relative">
-                                                <thead class="t-head sticky top-0 z-10">
-                                                    <tr>
-                                                        {{-- <th class="border-none bg-sgcolorSub sticky top-0 left-0 pt-2"> --}}
-                                                        </th>
-                                                        {{-- @for ($col = 0; $col < count($sequences); $col++)
-                                                            <th class="font-normal bg-sgcolorSub text-sm pt-2">
-                                                                <div class=" border-l border-cursor w-full">
-                                                                    {{ $sequences[$col] }}
-                                                                </div>
-                                                            </th>
-                                                        @endfor --}}
-                                                    </tr>
-                                                </thead>
-                            
                                                 {{-- NEW TD FOR STUDENTS --}}
                                                 @for ($row = 1; $row <= 2; $row++)
                                                     <tr class="text-center font-bold text-[12px] {{ $row == 1 ? 'border-t' : '' }} border-cursor">
@@ -1417,45 +1456,19 @@
                                                 @endfor
                                             
                                             
-    
-    
-                                            
-                                            
-                                            
-                                            
+                                             
                                                 @for ($row = $selected; $row < $numberOfStudents+$selected; $row++)
-                                                    <tr class="relative">
-                                                        {{-- <th class="min-w-[2rem] h-[1.6rem] font-normal bg-sgcolorSub sticky left-0">
-                                                            <div class=" w-full h-full border-t border-cursor text-sm grid place-content-center">
-                                                                {{ $row }}
-                                                            </div>
-                                                        </th> --}}
-                    
-                                                
-                                                        @for ($col = 0; $col < 19; $col++)
+                                                    <tr class="relative">                             
+                                                        @for ($col = 0; $col < count($columnLabels); $col++)
                                                             @php
-                                                                // if ($names->has($row - ($selectedRow->row ?? 101))) {
-                                                                //     $cell = $organizedStudent[$names[$row - $selected]->name_3][$sequences[$col]] ?? null;
-                                                                // } else {
-                                                                    $cell = $organizedData[$row][$sequences[$col]] ?? null;
-                                                                // }
-                                                
-                                                                $rowspan = $cell->rowspan ?? 1;
-                                                                $colspan = $cell->colspan ?? 1;
-                                                                if (isset($mergedCells[$row][$col])) {
-                                                                    continue;
-                                                                }
-                                                                for ($r = 0; $r < $rowspan; $r++) {
-                                                                    for ($c = 0; $c < $colspan; $c++) {
-                                                                        if ($r !== 0 || $c !== 0) {
-                                                                            $mergedCells[$row + $r][$col + $c] = true;
-                                                                        }
-                                                                    }
-                                                                }
-                
-                                                                $textCondition = $row >= $selected && $row <= $endingRow && ( $allName2Null ? $col == $colCount : $col == $colCount+1 );
+                                       
+                                                                // $cellRating = $organizedDataRatings[$row][$columnLabels[$col]] ?? null;
+                                                                $cellRating = $organizedDataStudent[$names[$row - $selected]->name_3][$columnLabels[$col]] ?? null;
+                                                                
+                                                                $excludedColumns = ['Mid.N.Eqv.', 'F.N.Eqv.', 'FR.N.Eqv'];
+                                                                $textCondition = ( $allName2Null ? $col == $colCount+1 : $col == $colCount+1 );
                                                             @endphp
-                                                            <td id="cell" class=" h-auto grade-cell border-t border-b border-l border-r border-t-cursor  border-b-cursor  border-l-cursor  border-r-cursor caret-transparent {{ $textCondition  ? 'text-start pl-4 w-60 text-[12.5px]' : 'text-center text-[11px]' }}"
+                                                            <td id="cell" class=" h-auto grade-cell border-t border-b border-l border-r border-t-cursor  border-b-cursor  border-l-cursor  border-r-cursor caret-transparent {{ $textCondition  ? 'text-start pl-2 w-60 text-[12.5px]' : 'text-center text-[11px]' }} {{ $col == $colCount+15 || $col == $colCount+11 || $col == $colCount+6 ? ' font-bold' : '' }}"
                                                                 contenteditable="true"
                                                                 @if($col == 0 && $names->has($row - ($selectedRow->row ?? $numberOfStudents+$selected+1)))
                                                                     data-room-student="{{ $names[$row-$selected]->name_3 }}"
@@ -1469,29 +1482,36 @@
                                                                     data-room-student="{{ $teacher->teacher_name }}"
                                                                 @endif             
                                                                 data-row="{{ $row }}"
-                                                                data-column="{{ $sequences[$col]}}"
-                                                                data-id="{{ $cell->id ?? '' }}"
+                                                                data-column="{{ $columnLabels[$col]}}"
+                                                                data-id="{{ $cellRating->id ?? '' }}"
                                                                 data-merged="{{ ($rowspan > 1 || $colspan > 1) ? 'true' : 'false' }}"
+                                                                data-original="{{ $cellRating->content ?? '' }}"
                                                                 @if($rowspan >= 1) rowspan="{{ $rowspan }}" @endif
                                                                 @if($colspan >= 1) colspan="{{ $colspan }}" @endif
                                                                 >
                 
                                     
                                                                 
-                                                                @if ($row >= $selected && $row <= $endingRow)
+                                                                {{-- @if ($row >= $selected && $row <= $endingRow) --}}
                                                                     @if ($col == $colCount)
                                                                         {{ $nameCounter++ }}
                                                                     @elseif ($col == $colCount+1)
                                                                         {{ $selected ? ($names[$row - $selected]->name_3 ?? '') : '' }}
                                                                         {{-- {{ $allName2Null ? '' : ($names[$row - $selected]->name_3 ?? '') }} --}}
+                                                                    @elseif ($col == $colCount+16)
+                                                                        {{ $unit->column ?? '' }}
                                                                     @elseif ($col == $colCount+18)
                                                                         {{ $name2Counter++ }}
                                                                     @else
-                                                                        {{ $cell->content ?? '' }}
+                                                                        @if (!empty($cellRating) && is_numeric($cellRating->content) && !in_array($columnLabels[$col] ?? '', $excludedColumns))
+                                                                            {{ round($cellRating->content) }}
+                                                                        @else
+                                                                            {{ $cellRating->content ?? '' }}
+                                                                        @endif
                                                                     @endif
-                                                                @else
+                                                                {{-- @else
                                                                     {{ $cell->content ?? '' }}
-                                                                @endif
+                                                                @endif --}}
                                                             
                                                                 
                                                             
@@ -1504,7 +1524,7 @@
                                             
                                         </table>
     
-                                        <div class=" w-full flex flex-col whitespace-nowrap">
+                                        <div id="footer" class=" w-full flex flex-col whitespace-nowrap">
                                             <div class=" flex-1 text-[12px] text-center italic mt-1">
                                                 <h1 class="font-bold">% Equivalent No. Equivalent 1.0 - Excellent 2.0 - Thorough 3.0 - Lowest Passing Grade 5.0 - Failure</h1>
                                             </div>
@@ -1639,12 +1659,76 @@
 
 
 
+                        <div class=" fixed bottom-0 left-0 right-0">
+                            <div class="flex h-[2.3rem] pb-2 bg-gray-100 gap-4 px-8 border-t border-sgline">
+                                <div class="recordTabDiv bg-bgcolor px-4 border-x border-b-4 border-mainText hover:border-b-4 hover:border-mainText">
+                                    <button id="recordTab" class="cursor-pointer">Records</button>
+                                </div>
+                                <div class="px-4 hover:border-b-4 hover:border-mainText cursor-pointer">
+                                    <a href="{{ route('attendance.room', [ 'id' => $encodedID, 'key' => 'attendance-table']) }}">Attendance</a>
+                                </div>
+                                <div class="ratingTabDiv px-4 hover:border-b-4 hover:border-mainText">
+                                    <button id="ratingTab" class="cursor-pointer">Grading Sheet</button>
+                                </div>
 
+                                <div class=" flex-1 flex gap-2 bg-gray-100">
+                                    <div class="flex-1 flex justify-end gap-2 p-2">
+                                        <div class="grid place-content-center pr-7">
+                                            <h1 class="font-bold">MID-TERM</h1>
+                                        </div>
+                                        <div class="flex gap-2">
+                                            <div class="flex items-center gap-1">
+                                                <label for="M.C">C :</label>
+                                                <input type="text" id="M.C" name="M.C" class="w-8 h-5 outline-none bg-gray-100 border-b-2 border-gray-600 focus:border-blue-500 text-center">
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                <label for="M.P">P :</label>
+                                                <input type="text" id="M.P" name="M.P" class="w-8 h-5 outline-none bg-gray-100 border-b-2 border-gray-600 focus:border-blue-500 text-center">
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                <label for="M.A">A :</label>
+                                                <input type="text" id="M.A" name="M.A" class="w-8 h-5 outline-none bg-gray-100 border-b-2 border-gray-600 focus:border-blue-500 text-center">
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                <label for="MidGr.">Mid Grade :</label>
+                                                <input type="text" id="MidGr." name="MidGr." class="w-8 h-5 outline-none bg-gray-100 border-b-2 border-gray-600 focus:border-blue-500 text-center"  value="{{$getMidGr->column ?? ''}}">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex-1 flex justify-end gap-2 p-2">
+                                        <div class="grid place-content-center pr-7">
+                                            <h1 class="font-bold">FINAL</h1>
+                                        </div>
+                                        <div class="flex gap-2">
+                                            <div class="flex items-center gap-1">
+                                                <label for="F.C">C :</label>
+                                                <input type="text" id="F.C" name="F.C" class="w-8 h-5 outline-none bg-gray-100 border-b-2 border-gray-600 focus:border-blue-500 text-center">
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                <label for="F.P">P :</label>
+                                                <input type="text" id="F.P" name="F.P" class="w-8 h-5 outline-none bg-gray-100 border-b-2 border-gray-600 focus:border-blue-500 text-center">
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                <label for="F.A">A :</label>
+                                                <input type="text" id="F.A" name="F.A" class="w-8 h-5 outline-none bg-gray-100 border-b-2 border-gray-600 focus:border-blue-500 text-center">
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                <label for="T.F.Gr.">Final Grade :</label>
+                                                <input type="text" id="T.F.Gr." name="T.F.Gr." class="w-8 h-5 outline-none bg-gray-100 border-b-2 border-gray-600 focus:border-blue-500 text-center"  value="{{$getFinGr->column ?? ''}}">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    
+                                </div>
+                            </div>
+                        </div>
 
 
                 </div>
             </div>
-            
+
 
 
         </section>
@@ -1683,7 +1767,16 @@
             }, 0); 
         }
 
-
+        document.addEventListener("DOMContentLoaded", function() {
+            const unitInput = document.getElementById("units");
+            const semInput = document.getElementById("semester");
+            if (unitInput.value.trim() !== "") {
+                unitInput.classList.remove("border-b"); // Remove border if there is an initial value
+            }
+            if (semInput.value.trim() !== "") {
+                semInput.classList.remove("border-b"); // Remove border if there is an initial value
+            }
+        });
     </script>
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>

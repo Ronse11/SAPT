@@ -711,7 +711,8 @@ document.addEventListener('DOMContentLoaded', function () {
     
                 try {
                     let result = evaluate(rowFormula);
-                    result = Math.round(result);
+                    result = result.toFixed(2);
+                    // result = Math.round(result);
                     // result = Math.round(result * 100) / 100;
     
                     let tableName = firstSelectedCell.closest('table').id;
@@ -764,7 +765,8 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             let result;
             result = evaluate(rowFormula);
-            result = Math.round(result);
+            result = result.toFixed(2);
+            // result = Math.round(result);
             // result = Math.round(result * 100) / 100;
 
             const resultCell = table.querySelector(`.cursor-cell[data-column="${firstSelectedCol}"][data-row="${row}"]`);
@@ -1017,7 +1019,9 @@ document.addEventListener('DOMContentLoaded', function () {
     
                     const involvedCell = cellCache.get(cacheKey);
                     if (!involvedCell) return;
-    
+
+                    const bulkUpdates = [];
+
                     involvedCell.addEventListener('keydown', function(event) {
                         const currentCell = event.target;
                         const tableId = currentCell.closest('table').id;
@@ -1071,7 +1075,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         originalContentLength = originalContent.length;
                     });
     
-                    involvedCell.addEventListener('blur', (event) => {
+                    involvedCell.addEventListener('blur', async(event) => {
                         let currentCell = event.target;
                         
                         const updatedContent = currentCell.textContent.trim();
@@ -1122,7 +1126,8 @@ document.addEventListener('DOMContentLoaded', function () {
     
                                 try {
                                     result = evaluate(updatedFormula);
-                                    result = Math.round(result); 
+                                    result = result.toFixed(2); 
+                                    // result = Math.round(result); 
                                     // result = Math.round(result * 100) / 100; 
                                     updates.push({ formulaCell, result });
                                 } catch (error) {
@@ -1143,6 +1148,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 let student_name = studentCell ? studentCell.getAttribute('data-room-student') : null;
     
                                 let results = {
+                                    id: id || null, // If no ID, it's an insert
                                     tableId: table.id,
                                     content: result,
                                     room_id: roomID,
@@ -1153,36 +1159,40 @@ document.addEventListener('DOMContentLoaded', function () {
                                     row: row,
                                     column: column
                                 }
+                                console.log(results);
+
+                                bulkUpdates.push(results);
+
                                 
-                                const url = id ? `/update-content-cell/${id}` : '/save-calculated-cell';
-                                fetch(url, {            
-                                method: "POST",
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                                },
-                                body: JSON.stringify(results)    
-                                })
-                                .then(response => response.json())
-                                .then(data => {
-                                    console.log("Server Response:", data);
+                                // const url = id ? `/update-content-cell/${id}` : '/save-calculated-cell';
+                                // fetch(url, {            
+                                // method: "POST",
+                                // headers: {
+                                //     'Content-Type': 'application/json',
+                                //     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                // },
+                                // body: JSON.stringify(results)    
+                                // })
+                                // .then(response => response.json())
+                                // .then(data => {
+                                //     console.log("Server Response:", data);
                         
-                                    // If there's no ID, update the cell with the returned ID from the server
-                                    if (!id && data.ids) {
-                                        cell.setAttribute('data-id', data.ids);
-                                        console.log(data.ids);
+                                //     // If there's no ID, update the cell with the returned ID from the server
+                                //     if (!id && data.ids) {
+                                //         cell.setAttribute('data-id', data.ids);
+                                //         console.log(data.ids);
     
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error("Error:", error);
-                                });
+                                //     }
+                                // })
+                                // .catch(error => {
+                                //     console.error("Error:", error);
+                                // });
                             });
     
                             // Involved cell calculation batch starts here
                             const involvedCols = [...table.querySelectorAll(`[data-formula][data-row='${row}']`)]
-                            .filter(cell => !cell.dataset.formula.startsWith("if"));                          
-    
+                            .filter(cell => !cell.dataset.formula.startsWith("if"));    
+                            
                             involvedCols.forEach(includesCol => {
                                 const targetFormula = includesCol.dataset.formula;
                                 let checkInvolveFormula = null;
@@ -1196,7 +1206,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 }
     
                                 
-                                if (!checkInvolveFormula.includes(targetCell)) {
+                                // if (!checkInvolveFormula.includes(targetCell)) {
                                     // console.log(includesCol);
                                     let newInvolvedFormula = null;
                                     // const subFormula = targetFormula.substring(1);
@@ -1218,64 +1228,96 @@ document.addEventListener('DOMContentLoaded', function () {
                                             const getTargetCols = table.querySelector(`[data-row='${row}'][data-column='${matchCol}']`);
                                             cellCache.set(cacheKey, getTargetCols);
                                         }
-    
+                                        
                                         let getTargetCols = cellCache.get(cacheKey);
+
                                         if (!getTargetCols || getTargetCols.textContent === "") {
                                             updatednewInvolvedFormula = updatednewInvolvedFormula.replace(matchCol, "0");
                                         } else {
-                                            getTargetCols = getTargetCols.textContent.trim();
-                                            updatednewInvolvedFormula = updatednewInvolvedFormula.replace(matchCol, getTargetCols);
+                                            // let getTargetCol = getTargetCols.textContent.trim();
+                                            let getTargetCol = getTargetCols.getAttribute("data-original");
+
+                                            updatednewInvolvedFormula = updatednewInvolvedFormula.replace(matchCol, getTargetCol);
                                         }
                                     });
     
                                     try {
+
                                         involvedResult = evaluate(updatednewInvolvedFormula);
-                                        involvedResult = Math.round(involvedResult);
-                                        // involvedResult = Math.round(involvedResult * 100) / 100;
-                                        includesCol.textContent = involvedResult;
-                                        // updatesInvolved.push({includesCol, involvedResult});
+                                        involvedResult = involvedResult.toFixed(2);
+                                        let roundedResult = Math.round(involvedResult);
+
+                                        includesCol.textContent = roundedResult;
+                                        includesCol.setAttribute("data-original", involvedResult);
                                     } catch (error) {
                                         includesCol.textContent = 'Invalidss!';
                                         return;
                                     }
     
-                                    // updatesInvolved.forEach(({includesCol, involvedResult}) => {
-                                    //     includesCol.textContent = involvedResult;
-    
+
                                     let id = includesCol.getAttribute('data-id');
                                     let involvedResults = {
+                                        id: id || null,
                                         tableId: table.id,
                                         content: involvedResult,
                                         colspan: 1,
                                         rowspan: 1,
                                         merged: false
                                     }
-                                        // console.log(id);
+
+                                    bulkUpdates.push(involvedResults);
+    
+                                    // fetch(`/update-content-cell`, {            
+                                    // method: "POST",
+                                    // headers: {
+                                    //     'Content-Type': 'application/json',
+                                    //     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                    // },
+                                    // body: JSON.stringify(involvedResults)    
+                                    // })
+                                    // .then(response => response.json())
+                                    // .then(data => {
+                                    //     console.log("Server Response:", data);
+                            
+                                    //     // If there's no ID, update the cell with the returned ID from the server
+                                    //     if (!id && data.ids) {
+                                    //         cell.setAttribute('data-id', data.ids);
+                                    //     }
+                                    // })
+                                    // .catch(error => {
+                                    //     console.error("Error:", error);
                                     // });
     
-                                    fetch(`/update-content-cell/${id}`, {            
+                                // }
+
+
+                            });
+
+                            if (bulkUpdates.length > 0) {
+                                fetch("/bulk-update-content-cell", {
                                     method: "POST",
                                     headers: {
-                                        'Content-Type': 'application/json',
-                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                        "Content-Type": "application/json",
+                                        "X-CSRF-TOKEN": document.querySelector("meta[name='csrf-token']").getAttribute("content")
                                     },
-                                    body: JSON.stringify(involvedResults)    
-                                    })
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        console.log("Server Response:", data);
-                            
-                                        // If there's no ID, update the cell with the returned ID from the server
-                                        if (!id && data.ids) {
-                                            cell.setAttribute('data-id', data.ids);
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error("Error:", error);
-                                    });
-    
-                                }
-                            });
+                                    body: JSON.stringify({ cells: bulkUpdates, tableId: table.id })
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    console.log("Server Response:", data);
+                                    if (data.ids) {
+                                        data.ids.forEach((newId, index) => {
+                                            let updatedCell = table.querySelector(
+                                                `td[data-row="${bulkUpdates[index].row}"][data-column="${bulkUpdates[index].column}"]`
+                                            );
+                                            if (updatedCell && !bulkUpdates[index].id) {
+                                                updatedCell.setAttribute("data-id", newId);
+                                            }
+                                        });
+                                    }
+                                })
+                                .catch(error => console.error("Error:", error));
+                            }
                         }
                     });
                 });

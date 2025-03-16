@@ -58,18 +58,21 @@ function selectCell() {
         let currentNumber = 1;
 
         names.forEach((student) => {
-
-            const firstCell = document.querySelector(`td[data-row="${currentRow}"][data-column="A"]`);
+            const rowCells = document.querySelectorAll(`td[data-row="${currentRow}"]`);
         
+            rowCells.forEach((cell) => {
+                cell.setAttribute("data-operation", "operation");  // Set data-operation attribute
+                cell.removeAttribute("data-sum");  // Remove data-sum attribute
+            });
+        
+            const firstCell = document.querySelector(`td[data-row="${currentRow}"][data-column="A"]`);
             if (firstCell) {
-                // Apply roomStudent attribute only to the first column of the current row
-                firstCell.dataset.roomStudent = student.name_3;  // Assign student.name_3 to the first column only
+                firstCell.dataset.roomStudent = student.name_3;
             } else {
                 console.warn(`First column cell not found at row ${currentRow}`);
             }
-
-            const numberCell = document.querySelector(`td[data-row="${currentRow}"][data-column="${startColumn}"]`);
         
+            const numberCell = document.querySelector(`td[data-row="${currentRow}"][data-column="${startColumn}"]`);
             if (numberCell) {
                 numberCell.textContent = currentNumber;
                 numberCell.classList.add('text-center');
@@ -81,7 +84,6 @@ function selectCell() {
             newCurrentCol++;
         
             const cell2 = document.querySelector(`td[data-row="${currentRow}"][data-column="${cellManager.indexToColumnName(newCurrentCol)}"]`);
-        
             if (cell2) {
                 cell2.textContent = student.name_2;
                 cell2.classList.add('text-start');
@@ -92,7 +94,6 @@ function selectCell() {
             newCurrentCol++;
         
             const cell3 = document.querySelector(`td[data-row="${currentRow}"][data-column="${cellManager.indexToColumnName(newCurrentCol)}"]`);
-        
             if (cell3) {
                 cell3.textContent = student.name_3;
                 cell3.classList.add('text-start');
@@ -101,8 +102,9 @@ function selectCell() {
             }
         
             currentRow++;
-            currentNumber++; 
+            currentNumber++;
         });
+        
 
         updateUI(startRow, removeContainer, studentContainer);  
 

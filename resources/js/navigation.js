@@ -95,8 +95,26 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   });
+
+
   
 });
+
+function adjustHeroWidth() {
+  const hero = document.getElementById('hero');
+  if (window.innerWidth <= 375) {
+    hero.style.width = '100%';
+  } else {
+    hero.style.width = ''; // Reset to default if needed
+  }
+}
+
+// Run on page load
+document.addEventListener('DOMContentLoaded', adjustHeroWidth);
+
+// Run on window resize
+window.addEventListener('resize', adjustHeroWidth);
+
   // const myDiv = document.getElementById('myDiv');
 //   div.style.width = '100%';
   
