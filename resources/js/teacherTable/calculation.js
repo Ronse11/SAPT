@@ -1,5 +1,9 @@
 import { evaluate } from 'mathjs';
 
+// import { getGradeEquivalent, formatGrade, getMidTermGrade, getFinTermGrade, getFinalRateGrade, getPassedOrFailed } from './ratingTable.js';
+
+
+
 // SHOWING OF COLUMNS AND CONTENT STARTS HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 const showColRow = document.querySelector('input[name="showRowCol"]');
 const showContent = document.querySelector('input[name="showContent"]');
@@ -7,6 +11,9 @@ const showFormula = document.querySelector('input[name="formulaInput"]');
 const showFontSize = document.getElementById('showFontSize');
 const formulaBox = document.getElementById('formulaBox');
 const formulaTitle = document.getElementById('formulaTitle');
+
+const tableRatings = document.querySelectorAll('.rating-table');
+
 
 document.querySelector('table').addEventListener('click', function(event) {
     const selectedCell = event.target.closest('td');
@@ -67,6 +74,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const currentTable = document.querySelector('.main-table');
     const getTableID = currentTable.id;
     const table = document.querySelector(`#${getTableID}`);
+
+    
+    const getMidColumn = document.getElementById('MidGr.');
+    const getFinColumn = document.getElementById('T.F.Gr.');
+
 
 
     let firstSelectedCell = null; // Store the first selected cell
@@ -636,7 +648,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             
             recalculateFormula(content);
-
     
             if (columnMatch) {
                 columnReferences = columnMatch; // Update column references based on user input
@@ -979,6 +990,11 @@ document.addEventListener('DOMContentLoaded', function () {
     
     //RECALCULATION OF INPUTS STARTS HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     function recalculateFormula(formula) {
+        let recalculateTimeout;
+        let recalculateTimeoutRating;
+        clearTimeout(recalculateTimeout);
+        clearTimeout(recalculateTimeoutRating);
+
         const operationACache = [...table.querySelectorAll('.cursor-cell[data-column="A"][data-operation="operation"]')];
     
         const formulaRegex = /if/;
@@ -1000,11 +1016,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const columnMatch = newFormula.match(/[A-Z]{1,2}/g);
         let result;
         let involvedResult;
+        let roundedResult;
         let originalContent = '';
         let originalContentLength = 0;
     
         const cellCache = new Map();
-
 
         if (columnMatch) {
             columnMatch.forEach(cols => {
@@ -1075,6 +1091,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         originalContentLength = originalContent.length;
                     });
     
+                    recalculateTimeout = setTimeout(() => {
                     involvedCell.addEventListener('blur', async(event) => {
                         let currentCell = event.target;
                         
@@ -1159,7 +1176,6 @@ document.addEventListener('DOMContentLoaded', function () {
                                     row: row,
                                     column: column
                                 }
-                                console.log(results);
 
                                 bulkUpdates.push(results);
 
@@ -1196,6 +1212,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             involvedCols.forEach(includesCol => {
                                 const targetFormula = includesCol.dataset.formula;
                                 let checkInvolveFormula = null;
+
     
                                 let subFormula = targetFormula.substring(1);
                                 if (subFormula.startsWith('SUM')) {
@@ -1245,10 +1262,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
                                         involvedResult = evaluate(updatednewInvolvedFormula);
                                         involvedResult = involvedResult.toFixed(2);
-                                        let roundedResult = Math.round(involvedResult);
+                                        roundedResult = Math.round(involvedResult);
 
                                         includesCol.textContent = roundedResult;
                                         includesCol.setAttribute("data-original", involvedResult);
+
                                     } catch (error) {
                                         includesCol.textContent = 'Invalidss!';
                                         return;
@@ -1266,7 +1284,6 @@ document.addEventListener('DOMContentLoaded', function () {
                                     }
 
                                     bulkUpdates.push(involvedResults);
-    
                                     // fetch(`/update-content-cell`, {            
                                     // method: "POST",
                                     // headers: {
@@ -1292,6 +1309,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
                             });
+
+                            // GETTING DATA FROM MAIN-TABLE TO RATING-TABLE
+                            recalculateTimeoutRating = setTimeout(() => {
+                                if(getMidColumn.value.trim() != '' || getFinColumn.value.trim() != '') {
+                                    if(midTermCol || getMidColumn.value.trim()) {
+                                        const getRatingMid = table.querySelector(`[data-column="${getMidColumn.value.trim()}"][data-row="${row}"]`);
+                                        const getResultMid = getRatingMid.getAttribute('data-original');
+
+                                        handleGradeInputBlur(row, getResultMid, 'mid');
+                                    } 
+                                    if (finTermCol || getFinColumn.value.trim()) {
+                                        const getRatingFin = table.querySelector(`[data-column="${getFinColumn.value.trim()}"][data-row="${row}"]`);
+                                        const getResultFin = getRatingFin.getAttribute('data-original');
+
+                                        handleGradeInputBlur(row, getResultFin, 'final');
+                                    }
+                                }
+                            }, 800);
 
                             if (bulkUpdates.length > 0) {
                                 fetch("/bulk-update-content-cell", {
@@ -1320,13 +1355,147 @@ document.addEventListener('DOMContentLoaded', function () {
                             }
                         }
                     });
+                    }, 800); 
                 });
             });
         }
     
     }   
     //RECALCULATION OF INPUTS ENDS HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+    const gradeState = {};
+
+    // RECALCULATION OF RATING-TABLE!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    async function handleGradeInputBlur(row, involvedResult, term) {
+        const currentRow = row;
     
+        let tableRating = null;
+        tableRatings.forEach(table => {
+            if (table.querySelector(`td[data-row='${currentRow}']`)) {
+                tableRating = table;
+            }
+        });
+    
+        if (!tableRating) return; // Exit if no table found
+    
+        const roomId = tableRating.getAttribute('data-room-id');
+        const teacherId = tableRating.getAttribute('data-teacher-id');
+        const studentName = tableRating.querySelector(`td[data-column='#1'][data-row='${currentRow}']`);
+    
+        try {
+            const columns = {
+                midColumn: tableRating.querySelector(`td[data-column='MidGr.'][data-row='${currentRow}']`),
+                midEqvColumn: tableRating.querySelector(`td[data-column='Mid.N.Eqv.'][data-row='${currentRow}']`),
+                midFinalColumn: tableRating.querySelector(`td[data-column='Mid'][data-row='${currentRow}']`),
+                tfColumn: tableRating.querySelector(`td[data-column='T.F.Gr.'][data-row='${currentRow}']`),
+                tfEqvColumn: tableRating.querySelector(`td[data-column='F.N.Eqv.'][data-row='${currentRow}']`),
+                tfFinalColumn: tableRating.querySelector(`td[data-column='Fin'][data-row='${currentRow}']`),
+                finalEquivalent: tableRating.querySelector(`td[data-column='FR.Eqv'][data-row='${currentRow}']`),
+                finalNumberEquivalent: tableRating.querySelector(`td[data-column='FR.N.Eqv'][data-row='${currentRow}']`),
+                remarks: tableRating.querySelector(`td[data-column='Remarks'][data-row='${currentRow}']`)
+            };
+    
+            if (!gradeState[currentRow]) {
+                gradeState[currentRow] = { mid: null, final: null };
+            }
+    
+            if (term === 'mid' && columns.midColumn && columns.midEqvColumn && columns.midFinalColumn) {
+                const midColOrigValue = parseFloat(columns.midColumn.getAttribute("data-original")) || 0;
+                if (midColOrigValue !== 0) {
+                    columns.midColumn.textContent = Math.round(involvedResult);
+                    columns.midColumn.setAttribute('data-original', involvedResult);
+    
+                    const showMidEqvCol = getGradeEquivalent(Math.round(midColOrigValue));
+                    columns.midEqvColumn.textContent = showMidEqvCol;
+                    columns.midEqvColumn.setAttribute('data-original', showMidEqvCol);
+    
+                    const showMidTermGrade = getMidTermGrade(involvedResult);
+                    columns.midFinalColumn.textContent = showMidTermGrade.display;
+                    columns.midFinalColumn.setAttribute('data-original', showMidTermGrade.value);
+    
+                    gradeState[currentRow].mid = showMidTermGrade;
+                }
+            }
+    
+            if (term === 'final' && columns.tfColumn && columns.tfEqvColumn && columns.tfFinalColumn) {
+                const tfColOrigValue = parseFloat(columns.tfColumn.getAttribute("data-original")) || 0;
+                if (tfColOrigValue !== 0) {
+                    columns.tfColumn.textContent = Math.round(involvedResult);
+                    columns.tfColumn.setAttribute('data-original', involvedResult);
+    
+                    const showTFEqvCol = getGradeEquivalent(Math.round(tfColOrigValue));
+                    columns.tfEqvColumn.textContent = showTFEqvCol;
+                    columns.tfEqvColumn.setAttribute('data-original', showTFEqvCol);
+    
+                    const showFinalTermGrade = getFinTermGrade(involvedResult);
+                    columns.tfFinalColumn.textContent = showFinalTermGrade.display;
+                    columns.tfFinalColumn.setAttribute('data-original', showFinalTermGrade.value);
+    
+                    gradeState[currentRow].final = showFinalTermGrade;
+                }
+            }
+    
+            if (columns.finalEquivalent && gradeState[currentRow].mid && gradeState[currentRow].final) {
+                const finalRate = getFinalRateGrade(
+                    gradeState[currentRow].mid.value,
+                    gradeState[currentRow].final.value
+                );
+    
+                columns.finalEquivalent.textContent = finalRate.display;
+                columns.finalEquivalent.setAttribute('data-original', finalRate.value);
+    
+                if (columns.finalNumberEquivalent) {
+                    const showFinGradeRate = getGradeEquivalent(parseFloat(finalRate.display));
+                    columns.finalNumberEquivalent.textContent = showFinGradeRate;
+                    columns.finalNumberEquivalent.setAttribute('data-original', showFinGradeRate);
+    
+                    const showRemarks = getPassedOrFailed(finalRate.display);
+                    columns.remarks.textContent = showRemarks;
+                    columns.remarks.setAttribute('data-original', showRemarks);
+                }
+            }
+    
+            const bulkUpdatedData = [];
+            Object.keys(columns).forEach(key => {
+                const columnElement = columns[key];
+                if (columnElement) {
+                    const content = columnElement.getAttribute('data-original');
+                    if (content) {
+                        bulkUpdatedData.push({
+                            teacher_id: teacherId,
+                            room_id: roomId,
+                            student_name: studentName?.getAttribute("data-room-student") || 'Unknown',
+                            column: columnElement.getAttribute("data-column"),
+                            row: currentRow,
+                            content: content,
+                            merged: 0,
+                            rowspan: 1,
+                            colspan: 1
+                        });
+                    }
+                }
+            });
+    
+            if (bulkUpdatedData.length > 0) {
+                await fetch("/save-number-grade", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+                    },
+                    body: JSON.stringify({ grades: bulkUpdatedData })
+                });
+            }
+    
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Something went wrong. Please try again.");
+        }
+    }
+    
+
+
     
     // RECONDITION OF FORMULA STARTS HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     function reCondition(formula) {
@@ -1643,6 +1812,75 @@ document.addEventListener('DOMContentLoaded', function () {
             formulaCell.classList.add(`bg-${currentColor}`);
         }
     }
+
+
+    const gradeRanges = [
+        { min: 97, max: 100, grade: 1.0 },
+        { min: 94, max: 96, grade: 1.25 },
+        { min: 91, max: 93, grade: 1.50 },
+        { min: 88, max: 90, grade: 1.75 },
+        { min: 85, max: 87, grade: 2.0 },
+        { min: 82, max: 84, grade: 2.25 },
+        { min: 79, max: 81, grade: 2.50 },
+        { min: 76, max: 78, grade: 2.75 },
+        { min: 75, max: 75, grade: 3.0 },
+        { min: 70, max: 74, grade: 4.0 },
+        { min: 0, max: 69, grade: 5.0 }
+    ];
+    
+
+
+    function getGradeEquivalent(score) {
+        if (isNaN(score)) return "Invalid Score"; // Prevent errors for non-numeric input
+        const range = gradeRanges.find(r => score >= r.min && score <= r.max);
+        return range ? formatGrade(range.grade) : "Invalid Score";
+    }
+    
+    function formatGrade(grade) {
+        if (grade % 1 === 0) {
+            return grade.toFixed(1); // Ensures 3.0, 2.0, 1.0
+        } else if (grade * 100 % 10 === 0) {
+            return grade.toFixed(2); // Ensures 2.50, 1.50, etc.
+        }
+        return grade; // Default case (if no formatting needed)
+    }
+    
+    function getMidTermGrade(grade) {
+        if (isNaN(grade)) return { display: "Invalid Grade", value: null };
+    
+        const originalValue = parseFloat(grade * 0.4).toFixed(2); 
+        const roundedValue = Math.round(originalValue); 
+    
+        return { display: roundedValue, value: originalValue };
+    }
+    
+    function getFinTermGrade(grade) {
+        if (isNaN(grade)) return { display: "Invalid Grade", value: null };
+    
+        const originalValue = parseFloat(grade * 0.6).toFixed(2);
+        const roundedValue = Math.round(originalValue);
+    
+        return { display: roundedValue, value: originalValue };
+    }
+    
+    function getFinalRateGrade(mid, fin) {
+    
+        const value = parseFloat(mid) + parseFloat(fin);
+        const originalValue = parseFloat(value).toFixed(2);
+        const roundedValue = Math.round(originalValue);
+    
+        return { display: roundedValue, value: originalValue };
+    }
+    
+    function getPassedOrFailed(grade) {
+        if(grade >= 75) {
+            return 'Passed';
+        } else {
+            return '';
+        }
+    }
+
+    
 });
 
 
@@ -1654,3 +1892,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 // ULOBRAHON ANG FONT AND BG COLOR NGA GA CHANGE KAY WALA GA CHANGE ANG COLOR PAG TAPOS APPLY O GAMIT SANG IF COLOR NGA BUTTON!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+

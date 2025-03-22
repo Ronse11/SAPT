@@ -1,86 +1,84 @@
-// export const formulaState = {
-//     isActive: false
-// };
 
-// export function activateFormula() {
-//     if (!formulaState.isActive) {
-//         formulaState.isActive = true;
-//     }
-// }
 
-// export function deactivateFormula() {
-//     if (formulaState.isActive) {
-//         formulaState.isActive = false;
-//     }
-// }
+import { column } from "mathjs";
 
-// export function isFormulaActiveStateRating() {
-//     return formulaState.isActive;
-// }
+
+
+
+
+const gradeRanges = [
+    { min: 97, max: 100, grade: 1.0 },
+    { min: 94, max: 96, grade: 1.25 },
+    { min: 91, max: 93, grade: 1.50 },
+    { min: 88, max: 90, grade: 1.75 },
+    { min: 85, max: 87, grade: 2.0 },
+    { min: 82, max: 84, grade: 2.25 },
+    { min: 79, max: 81, grade: 2.50 },
+    { min: 76, max: 78, grade: 2.75 },
+    { min: 75, max: 75, grade: 3.0 },
+    { min: 70, max: 74, grade: 4.0 },
+    { min: 0, max: 69, grade: 5.0 }
+];
+
+export function getGradeEquivalent(score) {
+    if (isNaN(score)) return "Invalid Score"; // Prevent errors for non-numeric input
+    const range = gradeRanges.find(r => score >= r.min && score <= r.max);
+    return range ? formatGrade(range.grade) : "Invalid Score";
+}
+
+export function formatGrade(grade) {
+    if (grade % 1 === 0) {
+        return grade.toFixed(1); // Ensures 3.0, 2.0, 1.0
+    } else if (grade * 100 % 10 === 0) {
+        return grade.toFixed(2); // Ensures 2.50, 1.50, etc.
+    }
+    return grade; // Default case (if no formatting needed)
+}
+
+export function getMidTermGrade(grade) {
+    if (isNaN(grade)) return { display: "Invalid Grade", value: null };
+
+    const originalValue = parseFloat(grade * 0.4).toFixed(2); 
+    const roundedValue = Math.round(originalValue); 
+
+    return { display: roundedValue, value: originalValue };
+}
+
+export function getFinTermGrade(grade) {
+    if (isNaN(grade)) return { display: "Invalid Grade", value: null };
+
+    const originalValue = parseFloat(grade * 0.6).toFixed(2);
+    const roundedValue = Math.round(originalValue);
+
+    return { display: roundedValue, value: originalValue };
+}
+
+export function getFinalRateGrade(mid, fin) {
+
+    const value = parseFloat(mid) + parseFloat(fin);
+    const originalValue = parseFloat(value).toFixed(2);
+    const roundedValue = Math.round(originalValue);
+
+    return { display: roundedValue, value: originalValue };
+}
+
+export function getPassedOrFailed(grade) {
+    if(grade >= 75) {
+        return 'Passed';
+    } else {
+        return '';
+    }
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     const table = document.querySelector(".rating-table");
     const roomId = table.getAttribute('data-room-id');
     const teacherId = table.getAttribute('data-teacher-id');
+
+    const getMidColumn = document.getElementById('MidGr.');
+    const getFinColumn = document.getElementById('T.F.Gr.');
     
-    const gradeRanges = [
-        { min: 97, max: 100, grade: 1.0 },
-        { min: 94, max: 96, grade: 1.25 },
-        { min: 91, max: 93, grade: 1.50 },
-        { min: 88, max: 90, grade: 1.75 },
-        { min: 85, max: 87, grade: 2.0 },
-        { min: 82, max: 84, grade: 2.25 },
-        { min: 79, max: 81, grade: 2.50 },
-        { min: 76, max: 78, grade: 2.75 },
-        { min: 75, max: 75, grade: 3.0 },
-        { min: 70, max: 74, grade: 4.0 },
-        { min: 0, max: 69, grade: 5.0 }
-    ];
-    
-    function getGradeEquivalent(score) {
-        if (isNaN(score)) return "Invalid Score"; // Prevent errors for non-numeric input
-        const range = gradeRanges.find(r => score >= r.min && score <= r.max);
-        return range ? formatGrade(range.grade) : "Invalid Score";
-    }
-    
-    function formatGrade(grade) {
-        if (grade % 1 === 0) {
-            return grade.toFixed(1); // Ensures 3.0, 2.0, 1.0
-        } else if (grade * 100 % 10 === 0) {
-            return grade.toFixed(2); // Ensures 2.50, 1.50, etc.
-        }
-        return grade; // Default case (if no formatting needed)
-    }
 
-    function getMidTermGrade(grade) {
-        if (isNaN(grade)) return { display: "Invalid Grade", value: null };
-
-        const originalValue = grade * 0.4; // Keep decimal
-        const roundedValue = Math.round(originalValue); // Round for display
-
-        return { display: roundedValue, value: originalValue };
-    }
-
-    function getFinTermGrade(grade) {
-        if (isNaN(grade)) return { display: "Invalid Grade", value: null };
-
-        const originalValue = grade * 0.6; // Keep decimal
-        const roundedValue = Math.round(originalValue); // Round for display
-
-        return { display: roundedValue, value: originalValue };
-    }
-
-    function getFinalRateGrade(mid, fin) {
-        return Math.round(mid + fin);
-    }
-
-    function getPassedOrFailed(grade) {
-        if(grade >= 75) {
-            return 'Passed';
-        } else {
-            return '';
-        }
-    }
 
     table.addEventListener("keydown", async (event) => {
         if (event.key === "Enter") {  
@@ -93,6 +91,13 @@ document.addEventListener("DOMContentLoaded", () => {
     
             const column = formula.substring(1);
             const currentCol = cell.getAttribute('data-column');
+
+            handleInputColumn(cell, formula);
+            if (currentCol == 'MidGr.') {
+                getMidColumn.value = column;
+            } else if (currentCol == 'T.F.Gr.') {
+                getFinColumn.value = column;
+            }
     
             try {
 
@@ -177,13 +182,13 @@ document.addEventListener("DOMContentLoaded", () => {
                             const midPercent = midPercentCell ? parseFloat(midPercentCell.dataset.original || midPercentCell.textContent.trim()) || 0 : 0;
                             const finalRate = getFinalRateGrade(midPercent, parseFloat(gradeContent.value));
                     
-                            addGradeEntry(bulkGradeData, skill.student_name, "FR.Eqv", skill.row, finalRate);
-                            addGradeEntry(bulkGradeData, skill.student_name, "FR.N.Eqv", skill.row, getGradeEquivalent(finalRate));
-                            addGradeEntry(bulkGradeData, skill.student_name, "Remarks", skill.row, getPassedOrFailed(finalRate));
+                            addGradeEntry(bulkGradeData, skill.student_name, "FR.Eqv", skill.row, finalRate.value);
+                            addGradeEntry(bulkGradeData, skill.student_name, "FR.N.Eqv", skill.row, getGradeEquivalent(finalRate.display));
+                            addGradeEntry(bulkGradeData, skill.student_name, "Remarks", skill.row, getPassedOrFailed(finalRate.display));
                     
-                            getCell("FR.Eqv", skill.row).innerText = finalRate;
-                            getCell("FR.N.Eqv", skill.row).innerText = getGradeEquivalent(finalRate);
-                            getCell("Remarks", skill.row).innerText = getPassedOrFailed(finalRate);
+                            getCell("FR.Eqv", skill.row).innerText = finalRate.display;
+                            getCell("FR.N.Eqv", skill.row).innerText = getGradeEquivalent(finalRate.display);
+                            getCell("Remarks", skill.row).innerText = getPassedOrFailed(finalRate.display);
                         }
                     
                         // Store the original value for Mid column
@@ -200,7 +205,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     
                 }
 
-                
                 if (bulkGradeData.length > 0) {
                     await fetch("/save-number-grade", {
                         method: "POST",
@@ -223,24 +227,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // USING INPUT
-    const inputs = ['MidGr.', 'T.F.Gr.'];
+    const inputs = ['semester', 'MidGr.', 'T.F.Gr.'];
+    const previousValues = {};
 
     inputs.forEach(id => {
         const inputElement = document.getElementById(id);
         if (inputElement) {
+            inputElement.addEventListener('focus', (event) => {
+                previousValues[id] = event.target.value.trim();
+            });
             inputElement.addEventListener('blur', handleGradeInputBlur);
         }
     });
     
     async function handleGradeInputBlur(event) {
         const cell = event.target;
+        const cellValue = cell.value.trim();
+        const previousValue = previousValues[cell.id] || '';
+
+        if (cellValue === previousValue) return;
+
+        handleInputColumn(cell, cellValue);
+
+        if(cell.id === 'semester') return;
+
         cell.setAttribute('data-p', 'process');
         const column = cell.value.trim();
         const currentCol = cell.getAttribute('name');
         
-        console.log(column);
-        console.log(currentCol);
-    
+
         try {
             const response = await fetch("/apply-formula/grading-sheet", {
                 method: "POST",
@@ -316,14 +331,20 @@ document.addEventListener("DOMContentLoaded", () => {
                         const midPercentCell = getCell("Mid", skill.row);
                         const midPercent = midPercentCell ? parseFloat(midPercentCell.dataset.original || midPercentCell.textContent.trim()) || 0 : 0;
                         const finalRate = getFinalRateGrade(midPercent, parseFloat(gradeContent.value));
-    
-                        addGradeEntry(bulkGradeData, skill.student_name, "FR.Eqv", skill.row, finalRate);
-                        addGradeEntry(bulkGradeData, skill.student_name, "FR.N.Eqv", skill.row, getGradeEquivalent(finalRate));
-                        addGradeEntry(bulkGradeData, skill.student_name, "Remarks", skill.row, getPassedOrFailed(finalRate));
-    
-                        getCell("FR.Eqv", skill.row).innerText = finalRate;
-                        getCell("FR.N.Eqv", skill.row).innerText = getGradeEquivalent(finalRate);
-                        getCell("Remarks", skill.row).innerText = getPassedOrFailed(finalRate);
+                        
+                        addGradeEntry(bulkGradeData, skill.student_name, "FR.Eqv", skill.row, finalRate.value);
+                        addGradeEntry(bulkGradeData, skill.student_name, "FR.N.Eqv", skill.row, getGradeEquivalent(finalRate.display));
+                        addGradeEntry(bulkGradeData, skill.student_name, "Remarks", skill.row, getPassedOrFailed(finalRate.display));
+                
+                        const showFREqv =  getCell("FR.Eqv", skill.row);
+                        showFREqv.innerText = finalRate.display;
+                        showFREqv.setAttribute('data-original', finalRate.value);
+
+                        const showFRNEqv =  getCell("FR.N.Eqv", skill.row);
+                        showFRNEqv.innerText = getGradeEquivalent(finalRate.display);
+                        showFRNEqv.setAttribute('data-original', finalRate.value);
+
+                        getCell("Remarks", skill.row).innerText = getPassedOrFailed(finalRate.display);
                     }
     
                     percentGradeCell.setAttribute("data-original", parseFloat(gradeContent.value).toFixed(2));
@@ -332,7 +353,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     addGradeEntry(bulkGradeData, skill.student_name, percent, skill.row, gradeContent.value);
                 }
             }
-    
+
+            
             if (bulkGradeData.length > 0) {
                 await fetch("/save-number-grade", {
                     method: "POST",
@@ -348,7 +370,39 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Something went wrong. Please try again.");
         }
     }
+
+    async function handleInputColumn(cell, newValue) {
+        if (newValue.length >= 1) {
+            try {
+                const response = await fetch("/apply-sem", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        semValue: newValue,
+                        table_id: cell.id,
+                        room_id: roomId
+                    })
+                });
     
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    alert(errorData.error);
+                }
+            } catch (error) {
+                console.error("Error applying units:", error);
+            }
+        }
+    }
+    
+
+
+    // const tableMain = document.getElementById('main-table');
+    // console.log(tableMain);
+
+
     
 
 
@@ -386,7 +440,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
     
                 // Update previousValue to the latest input value
-                previousValue = unitValue; 
+                // previousValue = unitValue; 
     
             } catch (error) {
                 console.error("Error applying units:", error);
@@ -395,87 +449,135 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     
 
-    // semester.addEventListener('blur', async() => {
-    //     const semValue = semester.value.trim(); 
 
-    //     if (semValue === previousSemtValue) return; 
+
+
+
+
+
+
+
+
+    // async function updateRow(row) {
+    //     const columns = {
+    //         midColumn: row.querySelector("td[data-column='MidGr.']"),
+    //         midEqvColumn: row.querySelector("td[data-column='Mid.N.Eqv.']"),
+    //         midFinalColumn: row.querySelector("td[data-column='Mid']"),
+    //         tfColumn: row.querySelector("td[data-column='T.F.Gr.']"),
+    //         tfEqvColumn: row.querySelector("td[data-column='F.N.Eqv.']"),
+    //         tfFinalColumn: row.querySelector("td[data-column='Fin']"),
+    //         finalEquivalent: row.querySelector("td[data-column='FR.Eqv']"),
+    //         finalNumberEquivalent: row.querySelector("td[data-column='FR.N.Eqv']"),
+    //         remarks: row.querySelector("td[data-column='Remarks']")
+    //     };
     
-    //     if (semValue.length >= 1) {
-    //         try {
-    //             const response = await fetch("/apply-sem", {
-    //                 method: "POST",
-    //                 headers: {
-    //                     "Content-Type": "application/json",
-    //                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-    //                 },
-    //                 body: JSON.stringify({ semValue, room_id: roomId })
-    //             });
+    //     console.log('I worked');
     
-    //             if (!response.ok) {
-    //                 const errorData = await response.json();
-    //                 alert(errorData.error);
-    //                 return;
-    //             }
+    //     const midColOrigValue = columns.midColumn ? parseFloat(columns.midColumn.getAttribute("data-original")) || '' : '';
+    //     const tfColOrigValue = columns.tfColumn ? parseFloat(columns.tfColumn.getAttribute("data-original")) || '' : '';
     
-    //         } catch (error) {
-    //             console.error("Error applying units:", error);
+    //     let showMidTermGrade = null;
+    //     let showFinalTermGrade = null;
+    
+    //     if (columns.midColumn && columns.midEqvColumn && columns.midFinalColumn && midColOrigValue !== '') {
+    //         columns.midEqvColumn.textContent = getGradeEquivalent(Math.round(midColOrigValue));
+    //         showMidTermGrade = getMidTermGrade(midColOrigValue);
+    //         columns.midFinalColumn.textContent = showMidTermGrade.display;
+    //     }
+    
+    //     if (columns.tfColumn && columns.tfEqvColumn && columns.tfFinalColumn && tfColOrigValue !== '') {
+    //         columns.tfEqvColumn.textContent = getGradeEquivalent(Math.round(tfColOrigValue));
+    //         showFinalTermGrade = getFinTermGrade(tfColOrigValue);
+    //         columns.tfFinalColumn.textContent = showFinalTermGrade.display;
+    //     }
+    
+    //     let finalRate = null;
+    //     if (columns.finalEquivalent && showMidTermGrade && showFinalTermGrade) {
+    //         finalRate = getFinalRateGrade(showMidTermGrade.value, showFinalTermGrade.value);
+    //         columns.finalEquivalent.textContent = finalRate;
+    //         if (columns.finalNumberEquivalent) {
+    //             columns.finalNumberEquivalent.textContent = getGradeEquivalent(parseFloat(finalRate));
+    //             columns.remarks.textContent = getPassedOrFailed(Math.round(finalRate));
     //         }
     //     }
+    
+    //     const rowId = columns.midColumn?.getAttribute("data-row") || columns.tfColumn?.getAttribute("data-row");
+    //     const getStudent = row.querySelector("td[data-column='#1']");
+    //     const student = getStudent.getAttribute("data-room-student");
+    
+    //     if (!rowId) {
+    //         console.warn('Row ID is missing, skipping save.');
+    //         return;
+    //     }
+    
+    //     // Array to store available column data
+    //     const bulkGradeData = [];
+    
+    //     Object.keys(columns).forEach(key => {
+    //         const columnElement = columns[key];
+    //         if (columnElement) {
+    //             const content = columnElement.textContent.trim();
+    //             if (content) {  // Only add if content is not empty
+    //                 bulkGradeData.push({
+    //                     teacher_id: teacherId,
+    //                     room_id: roomId,
+    //                     student_name: student,
+    //                     column: columnElement.getAttribute("data-column"),
+    //                     row: rowId,
+    //                     content: content,
+    //                     merged: 0,
+    //                     rowspan: 1,
+    //                     colspan: 1
+    //                 });
+    //             }
+    //         }
+    //     });
+    
+    //     if (bulkGradeData.length > 0) {
+    //         console.log(bulkGradeData);
+    //         // await fetch("/save-number-grade", {
+    //         //     method: "POST",
+    //         //     headers: {
+    //         //         "Content-Type": "application/json",
+    //         //         "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+    //         //     },
+    //         //     body: JSON.stringify({ grades: bulkGradeData })
+    //         // });
+    //     } else {
+    //         console.log("No data to save.");
+    //     }
+    // }
+    
+    
+    
+
+    // let observer = new MutationObserver(mutations => {
+    //     mutations.forEach(mutation => {
+    //         if (mutation.type === "childList") {
+    //             let column = mutation.target;
+    //             let row = column.closest("tr");
+    //             if (row) {
+    //                 updateRow(row);
+    //             }
+    //         }
+    //     });
     // });
 
+    // // Attach observer to both MidGr. and T.F.Gr.
+    // ["MidGr.", "T.F.Gr."].forEach(columnName => {
+    //     document.querySelectorAll(`td[data-column='${columnName}']`).forEach(column => {
+    //         observer.observe(column, { childList: true, subtree: true });
+    //     });
+    // });
+
+    
+    
 
 
-
-
-    // SAVING THE COLUMN IN USING INPUT
-    
-    
-    const userInput = ['semester', 'MidGr.', 'T.F.Gr.'];
-    const previousValues = {};
-    
-    userInput.forEach(id => {
-        const input = document.getElementById(id);
-        if (input) {
-            input.addEventListener('focus', (event) => {
-                previousValues[id] = event.target.value.trim(); // Store old value
-            });
-    
-            input.addEventListener('blur', handleInputColumn);
-        }
-    });
-    
-    async function handleInputColumn(event) {
-        const input = event.target;
-        const newValue = input.value.trim();
-        const previousValue = previousValues[input.id];
-    
-        if (newValue === previousValue) return; // No change, exit
-    
-        if (newValue.length >= 1) {
-            try {
-                const response = await fetch("/apply-sem", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({
-                        semValue: newValue,
-                        table_id: input.id, // Send dynamic table_id
-                        room_id: roomId
-                    })
-                });
-    
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    alert(errorData.error);
-                }
-            } catch (error) {
-                console.error("Error applying units:", error);
-            }
-        }
-    }
-    
 
 
 });
+
+
+
+

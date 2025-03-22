@@ -1325,15 +1325,21 @@
 
 
 
-                    <div id="ratingSection" class="hidden w-full p-8 font-noto bg-sgcolorBG">
+                    <div id="ratingSection" class="hidden w-full px-8 pt-8 pb-16 font-noto bg-sgcolorSub">
                         <div class="flex justify-center">
-                            <div class=" w-auto p-4 border border-sgcolorSub bg-bgcolor shadow-md">
-                                <div class=" w-[800px] flex justify-center bg-sgcolorBG">
-                                    <div id="printable-content"class="print-container w-full h-auto bg-white ">
-            
+                            <div class=" w-auto">
+                                <div class=" flex flex-col items-center gap-8">
+                                   
+                                    @php
+                                        $studentsPerTable = 30;
+                                        $totalTables = ceil($numberOfStudents / $studentsPerTable);
+                                    @endphp
+
+                                    @for ($tableIndex = 0; $tableIndex < $totalTables; $tableIndex++)
+                                    <div id="printable-content-{{ $tableIndex + 1 }}" class="print-container printable-content w-full h-auto bg-white p-4 border border-sgline shadow-md">
                                         <div id="header" class="w-auto flex flex-col whitespace-nowrap">
                                             <!-- Header with Logo & Title in Same Line -->
-                                            <div class="flex justify-center items-center space-x-4 mr-[52px]">
+                                            <div class="headTitle flex justify-center items-center space-x-4 mr-[70px]">
                                                 <!-- Logo -->
                                                 <div class="w-14">
                                                     <img src="{{ Vite::asset('resources/images/cpsubanner.png') }}" alt="CPSULOGO">
@@ -1368,7 +1374,7 @@
                                                 <div class="w-auto pr-12 relative">
                                                     <h1>Units: 
                                                         <input type="text" id="units" name="units"
-                                                        class="font-bold text-[11px] border-b border-sgline outline-none"
+                                                        class="units font-bold text-[11px] border-b border-sgline outline-none"
                                                         oninput="this.classList.toggle('border-b', this.value.trim() === '')"
                                                         value="{{$unit->column ?? ''}}">                                                 
                                                     </h1>
@@ -1376,7 +1382,7 @@
                                                 <div>
                                                     <h1>Semester: 
                                                         <input type="text" id="semester" name="semester"
-                                                        class="font-bold text-[11px] border-b border-sgline outline-none"
+                                                        class="semester font-bold text-[11px] border-b border-sgline outline-none"
                                                         oninput="this.classList.toggle('border-b', this.value === '')"
                                                         value="{{$sem->column ?? ''}}">                                                 
                                                     </h1>
@@ -1386,20 +1392,18 @@
                                             <div class="flex-1 text-[11px] text-center italic mt-1">
                                                 <h1>(Grades must be written in <span class="font-bold">BLACK</span> or <span class="font-bold text-blue-600">BLUE</span> ink. <span class="font-bold">CONDITIONAL OR FAILURE</span> in <span class="font-bold text-red-600">RED</span> ink)</h1>
                                             </div>
-                                        </div>
-                                        
-                                        
+                                        </div>          
             
-                                        <table class="rating-table w-full" id="rating-table" data-table="rating-table" data-room-id="{{ $room->id }}" data-teacher-id="{{ $room->teacher_id }}" data-row-start="{{ $selected }}">
+                                        <table class="rating-table w-full content" id="rating-table" data-table="rating-table" data-room-id="{{ $room->id }}" data-teacher-id="{{ $room->teacher_id }}" data-row-start="{{ $selected }}">
                         
                                             <tbody class="sub-table relative">
                                                 {{-- NEW TD FOR STUDENTS --}}
                                                 @for ($row = 1; $row <= 2; $row++)
-                                                    <tr class="text-center font-bold text-[12px] {{ $row == 1 ? 'border-t' : '' }} border-cursor">
+                                                    <tr class="leftBorder text-center font-bold text-[12px] {{ $row == 1 ? 'border-t' : '' }} border-cursor">
                                                         @php $colIndex = 0; @endphp
                                                 
                                                         <!-- Column A: colspan="2" with different text per row -->
-                                                        <td colspan="2" class="h-auto student-cell border-x border-cursor caret-transparent {{ $row == 1 ? 'font-bold text-[12px]' : 'italic font-normal text-[10px]' }}"
+                                                        <td colspan="2" class="firstRow h-auto student-cell border-x border-cursor caret-transparent {{ $row == 1 ? 'font-bold text-[12px]' : 'italic font-normal text-[10px]' }}"
                                                             data-column="{{ $sequences[$colIndex] ?? 'Undefined' }}">
                                                             {{ $row == 1 ? 'NAMES' : '(Arrange alphabetically regardless of sex)' }}
                                                         </td>
@@ -1408,7 +1412,7 @@
                                                         <!-- Columns with rowspan="2", only added in the first row -->
                                                         @if ($row == 1)
                                                             @foreach (['C', 'P', 'A'] as $text)
-                                                                <td rowspan="2" class="h-auto border-x border-cursor caret-transparent"
+                                                                <td rowspan="2" class="firstRow h-auto border-x border-cursor caret-transparent"
                                                                     data-column="{{ $sequences[$colIndex] ?? 'Undefined' }}">
                                                                     {{ $text }}
                                                                 </td>
@@ -1418,7 +1422,7 @@
                                                 
                                                         <!-- Columns with different text per row -->
                                                         @foreach ([['Mid', 'Gr.'], ['N.', 'Eqv.']] as [$firstRow, $secondRow])
-                                                            <td class="h-auto student-cell border-x border-cursor caret-transparent"
+                                                            <td class="firstRow h-auto student-cell border-x border-cursor caret-transparent"
                                                                 data-column="{{ $sequences[$colIndex] ?? 'Undefined' }}">
                                                                 {{ $row == 1 ? $firstRow : $secondRow }}
                                                             </td>
@@ -1427,7 +1431,7 @@
                                                 
                                                         @if ($row == 1)
                                                             @foreach (['C', 'P', 'A'] as $text)
-                                                                <td rowspan="2" class="h-auto border-x border-cursor caret-transparent"
+                                                                <td rowspan="2" class="firstRow h-auto border-x border-cursor caret-transparent"
                                                                     data-column="{{ $sequences[$colIndex] ?? 'Undefined' }}">
                                                                     {{ $text }}
                                                                 </td>
@@ -1436,7 +1440,7 @@
                                                         @endif
                                                 
                                                         @foreach ([['T.', 'F.Gr.'], ['N.', 'Eqv.'], ['Mid', '40%'], ['Final', '60%'], ['FR %', 'Eqv.'], ['N.', 'Eqv.']] as [$firstRow, $secondRow])
-                                                            <td class="h-auto student-cell border-x border-cursor caret-transparent"
+                                                            <td class="firstRow h-auto student-cell border-x border-cursor caret-transparent"
                                                                 data-column="{{ $sequences[$colIndex] ?? 'Undefined' }}">
                                                                 {{ $row == 1 ? $firstRow : $secondRow }}
                                                             </td>
@@ -1445,7 +1449,7 @@
                                                 
                                                         @if ($row == 1)
                                                             @foreach (['Credits', 'Remarks', ''] as $text)
-                                                                <td rowspan="2" class="h-auto border-x border-cursor caret-transparent"
+                                                                <td rowspan="2" class="firstRow h-auto border-x border-cursor caret-transparent"
                                                                     data-column="{{ $sequences[$colIndex] ?? 'Undefined' }}">
                                                                     {{ $text }}
                                                                 </td>
@@ -1455,13 +1459,17 @@
                                                     </tr>
                                                 @endfor
                                             
-                                            
+                                                {{-- Students Data --}}
+                                                @php
+                                                    $startRow = $tableIndex * $studentsPerTable;
+                                                    $endRow = min($startRow + $studentsPerTable, $numberOfStudents);
+                                                @endphp
                                              
-                                                @for ($row = $selected; $row < $numberOfStudents+$selected; $row++)
+                                                @for ($row = $startRow + $selected; $row < $endRow + $selected; $row++)
                                                     <tr class="relative">                             
                                                         @for ($col = 0; $col < count($columnLabels); $col++)
                                                             @php
-                                       
+                                        
                                                                 // $cellRating = $organizedDataRatings[$row][$columnLabels[$col]] ?? null;
                                                                 $cellRating = $organizedDataStudent[$names[$row - $selected]->name_3][$columnLabels[$col]] ?? null;
                                                                 
@@ -1529,7 +1537,7 @@
                                                 <h1 class="font-bold">% Equivalent No. Equivalent 1.0 - Excellent 2.0 - Thorough 3.0 - Lowest Passing Grade 5.0 - Failure</h1>
                                             </div>
                                             <div class=" flex-1 flex mt-1 gap-4">
-                                                <div class=" pl-4 w-[25%] text-[11px] pt-6">
+                                                <div class="gradeEquivalent pl-4 w-[25%] text-[11px] pt-6">
                                                     <div class=" flex gap-2">
                                                         <div class="w-[40%]">97-100</div>
                                                         <div class="font-bold">1.0</div>
@@ -1575,7 +1583,7 @@
                                                         <div class="font-bold">5.0 <span class="font-normal">(Failure)</span></div>
                                                     </div>
                                                 </div>
-                                                <div class=" flex-1 text-[13px] text-center">
+                                                <div class="signatureNames flex-1 text-[13px] text-center">
                                                     <div>
                                                         <div class=" text-center font-bold mt-2">
                                                             <h1>MIDTERM</h1>
@@ -1644,12 +1652,13 @@
                                             </div>
                                             <div class=" flex justify-evenly mt-2 text-[10px]">
                                                 <div>
-                                                    <h1>Doc Control Code:CPSU-F-REG-07     Effective Date:09/12/2018     Page No.: 1 of 1</h1>
+                                                    <h1>Doc Control Code:CPSU-F-REG-07     Effective Date:09/12/2018     Page No.: {{$tableIndex + 1}} of {{$totalTables}}</h1>
                                                 </div>
                                             </div>
                                         </div>
-    
                                     </div>
+                                    @endfor
+
                                 </div>
                             </div>
                         </div>
@@ -1739,6 +1748,9 @@
     <script>
         window.formulas = @json($usedFormula);
         let startRow = @json($selected);
+        let midTermCol = @json($getMidGr->column ?? null);
+        let finTermCol = @json($getFinGr->column ?? null);
+        const totalNumberOfStudents = @json($numberOfStudents);
 
         let showTimeout, hideTimeout;
 
@@ -1768,19 +1780,25 @@
         }
 
         document.addEventListener("DOMContentLoaded", function() {
-            const unitInput = document.getElementById("units");
-            const semInput = document.getElementById("semester");
-            if (unitInput.value.trim() !== "") {
-                unitInput.classList.remove("border-b"); // Remove border if there is an initial value
-            }
-            if (semInput.value.trim() !== "") {
-                semInput.classList.remove("border-b"); // Remove border if there is an initial value
-            }
+            const unitInput = document.querySelectorAll(".units");
+            const semInput = document.querySelectorAll(".semester");
+      
+            unitInput.forEach(unit => {            
+                if (unit.value.trim() !== "") {
+                    unit.classList.remove("border-b"); 
+                }
+            });
+            semInput.forEach(sem => {
+                if (sem.value.trim() !== "") {
+                    sem.classList.remove("border-b");
+                }
+            });
         });
     </script>
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     {{-- <script src="https://chir.ag/projects/ntc/ntc.js"></script> --}}
+    
 </body>
 
 </html>

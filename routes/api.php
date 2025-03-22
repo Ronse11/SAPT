@@ -31,3 +31,4 @@ Route::get('/download/{filename}', function ($filename) {
 
     return response()->download($filePath)->deleteFileAfterSend(true);
 })->name('download.file');
+

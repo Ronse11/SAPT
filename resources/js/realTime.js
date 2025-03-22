@@ -282,3 +282,165 @@
                 });
             });
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    // let pendingUpdates = new Map();
+    // let bulkUpdateTimeout = null;
+    
+    // async function updateRowsInBulk() {
+    //     if (pendingUpdates.size === 0) return;
+    
+    //     const bulkGradeData = [];
+    
+    //     pendingUpdates.forEach((row, rowId) => {
+    //         const columns = {
+    //             midColumn: row.querySelector("td[data-column='MidGr.']"),
+    //             midEqvColumn: row.querySelector("td[data-column='Mid.N.Eqv.']"),
+    //             midFinalColumn: row.querySelector("td[data-column='Mid']"),
+    //             tfColumn: row.querySelector("td[data-column='T.F.Gr.']"),
+    //             tfEqvColumn: row.querySelector("td[data-column='F.N.Eqv.']"),
+    //             tfFinalColumn: row.querySelector("td[data-column='Fin']"),
+    //             finalEquivalent: row.querySelector("td[data-column='FR.Eqv']"),
+    //             finalNumberEquivalent: row.querySelector("td[data-column='FR.N.Eqv']"),
+    //             remarks: row.querySelector("td[data-column='Remarks']")
+    //         };
+    
+    //         const midColOrigValue = columns.midColumn ? parseFloat(columns.midColumn.getAttribute("data-original")) || '' : '';
+    //         const tfColOrigValue = columns.tfColumn ? parseFloat(columns.tfColumn.getAttribute("data-original")) || '' : '';
+    
+    //         let showMidTermGrade = null;
+    //         let showFinalTermGrade = null;
+    
+    //         if (columns.midColumn && columns.midEqvColumn && columns.midFinalColumn && midColOrigValue !== '') {
+    //             columns.midEqvColumn.textContent = getGradeEquivalent(Math.round(midColOrigValue));
+    //             showMidTermGrade = getMidTermGrade(midColOrigValue);
+    //             columns.midFinalColumn.textContent = showMidTermGrade.display;
+    //         }
+    
+    //         if (columns.tfColumn && columns.tfEqvColumn && columns.tfFinalColumn && tfColOrigValue !== '') {
+    //             columns.tfEqvColumn.textContent = getGradeEquivalent(Math.round(tfColOrigValue));
+    //             showFinalTermGrade = getFinTermGrade(tfColOrigValue);
+    //             columns.tfFinalColumn.textContent = showFinalTermGrade.display;
+    //         }
+    
+    //         let finalRate = null;
+    //         if (columns.finalEquivalent && showMidTermGrade && showFinalTermGrade) {
+    //             finalRate = getFinalRateGrade(showMidTermGrade.value, showFinalTermGrade.value);
+    //             columns.finalEquivalent.textContent = finalRate;
+    //             if (columns.finalNumberEquivalent) {
+    //                 columns.finalNumberEquivalent.textContent = getGradeEquivalent(parseFloat(finalRate));
+    //                 columns.remarks.textContent = getPassedOrFailed(Math.round(finalRate));
+    //             }
+    //         }
+    
+    //         const getStudent = row.querySelector("td[data-column='#1']");
+    //         const student = getStudent.getAttribute("data-room-student");
+    
+    //         Object.keys(columns).forEach(key => {
+    //             const columnElement = columns[key];
+    //             if (columnElement) {
+    //                 const content = columnElement.textContent.trim();
+    //                 if (content) {
+    //                     bulkGradeData.push({
+    //                         teacher_id: teacherId,
+    //                         room_id: roomId,
+    //                         student_name: student,
+    //                         column: columnElement.getAttribute("data-column"),
+    //                         row: rowId,
+    //                         content: content,
+    //                         merged: 0,
+    //                         rowspan: 1,
+    //                         colspan: 1
+    //                     });
+    //                 }
+    //             }
+    //         });
+    //     });
+    
+    //     pendingUpdates.clear(); // Clear after processing
+    
+    //     if (bulkGradeData.length > 0) {
+    //         console.log("Bulk Data:", bulkGradeData);
+    //         await fetch("/save-number-grade", {
+    //             method: "POST",
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //                 "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+    //             },
+    //             body: JSON.stringify({ grades: bulkGradeData })
+    //         });
+    //     } else {
+    //         console.log("No data to save.");
+    //     }
+    // }
+    
+    // // MutationObserver to track changes and batch updates
+    // let observer = new MutationObserver(mutations => {
+    //     mutations.forEach(mutation => {
+    //         if (mutation.type === "childList") {
+    //             let column = mutation.target;
+    //             let row = column.closest("tr");
+    //             if (row) {
+    //                 const rowId = row.querySelector("td[data-column='MidGr.']")?.getAttribute("data-row") ||
+    //                               row.querySelector("td[data-column='T.F.Gr.']")?.getAttribute("data-row");
+    
+    //                 if (rowId) {
+    //                     pendingUpdates.set(rowId, row);
+    
+    //                     // Wait 500ms before bulk processing (prevents excessive API calls)
+    //                     clearTimeout(bulkUpdateTimeout);
+    //                     bulkUpdateTimeout = setTimeout(updateRowsInBulk, 500);
+    //                 }
+    //             }
+    //         }
+    //     });
+    // });
+    
+    // // Attach observer to MidGr. and T.F.Gr. columns
+    // ["MidGr.", "T.F.Gr."].forEach(columnName => {
+    //     document.querySelectorAll(`td[data-column='${columnName}']`).forEach(column => {
+    //         observer.observe(column, { childList: true, subtree: true });
+    //     });
+    // });

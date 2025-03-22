@@ -218,6 +218,8 @@ Route::middleware(['auth', 'no-cache'])->group(function() {
     // NOTIFICATIONS
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
     Route::post('/notifications/delete-all/{id}', [NotificationController::class, 'deleteNotifs']);
+
+
     
 });
 

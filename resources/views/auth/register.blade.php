@@ -54,7 +54,7 @@
                         </div>
 
                         <div class=" md:min-w-96 w-80">
-                            <h1 class=" text-center text-sm py-2">Already have an account? <a href="{{ route('login') }}" class=" text-mainText">Login</a></h1>
+                            <h1 class=" text-center text-sm py-2">Already have an account? <a href="{{ route('login') }}" class=" text-mainText underline">Login</a></h1>
                         </div>
                         <div class=" pb-2 md:min-w-96 w-80">
                             <h1 class=" text-center text-sm py-2">OR</h1>

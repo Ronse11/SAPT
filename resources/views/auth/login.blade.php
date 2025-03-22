@@ -44,7 +44,7 @@
                             <button class=" md:min-w-96 w-80 outline-sky-300 py-3 px-4 rounded-md bg-mainText text-bgcolor border-2 border-mainText hover:bg-bgcolor hover:text-mainText">Continue</button>
                         </div>
                         <div class=" md:min-w-96 w-80">
-                            <h1 class=" text-center text-sm py-2">Don't have an account? <a href="{{ route('register') }}" class=" text-mainText">Signup</a></h1>
+                            <h1 class=" text-center text-sm py-2">Don't have an account? <a href="{{ route('register') }}" class=" text-mainText underline">Signup</a></h1>
                         </div>
                         <div class=" pb-2  md:min-w-96 w-80">
                             <h1 class=" text-center text-sm py-2">OR</h1>

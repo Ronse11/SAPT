@@ -168,7 +168,7 @@ class UsefulController extends Controller
         $columnLabels = ['#1', 'Name', 'M.C', 'M.P', 'M.A', 'MidGr.','Mid.N.Eqv.', 'F.C', 'F.P', 'F.A','T.F.Gr.','F.N.Eqv.', 'Mid', 'Fin', 'FR.Eqv', 'FR.N.Eqv', 'Credits', 'Remarks', '#2'];
 
         $getUnit = RatingSheet::where('table_id', 'unit')->where('room_id', $decyptedRoomID)->first();
-        $getSem = RatingSheet::where('table_id', 'SEM')->where('room_id', $decyptedRoomID)->first();
+        $getSem = RatingSheet::where('table_id', 'semester')->where('room_id', $decyptedRoomID)->first();
 
         $getMidGr = RatingSheet::where('table_id', 'MidGr.')->where('room_id', $decyptedRoomID)->first();
         $getFinGr = RatingSheet::where('table_id', 'T.F.Gr.')->where('room_id', $decyptedRoomID)->first();
@@ -202,7 +202,7 @@ class UsefulController extends Controller
                 'teacher_id'   => $skill->teacher_id,
                 'room_id'      => $skill->room_id,
                 'student_name' => $skill->student_name,
-                'column'       => $currentCol,
+                'column'       => $currentCol,  
                 'row'          => $skill->row,
                 'content'      => $skill->content,
                 'merged'       => $skill->merged,
@@ -279,7 +279,23 @@ class UsefulController extends Controller
     public function getNumberGrade(Request $request) {
 
         $grades = $request->input('grades');
-        TableRatings::insert($grades);
+
+        foreach ($grades as $grade) {
+            TableRatings::updateOrInsert(
+                [
+                    'teacher_id' => $grade['teacher_id'],
+                    'room_id' => $grade['room_id'],
+                    'student_name' => trim($grade['student_name']), // Trim to avoid whitespace mismatches
+                    'column' => trim($grade['column']),
+                    'row' => $grade['row'],
+                ],
+                [
+                    'content' => $grade['content'], // Only update content
+                ]
+            );
+        }
+        
+        
 
         return response()->json(['message' => 'Formula applied successfully']);
     

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\RatingExport;
 use App\Models\Rooms;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,8 +18,11 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Font;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 
 class OtherController extends Controller
 {
@@ -485,6 +489,7 @@ class OtherController extends Controller
     public function exportToExcel(Request $request, $id)
     {
         $tableData = $request->input('tableData');
+        $tableRating = $request->input('tableRating');
         $getSubjectCode = Rooms::where('id', $id)->first();
     
         if (!$tableData || !is_array($tableData)) {
@@ -494,13 +499,18 @@ class OtherController extends Controller
         // Create a new Spreadsheet
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
+        $sheet->getStyle($sheet->calculateWorksheetDimension())->getFont()->setName('Arial');
+
+
+        $classSheetTitle = substr(pathinfo($getSubjectCode->section, PATHINFO_FILENAME), 0, 31);
+        $sheet->setTitle($classSheetTitle);
     
         foreach ($tableData as $rowIndex => $row) {
             foreach ($row as $colIndex => $cellData) {
                 // Calculate the cell's Excel address based on its column and row
                 $excelColumn = $cellData['cellColumn'] ?? \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex + 1);
                 $excelRow = $cellData['cellRow'] ?? ($rowIndex + 1);
-                $cellAddress = $excelColumn . $excelRow;
+                $cellAddress = trim($excelColumn) . trim($excelRow);
     
                 if (is_array($cellData)) {
                     // Retrieve cell data
@@ -513,9 +523,14 @@ class OtherController extends Controller
                     $underline = $cellData['underline'] ?? false;
                     $align = $cellData['align'] ?? 'left';
     
+
+                    // $sheet->setCellValue('F3', ' UPDATED VALUE');
+                    
                     // Set value or formula
                     if ($formula) {
                         $sheet->setCellValue($cellAddress, $formula);
+
+                        $sheet->getStyle($cellAddress)->getNumberFormat()->setFormatCode('#,##0');
                     } else {
                         $sheet->setCellValue($cellAddress, $value);
                     }
@@ -559,25 +574,206 @@ class OtherController extends Controller
                         $mergeRange = $cellAddress . ':' . $endColumnLetter . $endRowNumber;
                         $sheet->mergeCells($mergeRange);
                     }
-                } else {
-                    // Set simple cell value
-                    $sheet->setCellValue($cellAddress, $cellData);
+                } 
+            }
+        }
+
+        $sheet->getStyle('A1:' . $sheet->getHighestColumn() . $sheet->getHighestRow())
+        ->getFont()
+        ->setName('Arial');
+
+        foreach ($sheet->getColumnIterator() as $column) {
+            $columnLetter = $column->getColumnIndex();
+            $hasContent = false;
+        
+            // Check if the column has content
+            foreach ($sheet->getRowIterator() as $row) {
+                $cell = $sheet->getCell($columnLetter . $row->getRowIndex());
+                if ($cell->getValue() !== null && $cell->getValue() !== '') {
+                    $hasContent = true;
+                    break;
                 }
+            }
+        
+            // Set narrow width if there is content
+            if ($hasContent) {
+                $sheet->getColumnDimension($columnLetter)->setWidth(5);
+            }
+        }
+        
+        
+        
+
+
+
+    
+    // **Create Ratings Sheet*
+    $ratingSheet = $spreadsheet->createSheet();
+    RatingExport::ratingExport($ratingSheet, $getSubjectCode);
+
+
+    $columnLabels = ['#1', 'Name', 'M.C', 'M.P', 'M.A', 'MidGr.', 'Mid.N.Eqv.', 'F.C', 'F.P', 'F.A', 'T.F.Gr.', 'F.N.Eqv.', 'Mid', 'Fin', 'FR.Eqv', 'FR.N.Eqv', 'Credits', 'Remarks', '#2'];
+    $decimalColumns = ['Mid.N.Eqv.', 'F.N.Eqv.', 'FR.N.Eqv']; 
+
+    $excelColumns = [];
+    foreach ($columnLabels as $index => $label) {
+        $excelColumns[$label] = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($index + 1);
+    }
+
+    $maxRows = 30;
+
+    $firstRow = PHP_INT_MAX;
+    $lastRow = 0;
+    $firstColumnIndex = PHP_INT_MAX;
+    $lastColumnIndex = 0;
+
+    foreach ($tableRating as $rowIndex => $row) {
+        if ($rowIndex >= $maxRows) break; 
+        foreach ($row as $colIndex => $cellData) {
+            // Skip if cellData is not an array
+            if (!is_array($cellData)) continue;
+    
+            // Ensure 'cellColumn' exists in the predefined column map
+            $columnLabel = $cellData['cellColumn'] ?? null;
+            if (!isset($excelColumns[$columnLabel])) continue;
+    
+            // Get the corresponding Excel column letter
+            $excelColumn = $excelColumns[$columnLabel];
+            $excelRow = $rowIndex + 11; // Adjusting base row index
+            $cellAddress = $excelColumn . $excelRow;
+
+            // Track the first and last row/column indices
+            $firstRow = min($firstRow, $excelRow);
+            $lastRow = max($lastRow, $excelRow);
+
+            $columnIndex = Coordinate::columnIndexFromString($excelColumn);
+            $firstColumnIndex = min($firstColumnIndex, $columnIndex);
+            $lastColumnIndex = max($lastColumnIndex, $columnIndex);
+    
+            // Retrieve cell data
+            $value = $cellData['value'] ?? '';
+            $formula = $cellData['formula'] ?? null;
+            $rowspan = $cellData['rowspan'] ?? 1;
+            $colspan = $cellData['colspan'] ?? 1;
+            $bold = $cellData['bold'] ?? false;
+            $italic = $cellData['italic'] ?? false;
+            $underline = $cellData['underline'] ?? false;
+            $align = $cellData['align'] ?? 'left';
+    
+            // Apply decimal formatting for specific columns
+            if (in_array($columnLabel, $decimalColumns) && is_numeric($value)) {
+                $value = number_format((float) $value, 2, '.', '');
+                $ratingSheet->getStyle($cellAddress)->getNumberFormat()->setFormatCode('#,##0.00');
+            }
+    
+            // Set value or formula
+            if ($formula) {
+                $ratingSheet->setCellValue($cellAddress, $formula);
+            } else {
+                $ratingSheet->setCellValue($cellAddress, $value);
+            }
+    
+            // Apply text formatting
+            $styleArray = [];
+            if ($bold) $styleArray['font']['bold'] = true;
+            if ($italic) $styleArray['font']['italic'] = true;
+            if ($underline) $styleArray['font']['underline'] = Font::UNDERLINE_SINGLE;
+    
+            // Apply text alignment
+            $alignmentOptions = [
+                'center' => Alignment::HORIZONTAL_CENTER,
+                'right' => Alignment::HORIZONTAL_RIGHT,
+                'left' => Alignment::HORIZONTAL_LEFT
+            ];
+            $styleArray['alignment']['horizontal'] = $alignmentOptions[$align] ?? Alignment::HORIZONTAL_LEFT;
+    
+            $styleArray['font']['size'] = ($excelColumn === 'B') ? 11 : 10;
+
+
+            // Apply styles
+            if (!empty($styleArray)) {
+                $ratingSheet->getStyle($cellAddress)->applyFromArray($styleArray);
+            }
+    
+            // Handle rowspan and colspan (merge cells)
+            if ($rowspan > 1 || $colspan > 1) {
+                $endColumn = Coordinate::stringFromColumnIndex(Coordinate::columnIndexFromString($excelColumn) + $colspan - 1);
+                $endRow = $excelRow + $rowspan - 1;
+                $mergeRange = "$excelColumn$excelRow:$endColumn$endRow";
+                $ratingSheet->mergeCells($mergeRange);
+            }
+        }
+    }
+
+    if ($firstRow <= $lastRow && $firstColumnIndex <= $lastColumnIndex) {
+        $firstColumnLetter = Coordinate::stringFromColumnIndex($firstColumnIndex);
+        $lastColumnLetter = Coordinate::stringFromColumnIndex($lastColumnIndex);
+        $borderRange = "$firstColumnLetter$firstRow:$lastColumnLetter$lastRow";
+    
+        // Apply border
+        $ratingSheet->getStyle($borderRange)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+    }
+
+    foreach ($ratingSheet->getColumnIterator() as $column) {
+        $columnLetter = $column->getColumnIndex();
+        $hasContent = false;
+    
+        // Check if the column has content
+        foreach ($ratingSheet->getRowIterator() as $row) {
+            $cell = $ratingSheet->getCell($columnLetter . $row->getRowIndex());
+            if ($cell->getValue() !== null && $cell->getValue() !== '') {
+                $hasContent = true;
+                break;
             }
         }
     
-        // Specify the writer as Xlsx
-        $writer = new Xlsx($spreadsheet);
+        // Set column B to a width of 10
+        if ($columnLetter === 'B') {
+            $ratingSheet->getColumnDimension('B')->setWidth(25);
+        } 
+        elseif ($columnLetter === 'A') {
+            $ratingSheet->getColumnDimension('A')->setWidth(3);
+        }
+        elseif ($columnLetter === 'S') {
+            $ratingSheet->getColumnDimension('S')->setWidth(3);
+        }
+        elseif ($columnLetter === 'R') {
+            $ratingSheet->getColumnDimension('R')->setWidth(8);
+        }
+        elseif ($hasContent) {
+            $ratingSheet->getColumnDimension($columnLetter)->setWidth(4.2);
+        }
+    }
+
+    // Footer
+    RatingExport::ratingFooter($ratingSheet);
     
-        // Save the file temporarily
-        $filename = $getSubjectCode->class_name. '_' . now()->format('Y-m-d') . '.xlsx';
-        $filePath = storage_path('app/public/' . $filename);
-        $writer->save($filePath);
     
-        return response()->json([
-            'filename' => $filename,
-            'download_url' => route('download.file', ['filename' => $filename])
-        ]);
+    
+    
+
+
+
+    // Applying Borders
+    $borderRange = 'A9:S10';
+    $ratingSheet->getStyle($borderRange)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+
+    // **Set active sheet back to Class Records**
+    $ratingSheet->getStyle('A1:' . $ratingSheet->getHighestColumn() . $ratingSheet->getHighestRow())
+    ->getFont()
+    ->setName('Arial');
+    $spreadsheet->setActiveSheetIndex(0);
+
+    // **Save File**
+    $filename = $getSubjectCode->class_name . '_' . now()->format('Y-m-d') . '.xlsx';
+    $filePath = storage_path('app/public/' . $filename);
+    $writer = new Xlsx($spreadsheet);
+    $writer->save($filePath);
+
+    return response()->json([
+        'filename' => $filename,
+        'download_url' => route('download.file', ['filename' => $filename])
+    ]);
     }
     
     
