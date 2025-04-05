@@ -40,6 +40,16 @@
 
         @endphp
 
+        <div id="success-alert"
+            class="fixed inset-0 grid place-content-center z-50 opacity-0 transition-all duration-500 ease-in-out pointer-events-none">
+            <div class=" flex justify-center transition-all duration-500 ease-in-out pointer-events-auto">
+                <h1 class="text-red-500 px-4 py-2 rounded-sm text-sm text-center bg-bgcolor shadow-md ">
+                    This feature is not available yet. Stay tuned!
+                </h1>
+            </div>
+        </div>
+
+
         <div class=" w-screen flex flex-col row-start-1 row-span-2 z-40">
 
 
@@ -1211,7 +1221,7 @@
                 
                             <thead class="t-head sticky top-0 z-10">
                                 <tr>
-                                    <th class="border-none bg-sgcolorSub  pt-2"></th>
+                                    <th class="border-b border-sgcolor bg-sgcolorSub  pt-2"></th>
                                     @for ($col = 0; $col < count($sequences); $col++)
                                     @php
                                         $columnValue = $sequences[$col];
@@ -1332,7 +1342,7 @@
                                    
                                     @php
                                         $studentsPerTable = 30;
-                                        $totalTables = ceil($numberOfStudents / $studentsPerTable);
+                                        $totalTables = ($numberOfStudents > 0) ? ceil($numberOfStudents / $studentsPerTable) : 1;
                                     @endphp
 
                                     @for ($tableIndex = 0; $tableIndex < $totalTables; $tableIndex++)
@@ -1698,10 +1708,18 @@
                                                 <label for="M.A">A :</label>
                                                 <input type="text" id="M.A" name="M.A" class="w-8 h-5 outline-none bg-gray-100 border-b-2 border-gray-600 focus:border-blue-500 text-center">
                                             </div>
-                                            <div class="flex items-center gap-1">
-                                                <label for="MidGr.">Mid Grade :</label>
-                                                <input type="text" id="MidGr." name="MidGr." class="w-8 h-5 outline-none bg-gray-100 border-b-2 border-gray-600 focus:border-blue-500 text-center"  value="{{$getMidGr->column ?? ''}}">
-                                            </div>
+                                            <div class="relative group z-50" onmouseenter="unhideTooltip(this)" onmouseleave="hideTooltip(this)" onclick="hideTooltip(this)">
+                                                <div class="flex items-center gap-1">
+                                                    <label for="MidGr.">Mid Grade :</label>
+                                                    <input type="text" id="MidGr." name="MidGr." class="w-8 h-5 outline-none bg-gray-100 border-b-2 border-gray-600 focus:border-blue-500 text-center"  value="{{$getMidGr->column ?? ''}}">
+                                                </div>
+                                                <div class="tooltip opacity-0 pointer-events-none absolute top-full left-0 transform -translate-x-0 -mt-20  shadow-md flex-col items-center transition-opacity duration-300">
+                                                    <div class="relative bg-bgcolor text-sm border border-cursor whitespace-nowrap py-1 px-2">
+                                                        <h1 class="text-[0.8rem] font-bold">Midterm Grade Column</h1>
+                                                        <p class="text-[0.8rem]">Specify the midterm grade column.</p>                                                        
+                                                    </div>  
+                                                </div>
+                                            </div> 
                                         </div>
                                     </div>
 
@@ -1722,10 +1740,18 @@
                                                 <label for="F.A">A :</label>
                                                 <input type="text" id="F.A" name="F.A" class="w-8 h-5 outline-none bg-gray-100 border-b-2 border-gray-600 focus:border-blue-500 text-center">
                                             </div>
-                                            <div class="flex items-center gap-1">
-                                                <label for="T.F.Gr.">Final Grade :</label>
-                                                <input type="text" id="T.F.Gr." name="T.F.Gr." class="w-8 h-5 outline-none bg-gray-100 border-b-2 border-gray-600 focus:border-blue-500 text-center"  value="{{$getFinGr->column ?? ''}}">
-                                            </div>
+                                            <div class="relative group z-50" onmouseenter="unhideTooltip(this)" onmouseleave="hideTooltip(this)" onclick="hideTooltip(this)">
+                                                <div class="flex items-center gap-1">
+                                                    <label for="T.F.Gr.">Final Grade :</label>
+                                                    <input type="text" id="T.F.Gr." name="T.F.Gr." class="w-8 h-5 outline-none bg-gray-100 border-b-2 border-gray-600 focus:border-blue-500 text-center"  value="{{$getFinGr->column ?? ''}}">
+                                                </div>
+                                                <div class="tooltip opacity-0 pointer-events-none absolute top-full -left-24 transform -translate-x-0 -mt-20  shadow-md flex-col items-center transition-opacity duration-300">
+                                                    <div class="relative bg-bgcolor text-sm border border-cursor whitespace-nowrap py-1 px-2">
+                                                        <h1 class="text-[0.8rem] font-bold">Finalterm Grade Column</h1>
+                                                        <p class="text-[0.8rem]">Specify the finalterm grade column.</p>                                                        
+                                                    </div>  
+                                                </div>
+                                            </div> 
                                         </div>
                                     </div>
 

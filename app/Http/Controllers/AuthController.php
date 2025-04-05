@@ -17,8 +17,17 @@ class AuthController extends Controller
         $fields = $request->validate([
             'username' => ['required', 'max:255'],
             'email' => ['required', 'max:255', 'email', 'unique:users'],
-            'password' => ['required', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*3?&])[A-Za-z\d@#!%#?&]{8,}$/']
+            'password' => [
+                'required',
+                'min:8',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*#?&])[A-Za-z\d@#!%#?&]{8,}$/'
+            ]
+        ], [
+            'password.required' => 'Password is required.',
+            'password.min' => 'Password must be at least 8 characters.',
+            'password.regex' => 'Password requires A-Z, a-z & special char.',
         ]);
+        
 
         // Register
         $user = User::create($fields);

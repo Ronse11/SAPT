@@ -139,28 +139,80 @@
             {{-- Body --}}
             <section id="hero"
                 class="hero grid grid-cols-8 grid-rows-8 tablet:col-start-4 tablet:col-span-16 tablet:row-start-1 tablet:row-span-8 cp:col-start-2 cp:col-span-10 small-bp">
-                {{-- <div class=" row-start-1 row-span-1 col-start-1 col-span-8 flex items-center tablet:items-start">
-                <h1 class=" text-4xl text-mainText font-semibold"> {{ auth()->user()->username }} </h1>
-            </div> --}}
+
+                <div id="show-bar" class="opacity-0 pointer-events-none z-50 absolute md:hidden top-0 left-0 bottom-0 w-0 transition-all duration-500 ease-in-out">            
+                    <div class="w-full h-full shadow-xl pr-7 pl-4 py-4 flex flex-col border-l border-sgline gap-6 bg-mainBg">
+                        <nav class=" flex flex-col w-full h-full bg-gray-100 absolute top-0 left-0 border-r border-sgline">
+                            <div class="flex h-[5.5rem] items-center justify-between pl-8 border-b border-sgline">
+                                <div class="flex items-center">
+                                    <img class=" w-8 h-8 mb-1 mr-1" src="{{ Vite::asset('resources/images/saptlogo.svg') }}" alt="Logo">
+                                    <h1 class=" text-3xl mt-2 font-normal text-black select-none tracking-widest cp:text-3xl">APT</h1>
+                                </div>
+                                <div class="relative group">
+                                    <button id="close-bar" class=" -mb-1 text-4xl pt-1 cp:text-3xl"><i class='bx bx-menu text-mainText hover:text-subtText mr-6'></i></button>
+                                    <div class="absolute top-full -left-[50%] transform -translate-x-1/2 mt-3 hidden group-hover:flex flex-col items-center mb-3">
+                                        <div class="relative w-[8rem] bg-mainText bg-opacity-85 text-white text-sm rounded-lg py-2 px-4">
+                                            <h1>Close sidebar</h1>
+                                            <div class="absolute -top-1 left-[82%] transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-700 bg-opacity-75"></div>
+                                        </div>  
+                                    </div>
+                                </div>  
+                            </div>
+                            <div class=" py-4 flex flex-col items-center px-4">
+                                <a href="{{ route('student-home') }}"
+                                    class="w-full nav-link text-md  text-mainText hover:bg-navHover hover:text-mainText rounded-md pl-4 py-3">
+                                    <i class="bx bxs-calendar pr-4 text-xl"></i>
+                                <span class="text-base ">Home</span>
+                                </a>
+                                <a href="{{ route('student-calendar') }}"
+                                    class="w-full nav-link text-md  text-mainText hover:bg-navHover hover:text-mainText rounded-md pl-4 py-3">
+                                    <i class="bx bxs-cog pr-4 text-xl"></i>
+                                    <span class="text-base ">Calendar</span>
+                                </a>
+                                <a href="{{ route('student-setting') }}"
+                                    class=" w-full nav-link text-mainText bg-navHover hover:bg-navHover hover:text-mainText rounded-md pl-4 py-3">
+                                    <i class="bx bxs-home pr-4 text-xl "></i>
+                                    <span class=" text-base ">Settings</span>
+                                </a>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+
                 <div class="row-start-1 row-span-8 col-start-1 col-span-8 overflow-y-auto overflow-scrolls z-10 bg-bgcolor">
-                    <div
-                        class="w-full flex flex-col justify-center items-center h-[5.5rem] pr-8 pl-16 tablet:items-start sticky top-0 left-0 z-40 cp:gap-8 bg-bgcolor border-b border-sgline">
+                    <div class="w-full flex flex-col justify-center items-center h-[5.5rem] cp:pr-8 cp:pl-16 p-4 tablet:items-start sticky top-0 left-0 z-40 cp:gap-8 bg-bgcolor border-b border-sgline">
                         {{-- Header --}}
-                        <header class=" w-full row-start-1 row-span-1 flex justify-between items-center shadow tablet:shadow-none z-40">
+                        <header class=" w-full row-start-1 row-span-1 flex justify-between items-center tablet:shadow-none z-40">
+                            <div id="menu-bar" class="burger-menu hidden">
+                            </div>
+                            <div id="open-bar" class="open-bar flex gap-3 items-center">
+                                <i class='bx bx-menu text-4xl text-mainText hover:text-subtText'></i>
+                                {{-- <img class=" w-9 h-9 mb-1 mr-1" src="{{ Vite::asset('resources/images/saptlogo.svg') }}" alt="Logo"> --}}
+                            </div>
                             <div class="w-search">
-                                <div class="show hidden justify-self-start">
-                                    <div class="flex gap-4 items-center pr-8">
-                                        <button id="menu-assist" class=" text-4xl pt-1 cp:text-3xl"><i
-                                                class='bx bx-menu text-mainText hover:text-subtText'></i></button>
-                                        <h1 class=" text-3xl font-medium select-none tracking-widest text-mainText cp:text-2xl">
-                                            SAPT
-                                        </h1>
+                                <div class="show hidden justify-self-start w-full">
+                                    <div class="flex w-full items-center justify-between">
+                                        <div class="flex-1 flex items-center justify-between">
+                                            <div class=" flex items-center">
+                                                <img class=" w-8 h-8 mb-3 mr-1" src="{{ Vite::asset('resources/images/saptlogo.svg') }}" alt="Logo">
+                                                <h1 class=" text-xl font-normal text-black select-none tracking-widest cp:text-3xl">APT</h1>
+                                            </div>
+                                            <div class="relative group">
+                                                <button id="menu-assist" class="  -mb-1 text-4xl pt-1 cp:text-3xl"><i class='bx bx-menu text-mainText hover:text-subtText'></i></button>
+                                                <div class="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 hidden group-hover:flex flex-col items-center mb-3">
+                                                    <div class="relative w-[8rem] bg-mainText bg-opacity-85 text-white text-sm rounded-lg py-2 px-4">
+                                                        <h1>Open sidebar</h1>
+                                                        <div class="absolute -top-1 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-700 bg-opacity-75"></div>
+                                                    </div>  
+                                                </div>
+                                            </div>  
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             {{-- SEARCH SECTION HERE! --}}
-                            <div class=" h-full w-full row-start-1 row-span-1 flex items-center col-start-4 pr-16 z-40">
-                                <div class=" flex items-center h-12 w-full rounded-full relative ">
+                            <div class=" h-full w-full row-start-1 row-span-1 cp:flex hidden items-center col-start-4 pr-16 z-40">
+                                <div class=" cp:flex hidden items-center h-12 w-full rounded-full relative ">
                                     <i class="bx bx-search absolute font-semibold text-subtText text-2xl ml-5"></i>
                                     <label for="search"></label>
                                     <input type="text" name="search" id="search"
@@ -169,21 +221,17 @@
                             </div>
                             <div class="flex gap-4 relative items-center">
                                 <a href=" {{ route('folders.index') }} "
-                                    class="btn-plus grid place-items-center rounded-full w-11 h-11 text-mainText cp:text-2xl cursor-pointer hover:bg-subtText">
+                                    class="btn-plus grid place-items-center rounded-full w-11 h-11 text-mainText cp:text-2xl cursor-pointer hover:bg-gray-100 hover:border-2 hover:border-sgline">
                                     <i class='bx bx-folder-plus text-3xl font-weight-bolder'></i>
                                 </a>
-                                <a href=" {{ route('create') }} "
-                                    class="btn-plus grid place-items-center rounded-full w-11 h-11 text-mainText cp:text-2xl cursor-pointer hover:bg-subtText">
+                                <a href=" {{ route('track') }} "
+                                    class="btn-plus grid place-items-center rounded-full w-11 h-11 text-mainText cp:text-2xl cursor-pointer hover:bg-gray-100 hover:border-2 hover:border-sgline">
                                     <i class='bx bx-plus text-3xl font-weight-bolder'></i>
                                 </a>
-                                {{-- <button class="btn-pluss grid place-items-center rounded-full w-11 h-11 text-mainText cp:text-2xl cursor-pointer hover:bg-subtText">
-                                <i class='bx bx-plus text-3xl font-weight-bolder'></i>
-                            </button> --}}
                                 <button class="btn-user text-3xl w-9 h-9 rounded-full cp:text-2xl bg-mainText">
                                     <h1 class=" text-xl text-bgcolor">{{ substr(auth()->user()->username, 0, 1) }}</h1>
                                 </button>
-                                <div
-                                    class="log-user bg-bgcolor hidden absolute left-0 ml-[4.7rem] mt-[7rem] rounded-md shadow-md z-10 border border-sgline">
+                                <div class="log-user bg-bgcolor hidden absolute left-0 ml-[4.7rem] mt-[7rem] rounded-md shadow-md z-10 border border-sgline">
                                     <div class="flex flex-col">
                                         <a href="{{ route('logout') }}"
                                             class=" text-subtText hover:bg-hoverColor hover:text-mainText px-4 py-2 text-start">Logout</a>
@@ -197,8 +245,8 @@
                     </div>
                     <div class="flex">
                         <div class="flex-1 flex flex-col relative">
-                            <div id="class-list" class="content-box flex flex-col items-center h-auto p-16 gap-8 bg-slate-400">
-                                <div class=" w-[70%] p-6 border border-sgline rounded-md">
+                            <div id="class-list" class="content-box flex flex-col items-center h-auto p-4 md:p-16 gap-8">
+                                <div class=" w-full p-6 border border-sgline rounded-md">
                                     <h1 class=" text-4xl mb-5">Profile</h1>
                                     <h1 class=" text-sm font-medium text-mainText mb-2">Profile Picture</h1>
                                     <div class=" w-full flex items-center gap-2 mb-5">
@@ -212,14 +260,12 @@
                                     <h1 class="text-sm font-medium text-mainText mb-1">Change name</h1>
                                     <h1 class="text-sm font-normal text-mainText">To change your name, go to your <a href="" class="underline text-blue-500">account settings.</a></h1>
                                 </div>
-                                <div class=" w-[70%] p-6 border border-sgline rounded-md">
+                                <div class=" w-full p-6 border border-sgline rounded-md">
                                     <h1 class=" text-4xl mb-5">Notifications</h1>
                                     <h1 class="text-2xl font-normal text-mainText mb-1">SMS</h1>
                                     <h1 class="text-sm font-normal text-mainText mb-5">These settings apply to the notifications you get by sms. <a href="" class=" underline text-blue-500">Learn more</a></h1>
-                                    <h1 class="text-2xl font-normal text-mainText mb-1">Email</h1>
-                                    <h1 class="text-sm font-normal text-mainText mb-5">These settings apply to the notifications you get by email. <a href="" class=" underline text-blue-500">Learn more</a></h1>
                                 </div>
-                                <div class=" w-[70%] p-6 border border-sgline rounded-md">
+                                <div class=" w-full p-6 border border-sgline rounded-md">
                                     <h1 class=" text-4xl mb-5">Role</h1>
                                     <h1 class="text-sm font-normal text-mainText mb-10">These settings allow you to change your role. <a href="" class=" underline text-blue-500">Learn more</a></h1>
                                     <h1 class="text-sm font-medium text-mainText mb-1">Teacher</h1>
@@ -232,6 +278,33 @@
         @endauth
 
     </section>
+
+    <script>
+        const menuBar = document.querySelector('.open-bar');
+        const closeBar = document.getElementById('close-bar');
+        const showBar = document.getElementById('show-bar');
+
+        menuBar.addEventListener('click', () => {
+            showBar.classList.remove('opacity-0', 'pointer-events-none');
+            showBar.classList.remove('w-0');
+            showBar.classList.add('w-[80%]');
+        });
+
+        function closeSideBar() {
+            showBar.classList.remove('w-[80%]');
+            showBar.classList.add('w-0');
+
+            showBar.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        closeBar.addEventListener('click', closeSideBar);
+
+        document.addEventListener('click', (event) => {
+            if (!showBar.contains(event.target) && !menuBar.contains(event.target)) {
+                closeSideBar();
+            }
+        });
+    </script>
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>

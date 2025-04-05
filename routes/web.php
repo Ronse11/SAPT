@@ -73,7 +73,7 @@ Route::middleware(['auth', 'no-cache'])->group(function() {
     // // Route::get('/student-room', [RoomStudentController::class, 'showUp']);
 
     // View For Creating and Tracking Data
-    Route::view('/home/create', 'choices.create')->name('create');
+    Route::view('/home/create', 'choices.create')->name('createHome');
     Route::view('/home/track', 'choices.track')->name('track');
     Route::view('/home/track/phone-number', 'choices.phoneNumber')->name('phoneNumber');
 

@@ -238,28 +238,28 @@
                                     <h1>No Data yet!</h1>
                                 @else
                                     @foreach ($data->roomsWithUrls as $room)
-                                        <div class="class-item h-[14rem] flex rounded-md shadow-md relative hover:-translate-y-1 transition hover:shadow-lg">
+                                        <div class="class-item h-[14rem] flex rounded-md shadow-md relative hover:-translate-y-1 transition hover:shadow-lg border border-mainText">
                                             @php
                                                 $className = strlen($room->class_name) > 15 ? substr($room->class_name, 0, 15) . '...' : $room->class_name;
                                                 $subject = strlen($room->subject) > 28 ? substr($room->subject, 0, 28) . '...' : $room->subject;
                                             @endphp
-                                            <div class=" flex-1 h-full border-2 border-mainText rounded-l-md overflow-hidden">
-                                                <div class=" w-full h-full flex flex-col justify-between bg-gray-100 file-vertical shadow-sm relative overflow-visible p-5">
+                                            <div class=" flex-1 h-full rounded-l-md overflow-hidden">
+                                                <div class=" w-full h-full flex flex-col justify-between bg-mainBg file-vertical shadow-sm relative overflow-visible p-5">
                                                     <div class=" w-full">
                                                         <div class=" w-full mb-1">
-                                                            <h3 class=" text-lg text-mainText">{{ $room->section }}</h3>
+                                                            <h3 class=" text-lg text-mainText opacity-80">{{ $room->section }}</h3>
                                                         </div>
                                                         <div class=" w-full">
                                                             <h3 class=" text-4xl text-mainText">{{ $className }}</h3>
                                                         </div>
                                                     </div>
                                                     <div class=" w-full">
-                                                        <h3 class=" text-lg text-mainText">{{ $subject }}</h3>
+                                                        <h3 class=" text-lg text-mainText opacity-80">{{ $subject }}</h3>
                                                     </div>
                                                     {{-- <div class="file-corner-fold bg-gray-300"></div> --}}
                                                 </div>
                                             </div>
-                                            <div class=" w-[15%] h-full flex flex-col justify-between bg-bgcolor rounded-r-md border-y-2 border-r-2 border-mainText py-5">
+                                            <div class=" w-[15%] h-full flex flex-col justify-between bg-bgcolor rounded-r-md border-l border-mainText py-5">
                                                 <div class=" w-full grid items-center">
                                                     <div class="relative group grid place-content-center">
                                                         <button class="three-dot">

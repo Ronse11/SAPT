@@ -54,7 +54,7 @@
                     <h1 class=" text-xl font-normal text-black select-none tracking-widest cp:text-3xl">APT</h1>
                 </div>
                 <div class="relative group">
-                    <button id="menu-bar" class=" -mb-1 text-4xl pt-1 cp:text-3xl"><i class='bx bx-menu text-mainText hover:text-subtText mr-6'></i></button>
+                    <button id="open-bar" class=" -mb-1 text-4xl pt-1 cp:text-3xl"><i class='bx bx-menu text-mainText hover:text-subtText mr-6'></i></button>
                     <div class="absolute top-full -left-[50%] transform -translate-x-1/2 mt-3 hidden group-hover:flex flex-col items-center mb-3">
                         <div class="relative w-[8rem] bg-mainText bg-opacity-85 text-white text-sm rounded-lg py-2 px-4">
                             <h1>Close sidebar</h1>
@@ -141,18 +141,59 @@
         </nav>
         {{-- END OF NAVIGATION --}}
 
+
         @auth
             {{-- Body --}}
             <section id="hero" class="hero grid grid-cols-8 grid-rows-8 tablet:col-start-4 tablet:col-span-16 tablet:row-start-1 tablet:row-span-8 cp:col-start-2 cp:col-span-10 small-bp">
+
+                <div id="show-bar" class="opacity-0 pointer-events-none z-50 absolute md:hidden top-0 left-0 bottom-0 w-0 transition-all duration-500 ease-in-out">            
+                    <div class="w-full h-full shadow-xl pr-7 pl-4 py-4 flex flex-col border-l border-sgline gap-6 bg-mainBg">
+                        <nav class=" flex flex-col w-full h-full bg-gray-100 absolute top-0 left-0 border-r border-sgline">
+                            <div class="flex h-[5.5rem] items-center justify-between pl-8 border-b border-sgline">
+                                <div class="flex items-center">
+                                    <img class=" w-8 h-8 mb-1 mr-1" src="{{ Vite::asset('resources/images/saptlogo.svg') }}" alt="Logo">
+                                    <h1 class=" text-3xl mt-2 font-normal text-black select-none tracking-widest cp:text-3xl">APT</h1>
+                                </div>
+                                <div class="relative group">
+                                    <button id="close-bar" class=" -mb-1 text-4xl pt-1 cp:text-3xl"><i class='bx bx-menu text-mainText hover:text-subtText mr-6'></i></button>
+                                    <div class="absolute top-full -left-[50%] transform -translate-x-1/2 mt-3 hidden group-hover:flex flex-col items-center mb-3">
+                                        <div class="relative w-[8rem] bg-mainText bg-opacity-85 text-white text-sm rounded-lg py-2 px-4">
+                                            <h1>Close sidebar</h1>
+                                            <div class="absolute -top-1 left-[82%] transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-700 bg-opacity-75"></div>
+                                        </div>  
+                                    </div>
+                                </div>  
+                            </div>
+                            <div class=" py-4 flex flex-col items-center px-4">
+                                <a href="{{ route('student-home') }}"
+                                    class=" w-full nav-link text-mainText bg-navHover hover:bg-navHover hover:text-mainText rounded-md pl-4 py-3">
+                                    <i class="bx bxs-home pr-4 text-xl "></i>
+                                    <span class=" text-base ">Home</span>
+                                </a>
+                                <a href="{{ route('student-calendar') }}"
+                                    class="w-full nav-link text-md  text-mainText hover:bg-navHover hover:text-mainText rounded-md pl-4 py-3">
+                                    <i class="bx bxs-calendar pr-4 text-xl"></i>
+                                    <span class="text-base ">Calendar</span>
+                                </a>
+                                <a href="{{ route('student-setting') }}"
+                                class="w-full nav-link text-md  text-mainText hover:bg-navHover hover:text-mainText rounded-md pl-4 py-3">
+                                <i class="bx bxs-cog pr-4 text-xl"></i>
+                                <span class="text-base ">Settings</span>
+                            </a>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+
                 <div class="row-start-1 row-span-8 col-start-1 col-span-8 overflow-y-auto overflow-scrolls z-10 bg-bgcolor">
                     <div class="header-holder w-full flex flex-col justify-center items-center h-[5.5rem] cp:pr-8 cp:pl-16 p-4 tablet:items-start sticky top-0 left-0 z-40 cp:gap-8 bg-bgcolor border-b border-sgline">
                         {{-- Header --}}
                         <header class=" w-full row-start-1 row-span-1 flex justify-between items-center tablet:shadow-none z-40">
-                            <div class="burger-menu hidden">
-                                <div class="flex gap-3 items-center">
-                                    <i class='bx bx-menu text-3xl text-mainText hover:text-subtText'></i>
-                                    <img class=" w-10 h-10 mb-1 mr-1" src="{{ Vite::asset('resources/images/saptlogo.svg') }}" alt="Logo">
-                                </div>
+                            <div id="menu-bar" class="burger-menu hidden">
+                            </div>
+                            <div id="open-bar" class="open-bar flex gap-3 items-center">
+                                <i class='bx bx-menu text-4xl text-mainText hover:text-subtText'></i>
+                                {{-- <img class=" w-9 h-9 mb-1 mr-1" src="{{ Vite::asset('resources/images/saptlogo.svg') }}" alt="Logo"> --}}
                             </div>
                             <div class="w-search">
                                 <div class="show hidden justify-self-start w-full">
@@ -219,28 +260,28 @@
                                         <h1>No Data yet!</h1>
                                     @else
                                         @foreach ($roomsWithUrls as $room)
-                                            <div class="class-item h-[10rem] cp:h-[14rem] flex rounded-md shadow-md relative hover:-translate-y-1 transition hover:shadow-lg">
+                                            <div class="class-item h-[10rem] cp:h-[14rem] flex rounded-md shadow-md relative hover:-translate-y-1 transition hover:shadow-lg  border border-mainText">
                                                 @php
                                                     $className = strlen($room->class_name) > 15 ? substr($room->class_name, 0, 15) . '...' : $room->class_name;
                                                     $subject = strlen($room->subject) > 28 ? substr($room->subject, 0, 28) . '...' : $room->subject;
                                                 @endphp
-                                                <div class=" flex-1 h-full border-2 border-mainText rounded-l-md">
+                                                <div class=" flex-1 h-full rounded-l-md overflow-hidden">
                                                     <div class=" w-full h-full flex flex-col justify-between bg-gray-100 file-vertical shadow-sm relative overflow-visible rounded-l-md p-3 cp:p-5">
                                                         <div class=" w-full">
                                                             <div class=" w-full mb-1">
-                                                                <h3 class=" cp:text-lg text-base text-mainText">{{ $room->section }}</h3>
+                                                                <h3 class=" cp:text-lg text-base text-mainText opacity-80">{{ $room->section }}</h3>
                                                             </div>
                                                             <div class=" w-full">
                                                                 <h3 class=" cp:text-4xl text-3xl text-mainText">{{ $className }}</h3>
                                                             </div>
                                                         </div>
                                                         <div class=" w-full">
-                                                            <h3 class=" cp:text-lg text-base text-mainText">{{ $subject }}</h3>
+                                                            <h3 class=" cp:text-lg text-base text-mainText opacity-80">{{ $subject }}</h3>
                                                         </div>
                                                         {{-- <div class="file-corner-fold bg-gray-300"></div> --}}
                                                     </div>
                                                 </div>
-                                                <div class=" w-[15%] h-full flex flex-col justify-between bg-bgcolor rounded-r-md border-y-2 border-r-2 border-mainText py-5">
+                                                <div class=" w-[15%] h-full flex flex-col justify-between bg-bgcolor rounded-r-md border-l border-mainText py-5">
                                                     <div class=" w-full grid items-center">
                                                         <button class=" three-dot">
                                                             <i class="bx bx-dots-vertical-rounded text-2xl text-mainText"></i>
@@ -402,6 +443,32 @@
                 }, 2000);
             }
         });
+
+        const menuBar = document.querySelector('.open-bar');
+        const closeBar = document.getElementById('close-bar');
+        const showBar = document.getElementById('show-bar');
+
+        menuBar.addEventListener('click', () => {
+            showBar.classList.remove('opacity-0', 'pointer-events-none');
+            showBar.classList.remove('w-0');
+            showBar.classList.add('w-[80%]');
+        });
+
+        function closeSideBar() {
+            showBar.classList.remove('w-[80%]');
+            showBar.classList.add('w-0');
+
+            showBar.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        closeBar.addEventListener('click', closeSideBar);
+
+        document.addEventListener('click', (event) => {
+            if (!showBar.contains(event.target) && !menuBar.contains(event.target)) {
+                closeSideBar();
+            }
+        });
+
     </script>
 
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>

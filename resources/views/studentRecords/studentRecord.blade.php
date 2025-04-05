@@ -37,9 +37,67 @@
         </header> --}}
 
         {{-- Body --}}
-        <section class=" w-full h-full flex md:px-14 px-3 py-8">
+        <section class="relative w-full h-full flex md:px-14 px-3">
+            <div class=" absolute cp:hidden top-0 left-0 right-0 h-[28%] bg-mainBg -z-10 rounded-b-3xl"></div>
+            <div class="absolute cp:hidden bottom-10 left-1/2 transform -translate-x-1/2">
+                <button id="toggleButton" 
+                    class="relative w-48 h-9 bg-gray-200 rounded-full flex items-center transition-all duration-300 ease-in-out">
+                    <!-- Active Indicator -->
+                    <span id="activeIndicator" 
+                        class="absolute left-1 w-[48%] h-7 bg-mainText rounded-full transition-all duration-300 ease-in-out"></span>
+                    
+                    <!-- Chart Tab (Default Active) -->
+                    <span id="chartTab" 
+                        class="relative w-1/2 h-full flex items-center justify-center text-white font-semibold transition-all duration-300 ease-in-out z-10">
+                        <i class=' text-[.9rem] bx bxs-doughnut-chart' ></i>
+                        <h3 class=" text-[.9rem] ml-1 font-light">Chart</h3>
+                    </span>
+                    <!-- Table Tab -->
+                    <span id="tableTab" 
+                        class="relative w-1/2 h-full flex items-center justify-center text-gray-700 font-semibold transition-all duration-300 ease-in-out z-10">
+                        <i class='text-[.9rem] bx bxs-square '></i>
+                        <h3 class=" text-[.9rem] ml-1 font-light">Table</h3>
+                    </span>
+                </button>
+            </div>
+            <div id="show-bar" class="opacity-0 pointer-events-none z-50 absolute md:hidden top-0 right-0 bottom-0 w-0 transition-all duration-500 ease-in-out">
+                <div class="w-full h-full shadow-xl pr-7 pl-4 py-4 flex flex-col border-l border-sgline gap-6 bg-mainBg">
+                    <div class="flex items-center justify-between pb-2 border-b border-sgline">
+                        <div class="flex items-center -mt-4">
+                            <img class="w-8 h-8 mr-1" src="{{ Vite::asset('resources/images/saptlogo.svg') }}" alt="Logo">
+                            <h1 class="pt-3 text-3xl font-normal text-black select-none tracking-widest">APT</h1>
+                        </div>
+                        <div id="close-bar" class="md:hidden cursor-pointer">
+                            <i class='text-4xl bx bx-menu'></i>
+                        </div>
+                    </div>
+            
+                    <div class="flex flex-col gap-3">
+                        <a href="{{ route('student-home') }}" class="flex items-center text-mainText font-medium text-[14px] px-4 py-2 rounded-full gap-3 hover:bg-mainText hover:text-bgcolor">
+                            <i class="bx bxs-home text-lg"></i>
+                            <span>Home</span>
+                        </a>
+                        <div>
+                            <div>
+                                <button class="records-btn w-full bg-mainText flex items-center text-bgcolor font-medium text-[14px] px-4 py-2 rounded-full gap-3 hover:bg-mainText hover:text-bgcolor">
+                                    <i class="bx bxs-book-alt text-lg"></i>              
+                                    Records
+                                </button>
+                            </div>
+                        </div>
+            
+                        <a href="{{ route('studentAttendance.room', [ 'id' => $encodedId, 'key' => 'attendance-table']) }}" class="w-full flex items-center text-mainText font-medium text-[14px] px-4 py-2 rounded-full gap-3 hover:bg-mainText hover:text-bgcolor">
+                            <i class='bx bxs-check-square text-lg'></i>            
+                            Attendance
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
 
-            <div class="bg-gray-50 rounded-2xl px-4 pb-6 w-60 cp:flex hidden flex-col justify-between border border-sgline">
+              
+
+            <div class="bg-gray-50 rounded-2xl px-4 pb-6 w-60 cp:flex hidden flex-col justify-between border border-sgline my-8">
 
                 <div>
                     <div class="h-20 flex items-center mb-4 border-b border-sgline">
@@ -59,18 +117,6 @@
                                     Records
                                 </button>
                             </div>
-                            {{-- <div id="homeSubmenu" class="">
-                                <div class="flex flex-col items-start pl-8 font-semibold">
-                                    <button id="chartTab" class="flex items-center gap-2 w-full p-2 text-purple-600 focus:outline-none">
-                                        <i class='bx bxs-doughnut-chart' ></i>
-                                        Chart
-                                    </button>
-                                    <button id="tableTab" class="flex items-center gap-2 w-full p-2 text-gray-600 focus:outline-none">
-                                        <i class='bx bxs-square'></i>
-                                        Table
-                                    </button>
-                                </div>
-                            </div> --}}
                         </div>
     
                         <a href="{{ route('studentAttendance.room', [ 'id' => $encodedId, 'key' => 'attendance-table']) }}" class="w-full flex items-center text-mainText font-medium text-[14px] px-4 py-2 rounded-full gap-3 hover:bg-mainText hover:text-bgcolor">
@@ -97,64 +143,72 @@
             
             </div>
 
-            <div class="  flex-1 overflow-y-auto overflow-scrolls">
+            <div class="  flex-1 overflow-y-auto overflow-scrolls py-4">
                 {{-- overflow-y-auto overflow-scrolls --}}
 
-                <div class=" w-full h-full flex flex-col gap-8 md:px-8 px-4 rounded-3xl">
+                <div class=" w-full h-full flex flex-col gap-10 md:px-8 px-4 rounded-3xl">
 
 
-                    <div class=" md:h-20 h-16 flex items-center justify-between md:px-8 px-3 rounded-lg border border-sgline">
-                        <h1 class=" md:text-3xl text-xl font-bold text-mainText">Records</h1>
-                        <div>
-                            {{-- <button class="btn-user text-3xl w-9 h-9 rounded-full cp:text-2xl bg-mainText">
-                                <h1 class=" text-2xl text-bgcolor">{{ substr(auth()->user()->username, 0, 1) }}</h1>
-                            </button>
-                            <div class="log-user bg-bgcolor hidden absolute left-0 ml-[1rem] mt-14 rounded-md shadow-md z-10">
-                                <div class="flex flex-col">
-                                    <a href="{{ route('logout') }}" class=" text-subtText hover:bg-hoverColor hover:text-mainText px-4 py-2 text-start">Logout</a>
+                    <div class=" md:h-20 flex items-center justify-between md:px-8">
+                        <h1 class=" md:text-3xl text-2xl font-bold text-mainText">Records</h1>
+                        <div id="menu-bar" class="md:hidden cursor-pointer">
+                            <i class='text-4xl bx bx-menu'></i>
+                        </div>
+                        <div class="hidden md:block">
+                            {{-- <div>
+                                <button class="btn-user text-3xl w-9 h-9 rounded-full cp:text-2xl bg-mainText">
+                                    <h1 class=" text-2xl text-bgcolor">{{ substr(auth()->user()->username, 0, 1) }}</h1>
+                                </button>
+                                <div class="log-user bg-bgcolor hidden absolute left-0 ml-[1rem] mt-14 rounded-md shadow-md z-10">
+                                    <div class="flex flex-col">
+                                        <a href="{{ route('logout') }}" class=" text-subtText hover:bg-hoverColor hover:text-mainText px-4 py-2 text-start">Logout</a>
+                                    </div>
                                 </div>
                             </div> --}}
-
                             <button id="toggleButton" 
-                            class="relative w-32 h-7 bg-gray-200 rounded-full flex items-center transition-all duration-300 ease-in-out">
-                            <!-- Active Indicator -->
-                            <span id="activeIndicator" 
-                                class="absolute left-1 w-[48%] h-5 bg-mainText rounded-full transition-all duration-300 ease-in-out"></span>
-                            
-                            <!-- Chart Tab (Default Active) -->
-                            <span id="chartTab" 
-                                class="relative w-1/2 h-full flex items-center justify-center text-white font-semibold transition-all duration-300 ease-in-out z-10">
-                                <i class=' text-[.7rem] bx bxs-doughnut-chart' ></i>
-                                <h3 class=" text-[.7rem] ml-1 font-light">Chart</h3>
-                            </span>
-                            <!-- Table Tab -->
-                            <span id="tableTab" 
-                                class="relative w-1/2 h-full flex items-center justify-center text-gray-700 font-semibold transition-all duration-300 ease-in-out z-10">
-                                <i class='text-[.7rem] bx bxs-square '></i>
-                                <h3 class=" text-[.7rem] ml-1 font-light">Table</h3>
-                            </span>
-                        </button>
+                                class="relative w-32 h-7 bg-gray-200 rounded-full flex items-center transition-all duration-300 ease-in-out">
+                                <!-- Active Indicator -->
+                                <span id="activeIndicator" 
+                                    class="absolute left-1 w-[48%] h-5 bg-mainText rounded-full transition-all duration-300 ease-in-out"></span>
+                                
+                                <!-- Chart Tab (Default Active) -->
+                                <span id="chartTab" 
+                                    class="relative w-1/2 h-full flex items-center justify-center text-white font-semibold transition-all duration-300 ease-in-out z-10">
+                                    <i class=' text-[.7rem] bx bxs-doughnut-chart' ></i>
+                                    <h3 class=" text-[.7rem] ml-1 font-light">Chart</h3>
+                                </span>
+                                <!-- Table Tab -->
+                                <span id="tableTab" 
+                                    class="relative w-1/2 h-full flex items-center justify-center text-gray-700 font-semibold transition-all duration-300 ease-in-out z-10">
+                                    <i class='text-[.7rem] bx bxs-square '></i>
+                                    <h3 class=" text-[.7rem] ml-1 font-light">Table</h3>
+                                </span>
+                            </button>
 
                         </div>
                     </div>
+
+                    {{-- <div class=" cp:hidden w-full text-center">
+                        <h1 class=" text-3xl font-bold text-mainText">Records</h1>
+                    </div> --}}
 
 
                     <div class=" flex-1 flex flex-col">
                         <!-- Chart Section (Initially Hidden) -->
                         <div id="chartSection" class="flex-1 flex flex-col">
                             <div id="quizTabsContainer" class="flex-1 flex flex-col gap-4">
-                                <div class="flex-1 flex flex-col gap-4">
-                                    <div class="rounded-lg border border-sgline p-4">
+                                <div class="flex-1 flex flex-col gap-10">
+                                    <div class="rounded-lg bg-mainText p-4 text-bgcolor shadow-lg">
                                         <div class="flex-1">
-                                            <div class="mb-4 font-semibold text-base">
+                                            <div class="mb-4 font-semibold text-lg">
                                                 <h1 class="">Class Details</h1>
                                             </div>
-                                            <div class="pl-2 flex gap-4 text-sm opacity-90">
+                                            <div class="pl-2 flex gap-4 text-sm">
                                                 <div class=" flex flex-col gap-1">
-                                                    <h1 class=" font-medium opacity-85">Subject Code</h1>
-                                                    <h1 class=" font-medium opacity-85">Class Name</h1>
-                                                    <h1 class=" font-medium opacity-85">C/Y/S</h1>
-                                                    <h1 class=" font-medium opacity-85">Instructor</h1>
+                                                    <h1 class=" font-medium">Subject Code</h1>
+                                                    <h1 class=" font-medium">Class Name</h1>
+                                                    <h1 class=" font-medium">C/Y/S</h1>
+                                                    <h1 class=" font-medium">Instructor</h1>
                                                 </div>
                                                 <div class=" flex flex-col gap-1">
                                                     <h1>:</h1>
@@ -172,46 +226,48 @@
                                         </div>
                                     </div>
 
-                                    <div class="flex gap-4">
-                                        <div class=" flex-1 rounded-lg border border-sgline p-4">
-                                            <h1 class=" font-semibold text-base">Mid Term</h1>
-                                            @if(!empty($getMidTerm->content))
-                                                @if(round($getMidTerm->content) >= 75)
-                                                <h1>Passed</h1>
+                                    <div class=" flex flex-col gap-4">
+                                        <div class="flex gap-4">
+                                            <div class=" flex-1 rounded-md border border-sgline bg-mainBg p-4">
+                                                <h1 class=" font-semibold text-base">Mid Term</h1>
+                                                @if(!empty($getMidTerm->content))
+                                                    @if(round($getMidTerm->content) >= 75)
+                                                    <h1>Passed</h1>
+                                                    @else
+                                                    <h1>Failed</h1>
+                                                    @endif
                                                 @else
-                                                <h1>Failed</h1>
+                                                    <h1>No Mid Term Found</h1>
                                                 @endif
-                                            @else
-                                                <h1>No Mid Term Found</h1>
-                                            @endif
+                                            </div>
+                                            <div class="flex-1 rounded-md border border-sgline p-4 bg-mainBg">
+                                                <h1 class=" font-semibold text-base">Final Term</h1>
+                                                @if(!empty($getFinalTerm->content))
+                                                    @if(round($getFinalTerm->content) >= 75)
+                                                    <h1>Passed</h1>
+                                                    @else
+                                                    <h1>Failed</h1>
+                                                    @endif
+                                                @else
+                                                    <h1>No Final Term Found</h1>
+                                                @endif
+                                            </div>
                                         </div>
-                                        <div class="flex-1 rounded-lg border border-sgline p-4">
-                                            <h1 class=" font-semibold text-base">Final Term</h1>
-                                            @if(!empty($getFinalTerm->content))
-                                                @if(round($getFinalTerm->content) >= 75)
-                                                <h1>Passed</h1>
+    
+                                        <div class="flex gap-4">
+                                            <div class="flex-1 rounded-md border border-sgline p-4 bg-mainBg">
+                                                <h1 class=" font-semibold text-base">Final Grade</h1>
+                                                @if(!empty($getMidTerm->content) && !empty($getFinalTerm->content))
+                                                    @if(round((($getMidTerm->content * .4) + ($getFinalTerm->content * .6))) >= 75)
+                                                    <h1>Passed</h1>
+    
+                                                    @else
+                                                    <h1>Failed</h1>
+                                                    @endif
                                                 @else
-                                                <h1>Failed</h1>
+                                                    <h1>No Final Grade Found</h1>
                                                 @endif
-                                            @else
-                                                <h1>No Final Term Found</h1>
-                                            @endif
-                                        </div>
-                                    </div>
-
-                                    <div class="flex gap-4">
-                                        <div class="flex-1 rounded-lg border border-sgline p-4">
-                                            <h1 class=" font-semibold text-base">Final Term</h1>
-                                            @if(!empty($getMidTerm->content) && !empty($getFinalTerm->content))
-                                                @if(round((($getMidTerm->content * .4) + ($getFinalTerm->content * .6))) >= 75)
-                                                <h1>Passed</h1>
-
-                                                @else
-                                                <h1>Failed</h1>
-                                                @endif
-                                            @else
-                                                <h1>No Final Grade Found</h1>
-                                            @endif
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -324,8 +380,8 @@
                         </div>
                     
                         <!-- Table Section -->
-                        <div id="tableSection" class="mt-4 hidden flex-1">
-                            <div class=" h-full flex justify-center gap-8 rounded-xl p-8 border border-sgline">
+                        <div id="tableSection" class=" hidden flex-1">
+                            <div class=" h-full flex justify-center gap-8 rounded-xl bg-bgcolor p-8 border border-sgline">
                                 <div class=" whitespace-nowrap overflow-x-auto pb-4">
         
                                     @if($skills->isEmpty() ) 
@@ -542,6 +598,33 @@
     
             isChartActive = !isChartActive;
         });
+
+        const menuBar = document.getElementById('menu-bar');
+        const closeBar = document.getElementById('close-bar');
+        const showBar = document.getElementById('show-bar');
+
+        menuBar.addEventListener('click', () => {
+            showBar.classList.remove('opacity-0', 'pointer-events-none'); 
+            showBar.classList.remove('w-0');
+            showBar.classList.add('w-[80%]');
+        });
+
+        function closeSideBar() {
+            showBar.classList.remove('w-[80%]');
+            showBar.classList.add('w-0');
+
+            showBar.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        closeBar.addEventListener('click', closeSideBar);
+
+        document.addEventListener('click', (event) => {
+            if (!showBar.contains(event.target) && !menuBar.contains(event.target)) {
+                closeSideBar();
+            }
+        });
+
+
     </script>
 
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>

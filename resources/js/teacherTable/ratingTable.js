@@ -452,128 +452,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+    // COMIN SOONNNNN!!!!!!!!!!!
+    const comingInputs = ['M.C', 'M.P', 'M.A', 'F.C', 'F.P', 'F.A'];
+
+    comingInputs.forEach(id => {
+        const inputElement = document.getElementById(id);
+        if (inputElement) {
+            inputElement.addEventListener('click', showWarning);
+        }
+    });
 
 
+    function showWarning() {
+        const successAlert = document.getElementById('success-alert');
 
+        if (successAlert) {
+            successAlert.style.display = 'block';
+            setTimeout(() => {
+                successAlert.classList.add( 'opacity-100');
+            }, 100);
 
+            setTimeout(() => {
+                successAlert.classList.remove('opacity-100');
+            }, 1500);
 
-
-    // async function updateRow(row) {
-    //     const columns = {
-    //         midColumn: row.querySelector("td[data-column='MidGr.']"),
-    //         midEqvColumn: row.querySelector("td[data-column='Mid.N.Eqv.']"),
-    //         midFinalColumn: row.querySelector("td[data-column='Mid']"),
-    //         tfColumn: row.querySelector("td[data-column='T.F.Gr.']"),
-    //         tfEqvColumn: row.querySelector("td[data-column='F.N.Eqv.']"),
-    //         tfFinalColumn: row.querySelector("td[data-column='Fin']"),
-    //         finalEquivalent: row.querySelector("td[data-column='FR.Eqv']"),
-    //         finalNumberEquivalent: row.querySelector("td[data-column='FR.N.Eqv']"),
-    //         remarks: row.querySelector("td[data-column='Remarks']")
-    //     };
-    
-    //     console.log('I worked');
-    
-    //     const midColOrigValue = columns.midColumn ? parseFloat(columns.midColumn.getAttribute("data-original")) || '' : '';
-    //     const tfColOrigValue = columns.tfColumn ? parseFloat(columns.tfColumn.getAttribute("data-original")) || '' : '';
-    
-    //     let showMidTermGrade = null;
-    //     let showFinalTermGrade = null;
-    
-    //     if (columns.midColumn && columns.midEqvColumn && columns.midFinalColumn && midColOrigValue !== '') {
-    //         columns.midEqvColumn.textContent = getGradeEquivalent(Math.round(midColOrigValue));
-    //         showMidTermGrade = getMidTermGrade(midColOrigValue);
-    //         columns.midFinalColumn.textContent = showMidTermGrade.display;
-    //     }
-    
-    //     if (columns.tfColumn && columns.tfEqvColumn && columns.tfFinalColumn && tfColOrigValue !== '') {
-    //         columns.tfEqvColumn.textContent = getGradeEquivalent(Math.round(tfColOrigValue));
-    //         showFinalTermGrade = getFinTermGrade(tfColOrigValue);
-    //         columns.tfFinalColumn.textContent = showFinalTermGrade.display;
-    //     }
-    
-    //     let finalRate = null;
-    //     if (columns.finalEquivalent && showMidTermGrade && showFinalTermGrade) {
-    //         finalRate = getFinalRateGrade(showMidTermGrade.value, showFinalTermGrade.value);
-    //         columns.finalEquivalent.textContent = finalRate;
-    //         if (columns.finalNumberEquivalent) {
-    //             columns.finalNumberEquivalent.textContent = getGradeEquivalent(parseFloat(finalRate));
-    //             columns.remarks.textContent = getPassedOrFailed(Math.round(finalRate));
-    //         }
-    //     }
-    
-    //     const rowId = columns.midColumn?.getAttribute("data-row") || columns.tfColumn?.getAttribute("data-row");
-    //     const getStudent = row.querySelector("td[data-column='#1']");
-    //     const student = getStudent.getAttribute("data-room-student");
-    
-    //     if (!rowId) {
-    //         console.warn('Row ID is missing, skipping save.');
-    //         return;
-    //     }
-    
-    //     // Array to store available column data
-    //     const bulkGradeData = [];
-    
-    //     Object.keys(columns).forEach(key => {
-    //         const columnElement = columns[key];
-    //         if (columnElement) {
-    //             const content = columnElement.textContent.trim();
-    //             if (content) {  // Only add if content is not empty
-    //                 bulkGradeData.push({
-    //                     teacher_id: teacherId,
-    //                     room_id: roomId,
-    //                     student_name: student,
-    //                     column: columnElement.getAttribute("data-column"),
-    //                     row: rowId,
-    //                     content: content,
-    //                     merged: 0,
-    //                     rowspan: 1,
-    //                     colspan: 1
-    //                 });
-    //             }
-    //         }
-    //     });
-    
-    //     if (bulkGradeData.length > 0) {
-    //         console.log(bulkGradeData);
-    //         // await fetch("/save-number-grade", {
-    //         //     method: "POST",
-    //         //     headers: {
-    //         //         "Content-Type": "application/json",
-    //         //         "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
-    //         //     },
-    //         //     body: JSON.stringify({ grades: bulkGradeData })
-    //         // });
-    //     } else {
-    //         console.log("No data to save.");
-    //     }
-    // }
-    
-    
-    
-
-    // let observer = new MutationObserver(mutations => {
-    //     mutations.forEach(mutation => {
-    //         if (mutation.type === "childList") {
-    //             let column = mutation.target;
-    //             let row = column.closest("tr");
-    //             if (row) {
-    //                 updateRow(row);
-    //             }
-    //         }
-    //     });
-    // });
-
-    // // Attach observer to both MidGr. and T.F.Gr.
-    // ["MidGr.", "T.F.Gr."].forEach(columnName => {
-    //     document.querySelectorAll(`td[data-column='${columnName}']`).forEach(column => {
-    //         observer.observe(column, { childList: true, subtree: true });
-    //     });
-    // });
-
-    
-    
-
-
+            setTimeout(() => {
+                successAlert.style.display = 'none';
+            }, 2000);
+        }
+    }
 
 
 });

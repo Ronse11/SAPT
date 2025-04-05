@@ -86,8 +86,6 @@ document.addEventListener('DOMContentLoaded', function() {
       wSearch.style.width = `19rem`;
       wSearch.classList.add('mr-16');
 
-      console.log(wid)
-
       if (widthPercentage == '83') {
         show.classList.add('hidden');
         wSearch.style.width = '';

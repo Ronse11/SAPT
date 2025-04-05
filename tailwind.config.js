@@ -15,6 +15,7 @@ export default {
       //   return sizes;
       // })(),
       fontSize: {
+        '12px': '12.56px',
         '14px': '14px',
         '15px': '15px',
         '16px': '16px',
@@ -48,7 +49,8 @@ export default {
         sgline: "#e2e5e7",
         hoverColor: "#f0f2f3",
         mainText: "#333333",
-        mainBg: "#3454d1",
+        mainBg: "#f3f4f6",
+        // mainBg: "#3454d1",
         // mainText: "#6f8088",
         mainTexts: "#333333",
         subtText: "#CCCCCC",

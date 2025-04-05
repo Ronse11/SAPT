@@ -11,8 +11,8 @@
 </head>
 
 <body>
-    <section class=" w-full h-screen grid place-content-center">
-        <div class=" w-[26rem] max-w-[30rem] py-8 px-10 shadow-md rounded-md flex flex-col gap-y-8 bg-bgcolor border border-sgline">
+    <section class=" w-full h-screen flex justify-center items-center">
+        <div class=" w-[85%] md:w-96 py-4 px-5 md:py-8 md:px-10 shadow-md rounded-md flex flex-col gap-y-8 bg-bgcolor border border-sgline">
             <form action=" {{ route('folders.store') }} " method="POST" autocomplete="off">
                 @csrf
                 <div class="flex flex-col gap-y-8 mb-2">

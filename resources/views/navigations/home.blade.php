@@ -218,7 +218,7 @@
                                 <div class="choices bg-bgcolor hidden absolute left-0 -ml-[6.5rem] mt-36 border border-sgline rounded-md shadow-md ">
                                     <div class="flex flex-col">
                                         <a href=" {{ route('track') }} " class="text-subtText hover:bg-hoverColor hover:text-mainText px-4 py-2 text-start">Track Record</a>
-                                        <a href=" {{ route('create') }} " class=" text-subtText hover:bg-hoverColor hover:text-mainText px-4 py-2">Create Record</a>
+                                        <a href=" {{ route('createHome') }} " class=" text-subtText hover:bg-hoverColor hover:text-mainText px-4 py-2">Create Record</a>
                                     </div>
                                 </div>
     

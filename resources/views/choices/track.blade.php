@@ -10,8 +10,8 @@
 </head>
 <body>
     <section class=" w-full h-screen grid place-content-center">
-        <div class=" w-full h-full grid place-items-center">
-            <div class=" w-full max-w-[18rem] cp:max-w-[26rem] p-8 shadow-md rounded-md flex flex-col gap-y-4 bg-bgcolor border border-sgline">
+        <div class=" w-full h-full flex justify-center items-center">
+            <div class=" w-full max-w-[85%] p-8 shadow-md rounded-md flex flex-col gap-y-4 bg-bgcolor border border-sgline">
                 <div class="border-b-2 border-subtText pb-4">
                     <h1 class="mb-6 font-semibold">You are signed in as</h1>
                     <div class="flex gap-4">
@@ -52,7 +52,7 @@
                     @enderror --}}
                     <div class="flex flex-col gap-y-4 mt-4">
                         {{-- <h1 class="text-sm text-subtText mt-1">example: Surname, Firstname MI.</h1> --}}
-                        <h1 class="">The Track Code will be provided by your Teacher.</h1>
+                        <h1 class="text-sm md:text-base">The Track Code will be provided by your Teacher.</h1>
                     </div>
                     <div class="flex justify-end gap-x-4 mt-4 font-normal text-subtText">
                         <a href="{{ route('choices') }}" class=" hover:text-mainText">Cancel</a>
