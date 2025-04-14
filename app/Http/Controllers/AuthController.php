@@ -48,6 +48,7 @@ class AuthController extends Controller
     
         // Attempt to authenticate user
         if (Auth::attempt($fields)) {
+            $request->session()->regenerate();
             $user = Auth::user();
             $role = $user->role;
     

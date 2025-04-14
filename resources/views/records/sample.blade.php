@@ -9,7 +9,7 @@
 
     <title>Class Record</title>
 
-    @vite(['resources/css/app.css', 'resources/css/breakPoints.css', 'resources/css/table.css', 'resources/js/app.js', 'resources/js/teacherTable/sample.js', 'resources/js/teacherTable/merging.js', 'resources/js/teacherTable/applyBorder.js', 'resources/js/teacherTable/addStudentsNames.js', 'resources/js/teacherTable/applyFontStyle.js', 'resources/js/teacherTable/applyColors.js', 'resources/js/teacherTable/calculation.js', 'resources/js/teacherTable/logic.js', 'resources/js/teacherTable/colorLogic.js', 'resources/js/teacherTable/dragSum.js', 'resources/js/teacherTable/adjustFontSize.js', 'resources/js/teacherTable/doneCheck.js', 'resources/js/imports/import.js', 'resources/js/imports/export.js', 'resources/js/print/print.js', 'resources/js/teacherTable/tableTab.js', 'resources/js/teacherTable/ratingTable.js', 'resources/js/print/printGrades.js'])
+    @vite(['resources/css/app.css', 'resources/css/breakPoints.css', 'resources/css/table.css', 'resources/js/app.js', 'resources/js/teacherTable/sample.js', 'resources/js/teacherTable/merging.js', 'resources/js/teacherTable/applyBorder.js', 'resources/js/teacherTable/addStudentsNames.js', 'resources/js/teacherTable/applyFontStyle.js', 'resources/js/teacherTable/applyColors.js', 'resources/js/teacherTable/calculation.js', 'resources/js/teacherTable/logic.js', 'resources/js/teacherTable/colorLogic.js', 'resources/js/teacherTable/dragSum.js', 'resources/js/teacherTable/adjustFontSize.js', 'resources/js/teacherTable/doneCheck.js', 'resources/js/imports/import.js', 'resources/js/imports/export.js', 'resources/js/print/print.js', 'resources/js/teacherTable/tableTab.js', 'resources/js/teacherTable/ratingTable.js', 'resources/js/print/printGrades.js', 'resources/js/teacherTable/formula.js'])
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
 </head>
@@ -42,10 +42,40 @@
 
         <div id="success-alert"
             class="fixed inset-0 grid place-content-center z-50 opacity-0 transition-all duration-500 ease-in-out pointer-events-none">
-            <div class=" flex justify-center transition-all duration-500 ease-in-out pointer-events-auto">
+            <div class=" flex justify-center transition-all duration-500 ease-in-out pointer-events-none">
                 <h1 class="text-red-500 px-4 py-2 rounded-sm text-sm text-center bg-bgcolor shadow-md ">
                     This feature is not available yet. Stay tuned!
                 </h1>
+            </div>
+        </div>
+
+        {{-- SUCCESS --}}
+        <div id="success-changeName" class="absolute inset-0 flex items-center justify-center z-50 transition-all duration-500 ease-in-out opacity-0 pointer-events-none transform translate-y-[-50px]">
+            <div class="pt-6 pb-14 px-10 bg-white rounded-md border border-sgline shadow-lg max-w-sm w-full pointer-events-none">
+                <div class="flex justify-center mb-4">
+                    <!-- Success Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <h1 class="headText text-green-500 text-lg text-center font-semibold">
+                </h1>
+            </div>
+        </div>
+        {{-- ERROR --}}
+        <div id="error-changeName" class="absolute inset-0 flex items-center justify-center z-50 transition-all duration-500 ease-in-out opacity-0 pointer-events-none transform translate-y-[-50px]">
+            <div class="pt-6 pb-14 px-10 bg-white rounded-md border border-sgline shadow-lg max-w-sm w-full pointer-events-none">
+                <div class="flex justify-center mb-4">
+                    <!-- Success Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </div>
+                <h1 class="text-red-500 text-lg text-center font-semibold">
+                    Invalid!
+                </h1>
+                <p class="errShow text-center text-sm text-gray-600 mt-2">
+                </p>
             </div>
         </div>
 

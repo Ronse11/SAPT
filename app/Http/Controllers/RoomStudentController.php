@@ -397,7 +397,10 @@ class RoomStudentController extends Controller
 
         $folders = Folders::where('user_id', $userId)->get();
 
-        return view('student.setting', ['allRooms' => $allRooms, 'folders' => $folders]);
+        $user = User::where('id', $userId)->first();
+        $userName = $user->school_name;
+
+        return view('student.setting', ['allRooms' => $allRooms, 'folders' => $folders, 'userName' => $userName]);
     }
     // Student Calendar
     public function studentCalendar() {

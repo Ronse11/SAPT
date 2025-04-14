@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\RoomHelper;
+use App\Http\Controllers\HelperFunctions;
+
 use App\Models\Folders;
 use App\Models\Rooms;
 use App\Models\StudentRoom;
@@ -45,14 +48,22 @@ class FoldersController extends Controller
     public function teacherFolderShow($id)
     {
         $userId = Auth::id();
+        // $encodedId = HelperFunctions::base64_url_encode($id);
         $rooms = Rooms::orderBy('created_at', 'desc')->where('teacher_id', $userId)->where('folder_id', $id)->get();
         $allRooms = Rooms::orderBy('created_at', 'desc')->where('teacher_id', $userId)->get();
         $classCount = Rooms::where('teacher_id', $userId)->count();
-        $folderCount = Folders::where('user_id', $userId)->count();
+        $folderCount = Folders::where('user_id', $userId)->where('role', 'Teacher')->count();
 
-        $folders = Folders::where('user_id', $userId)->get();
+        $roomsWithUrls = $rooms->map(function ($room) {
+            $room->encoded_url = RoomHelper::generateRoomUrl($room);
+            return $room;
+        });
 
-        return view('folders.teacherFolders', ['rooms' => $rooms, 'folders' => $folders, 'classCount' => $classCount, 'folderCount' => $folderCount, 'allRooms' => $allRooms, 'folder_id' => $id]);
+
+        $folders = Folders::where('user_id', $userId)->where('role', 'Teacher')->get();
+        $folderName = Folders::where('user_id', $userId)->where('id', $id)->where('role', 'Teacher')->first();
+
+        return view('folders.teacherFolders', ['roomsWithUrls' => $roomsWithUrls, 'folders' => $folders, 'classCount' => $classCount, 'folderCount' => $folderCount, 'allRooms' => $allRooms, 'folder_id' => $id, 'folderName' => $folderName]);
     }
 
     public function studentFolderShow($id)
@@ -61,9 +72,9 @@ class FoldersController extends Controller
         $rooms = StudentRoom::orderBy('created_at', 'desc')->where('student_id', $userId)->where('folder_id', $id)->get();
         $allRooms = StudentRoom::orderBy('created_at', 'desc')->where('student_id', $userId)->get();
         $classCount = StudentRoom::where('student_id', $userId)->count();
-        $folderCount = Folders::where('user_id', $userId)->count();
+        $folderCount = Folders::where('user_id', $userId)->where('role', 'Student')->count();
 
-        $folders = Folders::where('user_id', $userId)->get();
+        $folders = Folders::where('user_id', $userId)->where('role', 'Student')->get();
 
         return view('folders.studentFolders', ['rooms' => $rooms, 'folders' => $folders, 'classCount' => $classCount, 'folderCount' => $folderCount, 'allRooms' => $allRooms, 'folder_id' => $id]);
     }

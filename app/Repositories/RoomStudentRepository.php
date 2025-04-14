@@ -20,12 +20,12 @@ class RoomStudentRepository
 
     public function getFoldersForStudent($userId)
     {
-        return Folders::orderBy('created_at', 'desc')->where('user_id', $userId)->get();
+        return Folders::orderBy('created_at', 'desc')->where('user_id', $userId)->where('role', 'Student')->get();
     }
 
     public function getFirstFoldersForStudent($userId)
     {
-        return Folders::where('user_id', $userId)->first();
+        return Folders::where('user_id', $userId)->where('role', 'Student')->first();
     }
 
     public function getClassCountForStudent($userId)
@@ -35,7 +35,7 @@ class RoomStudentRepository
 
     public function getFolderCountForStudent($userId)
     {
-        return Folders::where('user_id', $userId)->count();
+        return Folders::where('user_id', $userId)->where('role', 'Student')->count();
     }
 
 }

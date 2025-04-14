@@ -2,50 +2,7 @@ import { evaluate } from 'mathjs';
 
 // import { getGradeEquivalent, formatGrade, getMidTermGrade, getFinTermGrade, getFinalRateGrade, getPassedOrFailed } from './ratingTable.js';
 
-
-
-// SHOWING OF COLUMNS AND CONTENT STARTS HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-const showColRow = document.querySelector('input[name="showRowCol"]');
-const showContent = document.querySelector('input[name="showContent"]');
-const showFormula = document.querySelector('input[name="formulaInput"]');
-const showFontSize = document.getElementById('showFontSize');
-const formulaBox = document.getElementById('formulaBox');
-const formulaTitle = document.getElementById('formulaTitle');
-
-const tableRatings = document.querySelectorAll('.rating-table');
-
-
-document.querySelector('table').addEventListener('click', function(event) {
-    const selectedCell = event.target.closest('td');
-    
-    if (!selectedCell) return; // Exit if click is not on a table cell
-
-    // Get and display the row and column data
-    const selectedContent = `${selectedCell.getAttribute('data-column')?.trim() || ''}${selectedCell.getAttribute('data-row')?.trim() || ''}`;
-    showColRow.value = selectedContent;
-
-    // Get and display the cell content
-    showContent.value = selectedCell.textContent.trim();
-
-    // Check for font size in both class and inline styles
-    const fontSizeClass = [...selectedCell.classList].find(cls => cls.startsWith('text-') && cls.endsWith('px'));
-    const fontSizeStyle = selectedCell.style.fontSize;
-    const fontSize = fontSizeClass ? fontSizeClass.match(/(\d{1,2}|100)px/)[0] : fontSizeStyle || '';
-
-    showFontSize.value = fontSize.replace('px', '');
-
-    // Handle formula display
-    if (selectedCell.hasAttribute('data-formula')) {
-        showFormula.value = selectedCell.getAttribute('data-formula').trim();
-        formulaBox.classList.remove('hidden');
-        formulaTitle.classList.add('hidden');
-    } else {
-        formulaBox.classList.add('hidden');
-        formulaTitle.classList.remove('hidden');
-        showFormula.value = '';
-    }
-});
-// SHOWING OF COLUMNS AND CONTENT ENDS HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+const tableRatings = document.querySelector('.rating-table')
 
 
 export const formulaState = {

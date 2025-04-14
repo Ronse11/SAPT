@@ -150,7 +150,6 @@ class RoomController extends Controller
     public function show() {
         $userId = Auth::id();
 
-        // Get data using the repository
         $rooms = $this->roomRepository->getRoomsForTeacher($userId, 0);
         $allRooms = $this->roomRepository->getRoomsForTeacher($userId);
         $folderRooms = $this->roomRepository->getRoomsForTeacher($userId);
@@ -159,13 +158,11 @@ class RoomController extends Controller
         $classCount = $this->roomRepository->getClassCountForTeacher($userId);
         $folderCount = $this->roomRepository->getFolderCountForTeacher($userId);
 
-        // Generate URLs for rooms
         $roomsWithUrls = $rooms->map(function ($room) {
             $room->encoded_url = RoomHelper::generateRoomUrl($room);
             return $room;
         });
 
-        // Create a DTO for view data
         $data = new TeacherHomeData(
             $rooms,
             $roomsWithUrls,
@@ -177,7 +174,6 @@ class RoomController extends Controller
             $folderCount
         );
 
-        // Return the view with data
         return view('teacher.teacherHome', compact('data'));
     }
     
@@ -231,7 +227,10 @@ class RoomController extends Controller
         $allRooms = $this->roomRepository->getRoomsForTeacher($userId);
         $folders = $this->roomRepository->getFoldersForTeacher($userId);
 
-        return view('teacher.setting', ['allRooms' => $allRooms, 'folders' => $folders]);
+        $user = User::where('id', $userId)->first();
+        $userName = $user->school_name;
+
+        return view('teacher.setting', ['allRooms' => $allRooms, 'folders' => $folders, 'userName' => $userName]);
     }    
     // Student Calendar
     public function teacherCalendar() {
@@ -270,6 +269,19 @@ class RoomController extends Controller
 
         if($room) {
             $room->delete();
+        }
+        
+        return redirect()->route('teacher-home')->with('roomDeleted', true);
+    }
+
+    // DELETION OF FOLDER
+    public function destroyFolder($id)
+    {
+        // Find the item by ID
+        $folder = Folders::findOrFail($id);
+
+        if($folder) {
+            $folder->delete();
         }
         
         return redirect()->route('teacher-home')->with('roomDeleted', true);

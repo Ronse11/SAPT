@@ -28,7 +28,7 @@
                     @csrf
                     <div class="flex flex-col relative pb-1">
                         <label for="phone_number" class="font-semibold pb-6">Enter your Phone Number :</label>
-                        <input type="text" id="phone_number" name="phone_number" class=" px-3 py-2 border-2 border-subtText outline-mainText rounded-md @error('error') ring-2 ring-red-500 text-red-500 placeholder-red-500 @enderror" placeholder="09XX-XXX-XXXX">
+                        <input type="text" id="phone_number" name="phone_number" class=" px-3 py-2 border-2 border-subtText outline-mainText rounded-md @error('error') ring-2 ring-red-500 text-red-500 placeholder-red-500 @enderror" placeholder="09XXXXXXXXX">
                         @error('phone_number')
                             <p class=" text-sm text-red-500 mt-2">{{$message}}</p>
                         @enderror

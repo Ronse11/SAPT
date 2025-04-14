@@ -191,9 +191,11 @@
                         <header class=" w-full row-start-1 row-span-1 flex justify-between items-center tablet:shadow-none z-40">
                             <div id="menu-bar" class="burger-menu hidden">
                             </div>
-                            <div id="open-bar" class="open-bar flex gap-3 items-center">
-                                <i class='bx bx-menu text-4xl text-mainText hover:text-subtText'></i>
-                                {{-- <img class=" w-9 h-9 mb-1 mr-1" src="{{ Vite::asset('resources/images/saptlogo.svg') }}" alt="Logo"> --}}
+                            <div class="md:hidden">
+                                <div id="open-bar" class="open-bar flex gap-3 items-center">
+                                    <i class='bx bx-menu text-4xl text-mainText hover:text-subtText'></i>
+                                    {{-- <img class=" w-9 h-9 mb-1 mr-1" src="{{ Vite::asset('resources/images/saptlogo.svg') }}" alt="Logo"> --}}
+                                </div>
                             </div>
                             <div class="w-search">
                                 <div class="show hidden justify-self-start w-full">
@@ -260,7 +262,7 @@
                                         <h1>No Data yet!</h1>
                                     @else
                                         @foreach ($roomsWithUrls as $room)
-                                            <div class="class-item h-[10rem] cp:h-[14rem] flex rounded-md shadow-md relative hover:-translate-y-1 transition hover:shadow-lg  border border-mainText">
+                                            <div class="class-item h-[10rem] cp:h-[14rem] flex rounded-md shadow-md relative hover:-translate-y-1 transition hover:shadow-lg border border-mainText">
                                                 @php
                                                     $className = strlen($room->class_name) > 15 ? substr($room->class_name, 0, 15) . '...' : $room->class_name;
                                                     $subject = strlen($room->subject) > 28 ? substr($room->subject, 0, 28) . '...' : $room->subject;
@@ -318,11 +320,11 @@
                                         @endforeach
 
                                         @foreach ($folders as $folder)
-                                            <div class="class-item h-[14rem] flex justify-between shadow-md rounded-md relative hover:-translate-y-1 transition hover:shadow-lg">
+                                            <div class="class-item h-[14rem] flex justify-between shadow-md rounded-md relative hover:-translate-y-1 transition hover:shadow-lg border border-mainText">
                                                 @php
                                                     $folderName = strlen($folder->folder_name) > 14 ? substr($folder->folder_name, 0, 14) . '...' : $folder->folder_name;
                                                 @endphp
-                                                <div class="flex-1 bg-mainText rounded-l-md border-2 border-mainText pt-[21px]">
+                                                <div class="flex-1 bg-mainText rounded-l-md pt-[21px]">
                                                     <div class="folder-vertical shadow-lg relative w-full h-full bg-gray-100 rounded-l-[5px] overflow-visible">
                                                         <div class=" absolute top-0 right-0 left-0 bottom-0 px-5 pb-5 pt-6 z-[1]">
                                                             <h1 class=" text-4xl text-mainText">{{ $folderName }}</h1>
@@ -330,7 +332,7 @@
                                                         <div class="folder-tab absolute top-[-21px] left-0 w-[150px] h-[30px] bg-gray-300"></div>
                                                     </div>
                                                 </div>
-                                                <div class=" w-[15%] h-full flex flex-col justify-between bg-bgcolor rounded-r-md border-y-2 border-r-2 border-mainText py-5">
+                                                <div class=" w-[15%] h-full flex flex-col justify-between bg-bgcolor rounded-r-md border-l border-mainText py-5">
                                                     <div class=" w-full grid items-center">
                                                         <button class=" three-dot">
                                                             <i class="bx bx-dots-vertical-rounded text-2xl text-mainText"></i>

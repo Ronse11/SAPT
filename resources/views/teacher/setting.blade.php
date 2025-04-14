@@ -12,7 +12,7 @@
     <link href='https://cdn.jsdelivr.net/npm/@fullcalendar/core/main.css' rel='stylesheet' />
     <link href='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid/main.css' rel='stylesheet' />
 
-    @vite(['resources/css/app.css', 'resources/css/breakPoints.css', 'resources/css/global.css', 'resources/js/app.js', 'resources/js/navigation.js', 'resources/js/home/delButton.js', 'resources/js/search.js'])
+    @vite(['resources/css/app.css', 'resources/css/breakPoints.css', 'resources/css/global.css', 'resources/js/app.js', 'resources/js/navigation.js', 'resources/js/home/delButton.js', 'resources/js/search.js', 'resources/js/nav/settings'])
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 
@@ -46,6 +46,42 @@
                 </div>
             </div>
         @endif
+
+        {{-- SUCCESS --}}
+        <div id="success-changeName" class="absolute inset-0 flex items-center justify-center z-50 transition-all duration-500 ease-in-out opacity-0 pointer-events-none transform translate-y-[-50px]">
+            <div class="pt-6 pb-14 px-10 bg-white rounded-md border border-sgline shadow-lg max-w-sm w-full pointer-events-none">
+                <div class="flex justify-center mb-4">
+                    <!-- Success Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <h1 class="text-green-500 text-lg text-center font-semibold">
+                    Name Updated!
+                </h1>
+                <p class="succShow text-center text-sm text-gray-600 mt-2">
+                </p>
+            </div>
+        </div>
+        {{-- ERROR --}}
+        <div id="error-changeName" class="absolute inset-0 flex items-center justify-center z-50 transition-all duration-500 ease-in-out opacity-0 pointer-events-none transform translate-y-[-50px]">
+            <div class="pt-6 pb-14 px-10 bg-white rounded-md border border-sgline shadow-lg max-w-sm w-full pointer-events-none">
+                <div class="flex justify-center mb-4">
+                    <!-- Success Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </div>
+                <h1 class="text-red-500 text-lg text-center font-semibold">
+                    Invalid!
+                </h1>
+                <p class="errShow text-center text-sm text-gray-600 mt-2">
+                </p>
+            </div>
+        </div>
+        
+        
+    
 
         {{-- Navigation --}}
         <nav class="sidebar flex flex-col w-[17%] h-full bg-gray-100 absolute top-0 left-0 border-r border-sgline">
@@ -210,19 +246,29 @@
                                     <h1 class="text-sm font-medium text-mainText mb-1">Account settings</h1>
                                     <h1 class="text-sm font-normal text-mainText mb-5">Change your password and security options, and access other Google services. <a href="https://myaccount.google.com/" target="_blank" class=" underline text-blue-500">Manage</a></h1>
                                     <h1 class="text-sm font-medium text-mainText mb-1">Change name</h1>
-                                    <h1 class="text-sm font-normal text-mainText">To change your name, go to your <a href="" class="underline text-blue-500">account settings.</a></h1>
+                                    <input type="text" name="changeName" id="changeName" class=" outline-none border-b border-mainText @error('changeName') ring-2 ring-red-500 @enderror" value="{{$userName}}">
                                 </div>
                                 <div class=" w-[70%] p-6 border border-sgline rounded-md">
                                     <h1 class=" text-4xl mb-5">Notifications</h1>
                                     <h1 class="text-2xl font-normal text-mainText mb-1">SMS</h1>
-                                    <h1 class="text-sm font-normal text-mainText mb-5">These settings apply to the notifications you get by sms. <a href="" class=" underline text-blue-500">Learn more</a></h1>
-                                    <h1 class="text-2xl font-normal text-mainText mb-1">Email</h1>
-                                    <h1 class="text-sm font-normal text-mainText mb-5">These settings apply to the notifications you get by email. <a href="" class=" underline text-blue-500">Learn more</a></h1>
+                                    <h1 class="text-sm font-normal text-mainText mb-5">These settings apply to the notifications you get by sms. 
                                 </div>
-                                <div class=" w-[70%] p-6 border border-sgline rounded-md">
-                                    <h1 class=" text-4xl mb-5">Role</h1>
-                                    <h1 class="text-sm font-normal text-mainText mb-10">These settings allow you to change your role. <a href="" class=" underline text-blue-500">Learn more</a></h1>
-                                    <h1 class="text-sm font-medium text-mainText mb-1">Teacher</h1>
+                                <div class=" w-[70%] flex flex-col justify-between p-6 border border-sgline rounded-md">
+                                    <div>
+                                        <h1 class=" text-4xl mb-5">Role</h1>
+                                        <h1 class="text-sm font-normal text-mainText mb-10">These settings allow you to change your role.
+                                    </div>
+
+                                    <form method="POST" action="{{ route('user.updateRole') }}">
+                                        @csrf
+                                        <div class="text-sm font-medium text-mainText mb-1 w-full">
+                                            <select name="role" id="role" class="w-full cursor-pointer outline-none" onchange="this.form.submit()">
+                                                <option value="Teacher">Teacher</option>
+                                                <option value="Student">Student</option>
+                                            </select>
+                                        </div>
+                                    </form>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -232,6 +278,7 @@
         @endauth
 
     </section>
+
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>

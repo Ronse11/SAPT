@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FoldersController;
+use App\Http\Controllers\ForgotAndResetPasswordController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OtherController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\RoomStudentController;
 use App\Http\Controllers\TableButtonsController;
 use App\Http\Controllers\TableController;
 use App\Http\Controllers\UsefulController;
+use App\Http\Controllers\UserController;
 use App\Models\Folders;
 use Illuminate\Support\Facades\Route;
 
@@ -197,6 +199,7 @@ Route::middleware(['auth', 'no-cache'])->group(function() {
 
     // DELETING OF ROOM
     Route::delete('/teacher-room/{id}', [RoomController::class, 'destroyRoom'])->name('teacherRoom.delete');
+    Route::delete('/teacher-folder/{id}', [RoomController::class, 'destroyFolder'])->name('teacherFolder.delete');
     Route::delete('/student-room/{id}', [RoomStudentController::class, 'destroyRoom'])->name('studentRoom.delete');
 
     // DELETING NAME OF STUDENT IN PASTE ROOM
@@ -219,7 +222,20 @@ Route::middleware(['auth', 'no-cache'])->group(function() {
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
     Route::post('/notifications/delete-all/{id}', [NotificationController::class, 'deleteNotifs']);
 
+    // REROUTING
+    Route::post('/update-role', [UserController::class, 'updateRole'])->name('user.updateRole');
+    // CHANGE NAME
+    Route::post('/new-name', [UserController::class, 'updateName']);
 
+
+    Route::get('/not-found', function () {
+        return view('navigations.notFound');
+    })->name('not-found');
+
+    Route::fallback(function () {
+        return redirect()->route('not-found');
+    });
+    
     
 });
 
@@ -238,6 +254,16 @@ Route::middleware('guest')->group(function() {
 
     // Landing Page
     Route::view('/', 'navigations.landing')->name('landing');
+
+
+    // RESET AND FORGOT PASSWORD
+    Route::get('/forgot-password', [ForgotAndResetPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('/forgot-password', [ForgotAndResetPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::get('/check-email', [ForgotAndResetPasswordController::class, 'showCheckEmail'])->name('check.email');
+    Route::get('/changed-success', [ForgotAndResetPasswordController::class, 'changedSuccess'])->name('changed.success');
+
+    Route::get('/reset-password/{token}', [ForgotAndResetPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::post('/reset-password', [ForgotAndResetPasswordController::class, 'reset'])->name('password.update');
 
 });
 
@@ -262,7 +288,7 @@ Route::middleware(['auth', 'role:Teacher', 'no-cache'])->group(function() {
     // Ratings 
     Route::get('/teacher-room/records/ratings/{id}', [UsefulController::class, 'showRatings'])->name('ratings.room');
 
-        // Attendance
+    // Attendance
         // Route::get('/teacher-room/records/attendace/{id}', [UsefulController::class, 'showAttendance'])->name('attendance.room');
     // Displaying of SETTINGS of every ID's
     Route::get('/teacher-room/records/settings/{id}', [RoomController::class, 'settings'])->name('room-setting');
@@ -278,6 +304,9 @@ Route::middleware(['auth', 'role:Teacher', 'no-cache'])->group(function() {
     Route::post('/apply-units', [UsefulController::class, 'getUnits']);
     Route::post('/apply-sem', [UsefulController::class, 'getSem']);
     Route::post('/save-number-grade', [UsefulController::class, 'getNumberGrade']);
+
+    // Updating Formula
+    Route::post('/apply-changed-formula', [TableController::class, 'updateFormula']);
 
 });
 

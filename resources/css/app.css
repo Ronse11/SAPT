@@ -5,6 +5,9 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+    scroll-behavior: smooth;
+}
 
 @layer base {
     html {

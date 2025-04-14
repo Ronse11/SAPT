@@ -19,6 +19,7 @@ use App\Models\TableSkills;
 use App\Models\TableTotalRowCol;
 use App\Models\User;
 use App\Rules\SchoolNameMatchesEmail;
+use App\Services\VonageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -213,7 +214,7 @@ class UsefulController extends Controller
             ];
         })->toArray();
 
-        TableRatings::insert($ratings);
+        // TableRatings::insert($ratings);
 
         return response()->json(['message' => 'Formula applied successfully', 'data' => $ratings]);
     }
@@ -243,7 +244,7 @@ class UsefulController extends Controller
 
     }
 
-    public function getSem(Request $request) {
+    public function getSem(Request $request, VonageService $vonage) {
         $userId = Auth::id();
         $unitValue = $request->input('semValue');
         $tableId = $request->input('table_id'); // Get dynamic table_id
@@ -253,7 +254,6 @@ class UsefulController extends Controller
             return response()->json(['error' => 'Missing required parameters'], 400);
         }
     
-        // Check if a record with the same table_id and room_id exists
         $existingUnit = RatingSheet::where('table_id', $tableId)
             ->where('room_id', $roomId)
             ->where('teacher_id', $userId)
@@ -264,14 +264,30 @@ class UsefulController extends Controller
             $existingUnit->update(['unit_column' => $unitValue]); 
         } else {
             // If not exists, insert a new row
-            RatingSheet::create([
-                'table_id' => $tableId, // Store dynamic table_id
-                'teacher_id' => $userId,
-                'room_id' => $roomId,
-                'column' => $unitValue
-            ]);
+            // RatingSheet::create([
+            //     'table_id' => $tableId,
+            //     'teacher_id' => $userId,
+            //     'room_id' => $roomId,
+            //     'column' => $unitValue
+            // ]);
         }
-    
+
+        $students = StudentRoom::where('room_id', $roomId)->get();
+        foreach($students as $student)
+        {
+            $sendSmsNotif = User::where('id', $student->student_id)->first();
+
+            if($sendSmsNotif && !empty($sendSmsNotif->phone_number)) {
+                $formattedNumber = preg_replace('/^0/', '+63', $sendSmsNotif->phone_number);
+            
+                if ($tableId === "MidGr.") {
+                    $vonage->sendSms($formattedNumber, "Your Midterm Grade has been released. Check your account.");
+                } elseif ($tableId === "T.F.Gr.") {
+                    $vonage->sendSms($formattedNumber, "Your Finalterm Grade has been released. Check your account.");
+                }
+            }
+        }
+
         return response()->json(['message' => 'Formula applied successfully', 'data' => $unitValue]);
     }
     
@@ -279,23 +295,26 @@ class UsefulController extends Controller
     public function getNumberGrade(Request $request) {
 
         $grades = $request->input('grades');
+        
+        if ($grades) {
+            foreach ($grades as $grade) {
 
-        foreach ($grades as $grade) {
-            TableRatings::updateOrInsert(
-                [
-                    'teacher_id' => $grade['teacher_id'],
-                    'room_id' => $grade['room_id'],
-                    'student_name' => trim($grade['student_name']), // Trim to avoid whitespace mismatches
-                    'column' => trim($grade['column']),
-                    'row' => $grade['row'],
-                ],
-                [
-                    'content' => $grade['content'], // Only update content
-                ]
-            );
+                // TableRatings::updateOrInsert(
+                //     [
+                //         'teacher_id' => $grade['teacher_id'],
+                //         'room_id' => $grade['room_id'],
+                //         'student_name' => trim($grade['student_name']),
+                //         'column' => trim($grade['column']),
+                //         'row' => $grade['row'],
+                //     ],
+                //     [
+                //         'content' => $grade['content'],
+                //     ]
+
+                // );
+            }
+
         }
-        
-        
 
         return response()->json(['message' => 'Formula applied successfully']);
     

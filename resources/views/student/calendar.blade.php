@@ -51,8 +51,8 @@
         <nav class="sidebar flex flex-col w-[17%] h-full bg-gray-100 absolute top-0 left-0 border-r border-sgline">
             <div class="flex h-[5.5rem] items-center justify-between pl-8 border-b border-sgline">
                 <div class="flex items-center">
-                    <img class=" bg-bgcolor border-2 border-sgline px-1 rounded-full w-12 h-12 mr-2" src="{{ Vite::asset('resources/images/saptlogo.svg') }}" alt="Logo">
-                    <h1 class=" text-3xl font-medium select-none tracking-widest text-mainText cp:text-2xl">SAPT</h1>
+                    <img class=" w-8 h-8 mb-3 mr-1" src="{{ Vite::asset('resources/images/saptlogo.svg') }}" alt="Logo">
+                    <h1 class=" text-xl font-normal text-black select-none tracking-widest cp:text-3xl">APT</h1>
                 </div>
                 <button id="menu-bar" class=" -mb-1 text-4xl pt-1 cp:text-3xl"><i class='bx bx-menu text-mainText hover:text-subtText mr-6'></i></button>
             </div>
@@ -183,9 +183,11 @@
                         <header class=" w-full row-start-1 row-span-1 flex justify-between items-center tablet:shadow-none z-40">
                             <div id="menu-bar" class="burger-menu hidden">
                             </div>
-                            <div id="open-bar" class="open-bar flex gap-3 items-center">
-                                <i class='bx bx-menu text-4xl text-mainText hover:text-subtText'></i>
-                                {{-- <img class=" w-9 h-9 mb-1 mr-1" src="{{ Vite::asset('resources/images/saptlogo.svg') }}" alt="Logo"> --}}
+                            <div class="md:hidden">
+                                <div id="open-bar" class="open-bar flex gap-3 items-center">
+                                    <i class='bx bx-menu text-4xl text-mainText hover:text-subtText'></i>
+                                    {{-- <img class=" w-9 h-9 mb-1 mr-1" src="{{ Vite::asset('resources/images/saptlogo.svg') }}" alt="Logo"> --}}
+                                </div>
                             </div>
                             <div class="w-search">
                                 <div class="show hidden justify-self-start w-full">

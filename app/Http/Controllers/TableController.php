@@ -492,4 +492,24 @@ class TableController extends Controller
     //     return response()->json(['success' => true]);
 
     // }
+
+
+
+    // UPDATING FORMULA
+    public function updateFormula(Request $request) 
+    {
+        $tableId = $request->input('tableId');
+        $currentCol = $request->input('currentCol');
+        $currentFormula = $request->input('currentValue');
+        $roomId = $request->input('room_id');
+
+        $existingFormula = TableFormula::where('table_id', $tableId)->where('room_id', $roomId)->where('column', $currentCol)->first();
+
+        if($existingFormula) {
+            $existingFormula->update(['formula' => $currentFormula]);
+        }
+
+        return response()->json(['message' => 'Formula Updated!']);
+
+    }
 }
