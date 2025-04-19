@@ -3,9 +3,13 @@ import { CellManager, selectedCells } from "@js/merging.js";
 
 const newCellManager = new CellManager();
 
+const applied = document.getElementById('applied');
+const showMessage = document.querySelector('.message');
 
 
 document.addEventListener('DOMContentLoaded', function() {
+
+
     document.getElementById('applyUnderline').addEventListener('click', function() {
         applyFontStyle('Underline');
     });
@@ -89,7 +93,8 @@ function applyFontStyle(style) {
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Borders saved:', data);
+        const msg = 'Font Style Successfully Saved!';
+        floatMessage(msg);
     })
     .catch(error => {
         console.error('Error saving borders:', error);
@@ -213,6 +218,8 @@ function deleteFontStyle() {
     })
     .then(response => response.json())
     .then(data => {
+        const msg = 'Removed Font Style Successfully!';
+        floatMessage(msg);
 
         for (const styleInfo of data.fontStyle) {
             const cell = selectedCells.find(c => 
@@ -294,7 +301,8 @@ function applyAlignment(style) {
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Borders saved:', data);
+        const msg = 'Text Alignment Successfully Saved!';
+        floatMessage(msg);
     })
     .catch(error => {
         console.error('Error saving borders:', error);
@@ -411,11 +419,11 @@ window.addEventListener('load', function() {
 
         function colorReCondition(currentColor, cell, firstCell) {
             
-            if(firstCell === null) {
+            const formula = firstCell.getAttribute('data-formula');
+
+            if(firstCell && formula === null) {
                 return currentColor;
             }
-
-            const formula = firstCell.getAttribute('data-formula');
 
             const [firstColor, secColor] = separateColors(currentColor);
             
@@ -441,6 +449,7 @@ window.addEventListener('load', function() {
         
         function applyFontStyle(cell, colorResult, fontColor) {
             cell.setAttribute('font-colors', fontColor);
+            console.log(colorResult);
             if (colorResult.startsWith('#')) {
                 cell.style.color = colorResult;
             }
@@ -537,3 +546,18 @@ window.addEventListener('load', function() {
         });
     });
 });
+
+
+function floatMessage(msg) {
+    showMessage.textContent = msg;
+    applied.classList.remove('opacity-0', '-translate-x-[-15rem]');
+    applied.classList.add('opacity-100', 'translate-y-0');
+    applied.classList.remove('pointer-events-none');
+    applied.classList.add('pointer-events-auto');
+    setTimeout(() => {
+        applied.classList.remove('opacity-100', 'translate-y-0');
+        applied.classList.add('opacity-0', '-translate-x-[-15rem]');
+        applied.classList.remove('pointer-events-auto');
+        applied.classList.add('pointer-events-none');
+    }, 2000);
+}

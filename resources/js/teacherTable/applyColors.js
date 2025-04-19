@@ -4,12 +4,15 @@ import { CellManager, selectedCells } from "@js/merging.js";
 
 const newCellManager = new CellManager();
 
+const applied = document.getElementById('applied');
+const showMessage = document.querySelector('.message');
 
 
 document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('delete-colors').addEventListener('click', deleteColors);
     document.getElementById('delete-font-colors').addEventListener('click', deleteFontColors);
+
     
     // COLOR PICKER START
     const colorPicker = document.getElementById('colorPicker');
@@ -237,7 +240,8 @@ function applyColors(color) {
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Colors Successfully Saved!', data);
+        const msg = 'Background Color Successfully Saved!';
+        floatMessage(msg);
     })
     .catch(error => {
         console.log('Error Saving Colors:', error);
@@ -293,7 +297,8 @@ function applyColorPicker(selectedColor) {
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Colors Successfully Saved!', data);
+        const msg = 'Background Color Successfully Saved!';
+        floatMessage(msg);
     })
     .catch(error => {
         console.log('Error Saving Colors:', error);
@@ -419,7 +424,8 @@ function deleteColors() {
     })
     .then(response => response.json())
     .then(data => {
-        console.log('colors deleted:', data.getColors);
+        const msg = 'Deleted Background Color Successfully!';
+        floatMessage(msg);
 
         const classesToAdd = [
             'border-t', 'border-b', 'border-l', 'border-r', 'border-t-cursor', 'border-b-cursor', 'border-l-cursor', 'border-r-cursor'
@@ -504,8 +510,6 @@ function applyFontColors(color) {
         });
     });
 
-    console.log(sendColors)
-
     fetch('/save-colors', {
         method: 'POST',
         headers: {
@@ -516,7 +520,8 @@ function applyFontColors(color) {
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Colors Successfully Saved!', data);
+        const msg = 'Font Color Successfully Saved!';
+        floatMessage(msg);
     })
     .catch(error => {
         console.log('Error Saving Colors:', error);
@@ -572,7 +577,8 @@ function applyColorFontPicker(selectedColor) {
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Colors Successfully Saved!', data);
+        const msg = 'Font Color Successfully Saved!';
+        floatMessage(msg);
     })
     .catch(error => {
         console.log('Error Saving Colors:', error);
@@ -619,7 +625,8 @@ function deleteFontColors() {
     })
     .then(response => response.json())
     .then(data => {
-        console.log('colors deleted:', data.getColors);
+        const msg = 'Deleted Font Color Successfully!';
+        floatMessage(msg);
 
         // Remove the borders visually
         for (const { row, column, type } of data.getColors) {
@@ -639,4 +646,19 @@ function deleteFontColors() {
         console.error('Error deleting borders:', error);
     });
     
+}
+
+
+function floatMessage(msg) {
+    showMessage.textContent = msg;
+    applied.classList.remove('opacity-0', '-translate-x-[-15rem]');
+    applied.classList.add('opacity-100', 'translate-y-0');
+    applied.classList.remove('pointer-events-none');
+    applied.classList.add('pointer-events-auto');
+    setTimeout(() => {
+        applied.classList.remove('opacity-100', 'translate-y-0');
+        applied.classList.add('opacity-0', '-translate-x-[-15rem]');
+        applied.classList.remove('pointer-events-auto');
+        applied.classList.add('pointer-events-none');
+    }, 2000);
 }

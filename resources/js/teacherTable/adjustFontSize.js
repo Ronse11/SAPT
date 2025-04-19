@@ -200,7 +200,6 @@ function addChosenFontSize(count) {
         });
     });
 
-    console.log(fontSizeData);
 
     // fetch('/save-underline-fonts', {
     //     method: 'POST',

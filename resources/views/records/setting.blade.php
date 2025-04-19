@@ -14,7 +14,20 @@
 </head>
 
 <body>
-    <section class=" w-screen h-screen grid grid-cols-6 grid-rows-8 gap-x-16 gap-y-0 tablet:grid-cols-16 cp:grid-cols-12 tablet:gap-y-4 bg-bgcolor">
+    <section class=" w-screen h-screen grid grid-cols-6 grid-rows-8 gap-x-16 gap-y-0 tablet:grid-cols-16 cp:grid-cols-12 tablet:gap-y-4 bg-bgcolor relative overflow-hidden">
+
+        {{-- SUCCESS APPLYING OF BUTTONS --}}
+        <div id="applied" class="absolute right-7 top-[13vh] flex items-center justify-center z-50 transition-all duration-500 ease-in-out opacity-0 pointer-events-none transform -translate-x-[-15rem]">
+            <div class="p-4 bg-green-50 rounded-sm border border-green-300 shadow-lg max-w-sm w-full pointer-events-none">
+                <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <h1 class="message text-green-500 text-sm text-center">
+                    </h1>
+                </div>
+            </div>
+        </div>
 
         {{-- Header --}}
         <header class=" w-screen row-start-1 row-span-1 flex justify-between items-center shadow tablet:shadow-none px-5 cp:px-16 z-40">
@@ -106,6 +119,9 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            const applied = document.getElementById('applied');
+            const showMessage = document.querySelector('.message');
+
             function copyRoomCodeToClipboard() {
                 const roomCode = document.getElementById("roomCode").innerText;
                 const tempInput = document.createElement("input");
@@ -116,7 +132,7 @@
                 tempInput.select();
                 document.execCommand("copy");
                 document.body.removeChild(tempInput);
-                alert("Copied to clipboard: " + roomCode);
+                floatMessage('Track Code Copied!');
             }
 
             function copyLinkToClipboard() {
@@ -129,7 +145,21 @@
                 tempInput.select();
                 document.execCommand("copy");
                 document.body.removeChild(tempInput);
-                alert("Copied to clipboard: " + shareableLink);
+                floatMessage('Invite Link Copied!');
+            }
+
+            function floatMessage(msg) {
+                showMessage.textContent = msg;
+                applied.classList.remove('opacity-0', '-translate-x-[-15rem]');
+                applied.classList.add('opacity-100', 'translate-y-0');
+                applied.classList.remove('pointer-events-none');
+                applied.classList.add('pointer-events-auto');
+                setTimeout(() => {
+                    applied.classList.remove('opacity-100', 'translate-y-0');
+                    applied.classList.add('opacity-0', '-translate-x-[-15rem]');
+                    applied.classList.remove('pointer-events-auto');
+                    applied.classList.add('pointer-events-none');
+                }, 2000);
             }
     
             document.getElementById("copyButton").addEventListener("click", copyRoomCodeToClipboard);

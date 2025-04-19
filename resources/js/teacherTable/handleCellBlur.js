@@ -2,6 +2,9 @@
 import { isFormulaActiveState } from "./calculation.js";
 // import { isFormulaActiveStateRating } from "./ratingTable.js";
 
+const applied = document.getElementById('appliedError');
+const showMessage = document.querySelector('.messageError');
+
 export function handleCellBlur(event, tableId, initialContent) {
 
     if(isFormulaActiveState()) {
@@ -14,11 +17,17 @@ export function handleCellBlur(event, tableId, initialContent) {
 
     let cell = event.target;
     let student_name = null;
+    let rowOfTotalScore = null;
+    let totalScore = null;
+    let maxRowStudent = 0;
     const table = document.querySelector(`#${tableId}`);
+    if (table.id === 'main-table') {
+        rowOfTotalScore = document.getElementById('rowOfTotalScore').getAttribute('value');
+    }
     // Remove the border when the cell loses focus
     cell.classList.remove('selected2');
     let id = cell.getAttribute('data-id');
-    let row = cell.getAttribute('data-row');
+    let row = parseInt(cell.getAttribute('data-row'));
     let column = cell.getAttribute('data-column');
     let content = cell.textContent.trim();
     if (table.id == 'rating-table') {
@@ -33,12 +42,35 @@ export function handleCellBlur(event, tableId, initialContent) {
     let colspan = cell.getAttribute('colspan');
     let merged = colspan > 1;
     let dataFormula = cell.getAttribute('data-formula');
-
+    
     cell.setAttribute('data-original', content);
 
-    // Debounce to prevent multiple rapid-fire requests
+    console.log(rowOfTotalScore);
+    
+    if (rowOfTotalScore !== '' && table.id === 'main-table') {
+        totalScore = table.querySelector(`td[data-row="${parseInt(rowOfTotalScore)}"][data-column="${column}"]`).textContent.trim();
+        maxRowStudent = parseInt(totalNumberOfStudents) + rowOfTotalScore;
+    }
+
+
     clearTimeout(cell.blurTimeout);
     cell.blurTimeout = setTimeout(() => {
+        // Check if the Content is Greter than Total Score
+        if(totalScore && row > rowOfTotalScore && row <= maxRowStudent && table.id === 'main-table') {
+            
+            if(isNaN(content)) {
+                floatMessage('Please enter a valid number!');
+                cell.textContent = '';
+                return;
+            }
+            
+            if(parseFloat(content) > parseFloat(totalScore)) {
+                floatMessage('Input Score is Higher than Total Score!');
+                cell.textContent = '';
+                return;
+            }
+        }
+
         // Deletion logic: if content is empty and there is an ID
         if (content.length === 0 && id && !dataFormula) {
             let url = `/delete-skills/${id}`;
@@ -82,8 +114,6 @@ export function handleCellBlur(event, tableId, initialContent) {
             tableId: tableId // Verify if this.tableId is available in context
         };
 
-        console.log(payload);
-
         if (!id) {
             payload.row = row;
             payload.column = column;
@@ -102,13 +132,27 @@ export function handleCellBlur(event, tableId, initialContent) {
         })
         .then(response => response.json())
         .then(data => {
-            // If there's no ID, update the cell with the returned ID from the server
             if (!id && data.id) {
                 cell.setAttribute('data-id', data.id);
             }
         })
         .catch(error => {
-            console.error("Error:", error);
+            floatMessage('Error saving cell content!');
         });
-    }, 300); // 300ms delay for debouncing
+    }, 500);
+}
+
+
+function floatMessage(msg) {
+    showMessage.textContent = msg;
+    applied.classList.remove('opacity-0', '-translate-x-[-15rem]');
+    applied.classList.add('opacity-100', 'translate-y-0');
+    applied.classList.remove('pointer-events-none');
+    applied.classList.add('pointer-events-auto');
+    setTimeout(() => {
+        applied.classList.remove('opacity-100', 'translate-y-0');
+        applied.classList.add('opacity-0', '-translate-x-[-15rem]');
+        applied.classList.remove('pointer-events-auto');
+        applied.classList.add('pointer-events-none');
+    }, 2000);
 }

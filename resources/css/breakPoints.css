@@ -1,4 +1,4 @@
-
+/* 
 
 
 
@@ -67,19 +67,17 @@
     
 }
 
-@media screen and (max-width: 376px) {  /* Fixed missing px */
+@media screen and (max-width: 376px) { 
     .sidebar {
-        display: none; /* Hide sidebar on small screens */
+        display: none;
     }
     
     .burger-menu {
-        display: block; /* Show burger button */
+        display: block; 
         cursor: pointer;
     }
 }
 
-
-/* Search CSS */
 .search-btn.search {
     background-color: rgb(254 254 255 / 1);
-}
+} */

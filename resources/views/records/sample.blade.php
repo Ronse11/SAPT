@@ -15,7 +15,7 @@
 </head>
 
 <body>
-    <section class=" w-screen h-screen relative grid grid-cols-6 grid-rows-15 gap-x-16 gap-y-0 tablet:grid-cols-16 cp:grid-cols-12 bg-bgcolor">
+    <section class=" w-screen h-screen relative grid grid-cols-6 grid-rows-15 gap-x-16 gap-y-0 tablet:grid-cols-16 cp:grid-cols-12 bg-bgcolor overflow-hidden">
 
         @php 
             $totalColumn = $totalRowCol ? $totalRowCol->total_column : 40;
@@ -46,6 +46,32 @@
                 <h1 class="text-red-500 px-4 py-2 rounded-sm text-sm text-center bg-bgcolor shadow-md ">
                     This feature is not available yet. Stay tuned!
                 </h1>
+            </div>
+        </div>
+
+        {{-- SUCCESS APPLYING OF BUTTONS --}}
+        <div id="applied" class="absolute right-7 top-[13vh] flex items-center justify-center z-50 transition-all duration-500 ease-in-out opacity-0 pointer-events-none transform -translate-x-[-15rem]">
+            <div class="p-4 bg-green-50 rounded-sm border border-green-300 shadow-lg max-w-sm w-full pointer-events-none">
+                <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <h1 class="message text-green-500 text-sm text-center">
+                    </h1>
+                </div>
+            </div>
+        </div>
+
+        {{-- ERROR APPLYING --}}
+        <div id="appliedError" class="absolute right-7 top-[13vh] flex items-center justify-center z-50 transition-all duration-500 ease-in-out opacity-0 pointer-events-none transform -translate-x-[-15rem]">
+            <div class="p-4 bg-red-50 rounded-sm border border-red-300 shadow-lg max-w-sm w-full pointer-events-none">
+                <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    <h1 class="messageError text-red-500 text-sm text-center">
+                    </h1>
+                </div>
             </div>
         </div>
 
@@ -1345,7 +1371,11 @@
                                                         @endif
                                                     @endif
                                                 @else
-                                                    {{ $cell->content ?? '' }}
+                                                    @if (!empty($cell) && is_numeric($cell->content))
+                                                        {{ round($cell->content) }}
+                                                    @else
+                                                        {{ $cell->content ?? '' }}
+                                                    @endif
                                                 @endif
                                             
                                                 
@@ -1721,72 +1751,122 @@
                                 </div>
 
                                 <div class=" flex-1 flex gap-2 bg-gray-100">
-                                    <div class="flex-1 flex justify-end gap-2 p-2">
-                                        <div class="grid place-content-center pr-7">
-                                            <h1 class="font-bold">MID-TERM</h1>
+                                    <div class="flex-1 flex justify-center gap-8">
+                                        <div class=" relative">
+                                            <div class=" flex gap-2 items-cent px-2 py-1">
+                                                <h1 class="font-bold">ROW OF TOTAL SCORE : </h1>
+                                                <input type="text" id="rowOfTotalScore" name="rowOfTotalScore" class="w-8 h-5 outline-none bg-gray-100 border-b border-gray-600 text-center" value="{{$getRowOfTotal->column ?? ''}}">
+                                            </div>
                                         </div>
-                                        <div class="flex gap-2">
-                                            <div class="flex items-center gap-1">
-                                                <label for="M.C">C :</label>
-                                                <input type="text" id="M.C" name="M.C" class="w-8 h-5 outline-none bg-gray-100 border-b-2 border-gray-600 focus:border-blue-500 text-center">
+                                        <div class=" relative">
+                                            <div class="dropMidTerm flex gap-2 items-center hover:bg-gray-200 cursor-pointer px-2 py-1 rounded-md">
+                                                <h1 class="font-bold">MID-TERM</h1>
+                                                <i class="bx bx-caret-up"></i>
                                             </div>
-                                            <div class="flex items-center gap-1">
-                                                <label for="M.P">P :</label>
-                                                <input type="text" id="M.P" name="M.P" class="w-8 h-5 outline-none bg-gray-100 border-b-2 border-gray-600 focus:border-blue-500 text-center">
-                                            </div>
-                                            <div class="flex items-center gap-1">
-                                                <label for="M.A">A :</label>
-                                                <input type="text" id="M.A" name="M.A" class="w-8 h-5 outline-none bg-gray-100 border-b-2 border-gray-600 focus:border-blue-500 text-center">
-                                            </div>
-                                            <div class="relative group z-50" onmouseenter="unhideTooltip(this)" onmouseleave="hideTooltip(this)" onclick="hideTooltip(this)">
-                                                <div class="flex items-center gap-1">
-                                                    <label for="MidGr.">Mid Grade :</label>
-                                                    <input type="text" id="MidGr." name="MidGr." class="w-8 h-5 outline-none bg-gray-100 border-b-2 border-gray-600 focus:border-blue-500 text-center"  value="{{$getMidGr->column ?? ''}}">
+                                            <div class="showDropMidTerm hidden">
+                                                <div class=" flex flex-col gap-4 p-3 rounded-md shadow-sm bg-gray-100 absolute -top-[11rem] text-nowrap">
+                                                    <div class="flex items-center gap-1">
+                                                        <label for="M.C" class="font-semibold">C :</label>
+                                                        <input type="text" id="M.C" name="M.C" class="w-8 h-5 outline-none bg-gray-100 border-b border-gray-600 focus:border-blue-500 text-center">
+                                                    </div>
+                                                    <div class="flex items-center gap-1">
+                                                        <label for="M.P" class="font-semibold">P :</label>
+                                                        <input type="text" id="M.P" name="M.P" class="w-8 h-5 outline-none bg-gray-100 border-b border-gray-600 focus:border-blue-500 text-center">
+                                                    </div>
+                                                    <div class="flex items-center gap-1">
+                                                        <label for="M.A" class="font-semibold">A :</label>
+                                                        <input type="text" id="M.A" name="M.A" class="w-8 h-5 outline-none bg-gray-100 border-b border-gray-600 focus:border-blue-500 text-center">
+                                                    </div>
+                                                    <div class="relative group z-50" onmouseenter="unhideTooltip(this)" onmouseleave="hideTooltip(this)" onclick="hideTooltip(this)">
+                                                        <div class="flex items-center gap-1">
+                                                            <label for="MidGr." class="font-semibold">Mid Grade :</label>
+                                                            <input type="text" id="MidGr." name="MidGr." class="w-8 h-5 outline-none bg-gray-100 border-b border-gray-600 focus:border-blue-500 text-center"  value="{{$getMidGr->column ?? ''}}">
+                                                        </div>
+                                                        <div class="tooltip opacity-0 pointer-events-none absolute top-full left-0 transform -translate-x-0 -mt-20  shadow-md flex-col items-center transition-opacity duration-300">
+                                                            <div class="relative bg-bgcolor text-sm border border-cursor whitespace-nowrap py-1 px-2">
+                                                                <h1 class="text-[0.8rem] font-bold">Midterm Grade Column</h1>
+                                                                <p class="text-[0.8rem]">Specify the midterm grade column.</p>                                                        
+                                                            </div>  
+                                                        </div>
+                                                    </div> 
                                                 </div>
-                                                <div class="tooltip opacity-0 pointer-events-none absolute top-full left-0 transform -translate-x-0 -mt-20  shadow-md flex-col items-center transition-opacity duration-300">
-                                                    <div class="relative bg-bgcolor text-sm border border-cursor whitespace-nowrap py-1 px-2">
-                                                        <h1 class="text-[0.8rem] font-bold">Midterm Grade Column</h1>
-                                                        <p class="text-[0.8rem]">Specify the midterm grade column.</p>                                                        
-                                                    </div>  
+                                            </div>
+                                        </div>
+
+                                        <div class="relative">
+                                            <div class="dropFinalTerm flex gap-2 items-center hover:bg-gray-200 cursor-pointer px-2 py-1 rounded-md">
+                                                <h1 class="font-bold">FINAL-TERM</h1>
+                                                <i class="bx bx-caret-up"></i>
+                                            </div>
+                                            <div class="showDropFinalTerm hidden">
+                                                <div class="flex flex-col gap-4 p-3 rounded-md shadow-sm bg-gray-100 absolute -top-[11rem] text-nowrap">
+                                                    <div class="flex items-center gap-1">
+                                                        <label for="F.C" class="font-semibold">C :</label>
+                                                        <input type="text" id="F.C" name="F.C" class="w-8 h-5 outline-none bg-gray-100 border-b border-gray-600 focus:border-blue-500 text-center">
+                                                    </div>
+                                                    <div class="flex items-center gap-1">
+                                                        <label for="F.P" class="font-semibold">P :</label>
+                                                        <input type="text" id="F.P" name="F.P" class="w-8 h-5 outline-none bg-gray-100 border-b border-gray-600 focus:border-blue-500 text-center">
+                                                    </div>
+                                                    <div class="flex items-center gap-1">
+                                                        <label for="F.A" class="font-semibold">A :</label>
+                                                        <input type="text" id="F.A" name="F.A" class="w-8 h-5 outline-none bg-gray-100 border-b border-gray-600 focus:border-blue-500 text-center">
+                                                    </div>
+                                                    <div class="relative group z-50" onmouseenter="unhideTooltip(this)" onmouseleave="hideTooltip(this)" onclick="hideTooltip(this)">
+                                                        <div class="flex items-center gap-1">
+                                                            <label for="T.F.Gr." class="font-semibold">Final Grade :</label>
+                                                            <input type="text" id="T.F.Gr." name="T.F.Gr." class="w-8 h-5 outline-none bg-gray-100 border-b border-gray-600 focus:border-blue-500 text-center"  value="{{$getFinGr->column ?? ''}}">
+                                                        </div>
+                                                        <div class="tooltip opacity-0 pointer-events-none absolute top-full -left-24 transform -translate-x-0 -mt-20  shadow-md flex-col items-center transition-opacity duration-300">
+                                                            <div class="relative bg-bgcolor text-sm border border-cursor whitespace-nowrap py-1 px-2">
+                                                                <h1 class="text-[0.8rem] font-bold">Finalterm Grade Column</h1>
+                                                                <p class="text-[0.8rem]">Specify the finalterm grade column.</p>                                                        
+                                                            </div>  
+                                                        </div>
+                                                    </div> 
                                                 </div>
-                                            </div> 
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div class="flex-1 flex justify-end gap-2 p-2">
-                                        <div class="grid place-content-center pr-7">
-                                            <h1 class="font-bold">FINAL</h1>
-                                        </div>
-                                        <div class="flex gap-2">
-                                            <div class="flex items-center gap-1">
-                                                <label for="F.C">C :</label>
-                                                <input type="text" id="F.C" name="F.C" class="w-8 h-5 outline-none bg-gray-100 border-b-2 border-gray-600 focus:border-blue-500 text-center">
+                                    {{-- <div class="flex-1 flex justify-start gap-2">
+                                        <div class="relative">
+                                            <div class="dropFinalTerm flex gap-2 items-center hover:bg-gray-200 cursor-pointer px-2 py-1 rounded-md">
+                                                <h1 class="font-bold">FINAL-TERM</h1>
+                                                <i class="bx bx-caret-up"></i>
                                             </div>
-                                            <div class="flex items-center gap-1">
-                                                <label for="F.P">P :</label>
-                                                <input type="text" id="F.P" name="F.P" class="w-8 h-5 outline-none bg-gray-100 border-b-2 border-gray-600 focus:border-blue-500 text-center">
-                                            </div>
-                                            <div class="flex items-center gap-1">
-                                                <label for="F.A">A :</label>
-                                                <input type="text" id="F.A" name="F.A" class="w-8 h-5 outline-none bg-gray-100 border-b-2 border-gray-600 focus:border-blue-500 text-center">
-                                            </div>
-                                            <div class="relative group z-50" onmouseenter="unhideTooltip(this)" onmouseleave="hideTooltip(this)" onclick="hideTooltip(this)">
-                                                <div class="flex items-center gap-1">
-                                                    <label for="T.F.Gr.">Final Grade :</label>
-                                                    <input type="text" id="T.F.Gr." name="T.F.Gr." class="w-8 h-5 outline-none bg-gray-100 border-b-2 border-gray-600 focus:border-blue-500 text-center"  value="{{$getFinGr->column ?? ''}}">
+                                            <div class="showDropFinalTerm hidden">
+                                                <div class="flex gap-4 p-3 rounded-md shadow-sm bg-gray-100 absolute -top-[3.5rem] text-nowrap">
+                                                    <div class="flex items-center gap-1">
+                                                        <label for="F.C" class="font-semibold">C :</label>
+                                                        <input type="text" id="F.C" name="F.C" class="w-8 h-5 outline-none bg-gray-100 border-b border-gray-600 focus:border-blue-500 text-center">
+                                                    </div>
+                                                    <div class="flex items-center gap-1">
+                                                        <label for="F.P" class="font-semibold">P :</label>
+                                                        <input type="text" id="F.P" name="F.P" class="w-8 h-5 outline-none bg-gray-100 border-b border-gray-600 focus:border-blue-500 text-center">
+                                                    </div>
+                                                    <div class="flex items-center gap-1">
+                                                        <label for="F.A" class="font-semibold">A :</label>
+                                                        <input type="text" id="F.A" name="F.A" class="w-8 h-5 outline-none bg-gray-100 border-b border-gray-600 focus:border-blue-500 text-center">
+                                                    </div>
+                                                    <div class="relative group z-50" onmouseenter="unhideTooltip(this)" onmouseleave="hideTooltip(this)" onclick="hideTooltip(this)">
+                                                        <div class="flex items-center gap-1">
+                                                            <label for="T.F.Gr." class="font-semibold">Final Grade :</label>
+                                                            <input type="text" id="T.F.Gr." name="T.F.Gr." class="w-8 h-5 outline-none bg-gray-100 border-b border-gray-600 focus:border-blue-500 text-center"  value="{{$getFinGr->column ?? ''}}">
+                                                        </div>
+                                                        <div class="tooltip opacity-0 pointer-events-none absolute top-full -left-24 transform -translate-x-0 -mt-20  shadow-md flex-col items-center transition-opacity duration-300">
+                                                            <div class="relative bg-bgcolor text-sm border border-cursor whitespace-nowrap py-1 px-2">
+                                                                <h1 class="text-[0.8rem] font-bold">Finalterm Grade Column</h1>
+                                                                <p class="text-[0.8rem]">Specify the finalterm grade column.</p>                                                        
+                                                            </div>  
+                                                        </div>
+                                                    </div> 
                                                 </div>
-                                                <div class="tooltip opacity-0 pointer-events-none absolute top-full -left-24 transform -translate-x-0 -mt-20  shadow-md flex-col items-center transition-opacity duration-300">
-                                                    <div class="relative bg-bgcolor text-sm border border-cursor whitespace-nowrap py-1 px-2">
-                                                        <h1 class="text-[0.8rem] font-bold">Finalterm Grade Column</h1>
-                                                        <p class="text-[0.8rem]">Specify the finalterm grade column.</p>                                                        
-                                                    </div>  
-                                                </div>
-                                            </div> 
+                                            </div>
                                         </div>
-                                    </div>
-
-                                    
+                                    </div> --}}
                                 </div>
+
                             </div>
                         </div>
 

@@ -17,7 +17,7 @@
 <body>
     <section class=" w-full h-screen flex flex-col">
         {{-- Navigation --}}
-        <nav class="sidebar flex flex-col w-[17%] h-full bg-gray-100 -translate-x-[20rem] transition absolute top-0 left-0 border-r border-sgline z-20">
+        <nav class="sidebar flex flex-col xl:w-[17%] w-[15rem] h-full bg-gray-100 -translate-x-[20rem] transition absolute top-0 left-0 border-r border-sgline z-20">
             <div class="flex h-[5.5rem] items-center justify-between pl-8 border-b border-sgline">
                 <div class="flex items-center">
                     <img class=" w-8 h-8 mb-3 mr-1" src="{{ Vite::asset('resources/images/saptlogo.svg') }}" alt="Logo">
@@ -116,7 +116,7 @@
         <section class="teacher-choices flex-1 flex flex-col w-full bg-bgcolor">
                 {{-- Header --}}
                 <header class=" w-full h-[5.5rem] flex justify-between items-center shadow tablet:shadow-none cp:pr-8 z-10 border-b border-sgline">
-                    <div class="flex h-[5.5rem] w-[17%] items-center justify-between pl-8 ">
+                    <div class="flex h-[5.5rem] md:gap-20 gap-10 items-center justify-between pl-8 ">
                         <div class="flex items-center">
                             <img class=" w-8 h-8 mb-3 mr-1" src="{{ Vite::asset('resources/images/saptlogo.svg') }}" alt="Logo">
                             <h1 class=" text-xl font-normal text-black select-none tracking-widest cp:text-3xl">APT</h1>
@@ -180,7 +180,7 @@
                         <button class="btn-user text-3xl w-9 h-9 rounded-full cp:text-2xl bg-mainText hover:ring-8 hover:ring-gray-100">
                             <h1 class=" text-xl text-bgcolor">{{ substr(auth()->user()->username, 0, 1) }}</h1>
                         </button>
-                        <div class="log-user bg-bgcolor hidden absolute left-0 ml-[1rem] mt-14 rounded-md shadow-md z-10">
+                        <div class="log-user bg-bgcolor hidden absolute left-0 ml-[4.7rem] mt-28 border border-sgline rounded-md shadow-md z-10">
                             <div class="flex flex-col">
                                 <a href="{{ route('logout') }}" class=" text-subtText hover:bg-hoverColor hover:text-mainText px-4 py-2 text-start">Logout</a>
                             </div>
@@ -231,9 +231,8 @@
                              </div>
                         </a> --}}
                          
-                        <div class="flex gap-12">
-                            <a href="{{ route('sample.room', ['id' => $encodedId, 'key' => 'main-table']) }}" 
-                               class="card relative bg-bgcolor flex flex-col items-center justify-center w-[270px] h-[370px] rounded-sm px-5 pt-5 pb-1 overflow-hidden transition"
+                        <div class="flex lg:gap-12 gap-4">
+                            <a href="{{ route('sample.room', ['id' => $encodedId, 'key' => 'main-table']) }}" class="card relative bg-bgcolor flex flex-col items-center justify-center lg:w-[270px] lg:h-[370px] md:w-[220px] w-[200px] rounded-sm px-5 pt-5 pb-1 overflow-hidden transition"
                                data-default="true">
 
                                 <!-- Content -->
@@ -265,12 +264,11 @@
                                 </div>
 
                                 <div class="w-full text-start">
-                                    <h1 class="text-2xl font-medium py-2">Record</h1>
+                                    <h1 class="md:text-2xl text-xl font-medium py-2">Record</h1>
                                 </div>
                             </a>
                         
-                            <a href="{{ route('attendance.room', [ 'id' => $encodedId, 'key' => 'attendance-table']) }}" 
-                               class="card relative bg-bgcolor flex flex-col items-center justify-center w-[270px] h-[370px] rounded-sm px-5 pt-5 pb-1 overflow-hidden transition">
+                            <a href="{{ route('attendance.room', [ 'id' => $encodedId, 'key' => 'attendance-table']) }}" class="card relative bg-bgcolor flex flex-col items-center justify-center lg:w-[270px] lg:h-[370px] md:w-[220px] w-[200px] rounded-sm px-5 pt-5 pb-1 overflow-hidden transition">
                                 <!-- Content -->
                                 <div class="text-center bg-bgcolor w-full h-full border border-sgline flex items-center justify-center p-4">
                                     <table class="border-collapse border border-gray-400 w-full text-[.5rem]">
@@ -300,12 +298,11 @@
                                 </div>
                                 
                                 <div class="w-full text-start">
-                                    <h1 class="text-2xl font-medium py-2">Attendance</h1>
+                                    <h1 class="md:text-2xl text-xl font-medium py-2">Attendance</h1>
                                 </div>
                             </a>
                         
-                            <a href="{{ route('paste-name', $encodedId) }}" 
-                               class="card relative bg-bgcolor flex flex-col items-center justify-center w-[270px] h-[370px] rounded-sm px-5 pt-5 pb-1 overflow-hidden transition">
+                            <a href="{{ route('paste-name', $encodedId) }}" class="card relative bg-bgcolor flex flex-col items-center justify-center lg:w-[270px] lg:h-[370px] md:w-[220px] w-[200px] rounded-sm px-5 pt-5 pb-1 overflow-hidden transition">
                                
                                 <!-- Content -->
                                 <div class="text-center bg-bgcolor w-full h-full border border-sgline flex items-center justify-center p-4">
@@ -332,13 +329,13 @@
                                 </div>
 
                                 <div class="w-full text-start">
-                                    <h1 class="text-2xl font-medium py-2">Students</h1>
+                                    <h1 class="md:text-2xl text-xl font-medium py-2">Students</h1>
                                 </div>
                             </a>
                         </div>
                         <div class="w-full flex gap-2 items-center">
-                            <h1 class="text-xl">{{ $count }}</h1>
-                            <h1 class="text-xl">Student/s</h1>
+                            <h1 class="md:text-xl text-lg">{{ $count }}</h1>
+                            <h1 class="md:text-xl text-lg">Student/s</h1>
                         </div>
                          
                          

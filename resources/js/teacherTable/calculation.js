@@ -680,7 +680,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 try {
                     let result = evaluate(rowFormula);
                     result = result.toFixed(2);
-                    // result = Math.round(result);
+                    const displayResult = Math.round(result);
                     // result = Math.round(result * 100) / 100;
     
                     let tableName = firstSelectedCell.closest('table').id;
@@ -694,7 +694,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         const resultCell = table.querySelector(`.cursor-cell[data-column="${firstSelectedCol}"][data-row="${operationRow}"]`);
 
                         if(resultCell) {
-                            resultCell.textContent = result; // Apply result to all matching cells
+                            resultCell.textContent = displayResult; // Apply result to all matching cells
                             let rowCell = resultCell.dataset.row;
     
                             let studentName = studentNameCache[rowCell];
@@ -734,13 +734,13 @@ document.addEventListener('DOMContentLoaded', function () {
             let result;
             result = evaluate(rowFormula);
             result = result.toFixed(2);
-            // result = Math.round(result);
+            const displaResult = Math.round(result);
             // result = Math.round(result * 100) / 100;
 
             const resultCell = table.querySelector(`.cursor-cell[data-column="${firstSelectedCol}"][data-row="${row}"]`);
 
             if (resultCell) {
-                resultCell.textContent = result; // Set the calculated and rounded result
+                resultCell.textContent = displaResult; // Set the calculated and rounded result
                 let rowCell = resultCell.dataset.row;
 
                 let studentName = studentNameCache[rowCell];
@@ -1194,8 +1194,8 @@ document.addEventListener('DOMContentLoaded', function () {
                                     // console.log(newInvolvedFormula);
     
                                     let updatednewInvolvedFormula = newInvolvedFormula;
-                                    const matchTargetFormula = newInvolvedFormula.match(/[A-Z]{1,2}/g);
-    
+                                    const matchTargetFormula = newInvolvedFormula.match(/[A-Z]{1,2}/g) || [];
+
                                     matchTargetFormula.forEach(matchCol => {
                                         const cacheKey = `${row}-${matchCol}`;
                                         if (!cellCache.has(cacheKey)) {
@@ -1296,7 +1296,6 @@ document.addEventListener('DOMContentLoaded', function () {
                                 })
                                 .then(response => response.json())
                                 .then(data => {
-                                    console.log("Server Response:", data);
                                     if (data.ids) {
                                         data.ids.forEach((newId, index) => {
                                             let updatedCell = table.querySelector(

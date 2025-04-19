@@ -287,6 +287,9 @@ export class CellManager {
 
 const cellManager = new CellManager();
 
+const applied = document.getElementById('applied');
+const showMessage = document.querySelector('.message');
+
 // MANG ENCAPSULATE BWAS CODE OKIIIIIIIIIIIIIIIIIISSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS??????????????????????????
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -412,6 +415,11 @@ async function mergeSelectedCells() {
 
         const result = await response.json();
 
+        if(response.ok) {
+            const msg = 'Merged Successfully!';
+            floatMessage(msg);
+        }
+
         if (result.id) {
             firstCell.dataset.id = result.id;
         }
@@ -521,13 +529,19 @@ async function unmergeSelectedCells() {
         if (data.updatedCells) {
             updateCellsAfterUnmerge(data.updatedCells, data.cellAttr);
         }
+
+        if(response.ok) {
+            const msg = 'Unmerged Successfully!';
+            floatMessage(msg);
+        }
+
     } catch (error) {
         restorePreviousCellState(firstCell, rowspan, colspan);
     } finally {
         // Remove the loading message
-        const loadingMessage = document.getElementById('loadingScreen');
+        const loadingMessage = document.querySelector('.loadingScreen');
         if (loadingMessage) {
-            loadingMessage.remove();
+            loadingMessage.classList.add('hidden');
         }
         cellManager.clearSelection();
     }
@@ -683,3 +697,18 @@ document.addEventListener('DOMContentLoaded', (event) => {
         });
     });
 });
+
+
+function floatMessage(msg) {
+    showMessage.textContent = msg;
+    applied.classList.remove('opacity-0', '-translate-x-[-15rem]');
+    applied.classList.add('opacity-100', 'translate-y-0');
+    applied.classList.remove('pointer-events-none');
+    applied.classList.add('pointer-events-auto');
+    setTimeout(() => {
+        applied.classList.remove('opacity-100', 'translate-y-0');
+        applied.classList.add('opacity-0', '-translate-x-[-15rem]');
+        applied.classList.remove('pointer-events-auto');
+        applied.classList.add('pointer-events-none');
+    }, 2000);
+}

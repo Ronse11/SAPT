@@ -3,6 +3,9 @@ import { selectedCells, CellManager } from "@js/merging.js";
 
 const cellManager = new CellManager();
 
+const applied = document.getElementById('applied');
+const showMessage = document.querySelector('.message');
+
 document.addEventListener('DOMContentLoaded', function() {
     if( !document.getElementById('pushNames')) return;
 
@@ -52,55 +55,50 @@ function selectCell() {
 
         const names = data.names;
 
-        console.log(names);
-
         let currentRow = startRow;
         let currentNumber = 1;
 
+        const allName2Null = names.every(student => !student.name_2);
+
         names.forEach((student) => {
             const rowCells = document.querySelectorAll(`td[data-row="${currentRow}"]`);
-        
+            
             rowCells.forEach((cell) => {
-                cell.setAttribute("data-operation", "operation");  // Set data-operation attribute
-                cell.removeAttribute("data-sum");  // Remove data-sum attribute
+                cell.setAttribute("data-operation", "operation");
+                cell.removeAttribute("data-sum");
             });
-        
+            
             const firstCell = document.querySelector(`td[data-row="${currentRow}"][data-column="A"]`);
             if (firstCell) {
                 firstCell.dataset.roomStudent = student.name_3;
-            } else {
-                console.warn(`First column cell not found at row ${currentRow}`);
             }
-        
+            
             const numberCell = document.querySelector(`td[data-row="${currentRow}"][data-column="${startColumn}"]`);
             if (numberCell) {
-                numberCell.textContent = currentNumber;
+                numberCell.textContent = student.name_1 && student.name_1 !== '' ? student.name_1 : currentNumber;
                 numberCell.classList.add('text-center');
-            } else {
-                console.warn(`Number cell not found at row ${currentRow}, column ${startColumn}`);
             }
-        
+            
             let newCurrentCol = cellManager.columnNameToIndex(startColumn);
             newCurrentCol++;
-        
+            
             const cell2 = document.querySelector(`td[data-row="${currentRow}"][data-column="${cellManager.indexToColumnName(newCurrentCol)}"]`);
             if (cell2) {
-                cell2.textContent = student.name_2;
+                cell2.textContent = allName2Null ? student.name_3 : student.name_2;
                 cell2.classList.add('text-start');
-            } else {
-                console.warn(`Cell2 not found at row ${currentRow}, column ${newCurrentCol}`);
             }
-        
+            
             newCurrentCol++;
-        
             const cell3 = document.querySelector(`td[data-row="${currentRow}"][data-column="${cellManager.indexToColumnName(newCurrentCol)}"]`);
             if (cell3) {
-                cell3.textContent = student.name_3;
-                cell3.classList.add('text-start');
-            } else {
-                console.warn(`Cell3 not found at row ${currentRow}, column ${newCurrentCol}`);
+                cell3.textContent = allName2Null ? '' : student.name_3;
+                if(allName2Null) {
+                    cell3.classList.add('text-center');
+                } else {
+                    cell3.classList.add('text-start');
+                }
             }
-        
+            
             currentRow++;
             currentNumber++;
         });
@@ -108,6 +106,7 @@ function selectCell() {
 
         updateUI(startRow, removeContainer, studentContainer);  
 
+        floatMessage('Names loaded successfully.')
     })
     .catch(error => {
         console.error('Error saving data:', error);
@@ -124,14 +123,19 @@ function updateUI(startRow, removeContainer, studentContainer) {
 }
 
 
-
-
-
-
-
-
-
-
+function floatMessage(msg) {
+    showMessage.textContent = msg;
+    applied.classList.remove('opacity-0', '-translate-x-[-15rem]');
+    applied.classList.add('opacity-100', 'translate-y-0');
+    applied.classList.remove('pointer-events-none');
+    applied.classList.add('pointer-events-auto');
+    setTimeout(() => {
+        applied.classList.remove('opacity-100', 'translate-y-0');
+        applied.classList.add('opacity-0', '-translate-x-[-15rem]');
+        applied.classList.remove('pointer-events-auto');
+        applied.classList.add('pointer-events-none');
+    }, 2000);
+}
 
 
 

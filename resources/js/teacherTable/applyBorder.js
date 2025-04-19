@@ -3,7 +3,8 @@ import { CellManager, selectedCells } from "@js/merging.js";
 
 const newCellManager = new CellManager();
 
-
+const applied = document.getElementById('applied');
+const showMessage = document.querySelector('.message');
 
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('apply-borders').addEventListener('click', applyBorders);
@@ -146,7 +147,8 @@ function applyBorders() {
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Borders saved:', data);
+        const msg = 'Borders Successfully Saved!';
+        floatMessage(msg);
     })
     .catch(error => {
         console.error('Error saving borders:', error);
@@ -213,7 +215,8 @@ function applyBorderToAllCells() {
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Borders saved:', data);
+        const msg = 'Borders Successfully Saved!';
+        floatMessage(msg);
     })
     .catch(error => {
         console.error('Error saving borders:', error);
@@ -322,7 +325,8 @@ function deleteBordersAllCells() {
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Borders deleted:', data);
+        const msg = 'Borders Deleted Successfully!';
+        floatMessage(msg);
 
         // Remove the borders visually
         for (const borderInfo of data.borders) {
@@ -411,7 +415,6 @@ function applyTopRightBotLeftBorder(position) {
             isRight: ('Right' == position) ? true : false
         });
     });
-    console.log(borderDataPosition)
 
     fetch('/save-borders-position-cells', {
         method: 'POST',
@@ -423,9 +426,24 @@ function applyTopRightBotLeftBorder(position) {
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Borders saved:', data);
+        const msg = 'Borders Successfully Saved!';
+        floatMessage(msg);
     })
     .catch(error => {
         console.error('Error saving borders:', error);
     });
+}
+
+function floatMessage(msg) {
+    showMessage.textContent = msg;
+    applied.classList.remove('opacity-0', '-translate-x-[-15rem]');
+    applied.classList.add('opacity-100', 'translate-y-0');
+    applied.classList.remove('pointer-events-none');
+    applied.classList.add('pointer-events-auto');
+    setTimeout(() => {
+        applied.classList.remove('opacity-100', 'translate-y-0');
+        applied.classList.add('opacity-0', '-translate-x-[-15rem]');
+        applied.classList.remove('pointer-events-auto');
+        applied.classList.add('pointer-events-none');
+    }, 2000);
 }

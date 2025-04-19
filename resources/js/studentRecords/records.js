@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Show active section, hide inactive section
         activeSection.classList.remove("hidden");
         inactiveSectionOne.classList.add("hidden");
-        inactiveSectionTwo.classList.add("hidden");
+        // inactiveSectionTwo.classList.add("hidden");
     }
 
     tableTab.addEventListener("click", function () {

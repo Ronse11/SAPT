@@ -9,6 +9,7 @@ class RoomRepository
     public function getRoomsForTeacher($userId, $folderId = null)
     {
         $query = Rooms::orderBy('created_at', 'desc')
+            ->where('folder_id', 0)
             ->where('teacher_id', $userId);
 
         if ($folderId !== null) {

@@ -227,7 +227,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // USING INPUT
-    const inputs = ['semester', 'MidGr.', 'T.F.Gr.'];
+    const inputs = ['semester', 'MidGr.', 'T.F.Gr.', 'rowOfTotalScore'];
     const previousValues = {};
 
     inputs.forEach(id => {
@@ -249,7 +249,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         handleInputColumn(cell, cellValue);
 
-        if(cell.id === 'semester') return;
+        cell.setAttribute('value', cellValue);
+        if(cell.id === 'semester' || cell.id === 'rowOfTotalScore') return;
 
         cell.setAttribute('data-p', 'process');
         const column = cell.value.trim();
@@ -462,6 +463,69 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    const dropdownMap = {
+        'dropMidTerm': document.querySelector('.showDropMidTerm'),
+        'dropFinalTerm': document.querySelector('.showDropFinalTerm')
+    };
+    
+    const triggerElements = {};
+    
+    Object.entries(dropdownMap).forEach(([className, contentElement]) => {
+        const trigger = document.querySelector(`.${className}`);
+        if (trigger && contentElement) {
+            triggerElements[className] = trigger;
+            
+            trigger.addEventListener('click', (event) => {
+                Object.values(triggerElements).forEach(t => {
+                    t.classList.remove('bg-gray-200');
+                });
+                
+                trigger.classList.add('bg-gray-200');
+                
+                Object.entries(dropdownMap).forEach(([otherClass, otherElement]) => {
+                    if (otherClass !== className && otherElement) {
+                        otherElement.classList.add('hidden');
+                    }
+                });
+                
+                contentElement.classList.toggle('hidden');
+                
+                if (contentElement.classList.contains('hidden')) {
+                    trigger.classList.remove('bg-gray-200');
+                }
+                
+                event.stopPropagation();
+            });
+        }
+        
+        // Add event listener to prevent dropdown from closing when interacting with its content
+        if (contentElement) {
+            contentElement.addEventListener('click', (event) => {
+                event.stopPropagation();
+            });
+        }
+    });
+    
+    document.addEventListener('click', (event) => {
+        const isClickInsideDropdown = Object.values(dropdownMap).some(element => 
+            element && element.contains(event.target)
+        );
+        
+        if (isClickInsideDropdown) {
+            return;
+        }
+        
+        Object.values(triggerElements).forEach(trigger => {
+            trigger.classList.remove('bg-gray-200');
+        });
+        
+        Object.values(dropdownMap).forEach(element => {
+            if (element && !element.classList.contains('hidden')) {
+                element.classList.add('hidden');
+            }
+        });
+    });
+
 
     function showWarning() {
         const successAlert = document.getElementById('success-alert');
@@ -482,8 +546,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-
-});
+}); 
 
 
 

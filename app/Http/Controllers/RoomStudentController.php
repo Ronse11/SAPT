@@ -72,7 +72,7 @@ class RoomStudentController extends Controller
                 return redirect()->route('phoneNumber');
             }
             
-            return redirect()->route('student-home');
+            return redirect()->route('student-home')->with('roomCreated', true);
             
         } else {
             return redirect()->route('track')->withErrors(['error' => 'Incorrect Track Code']);
@@ -328,12 +328,54 @@ class RoomStudentController extends Controller
     public function destroyRoom($id)
     {
         $room = StudentRoom::findOrFail($id);
+        $folderId = $room->folder_id;
 
-        if($room) {
+        if($room && $folderId === 0) {
             $room->delete();
-        }
 
-        return redirect()->route('student-home')->with('roomDeleted', true);
+            return redirect()->route('student-home')->with('roomDeleted', true);
+        } else {
+            $room->delete();
+            
+            return redirect()->route('student-folder', $folderId)->with('roomDeleted', true);
+        }
+    }
+
+    // DELETION OF FOLDER
+    public function destroyFolder($id)
+    {
+        // Find the item by ID
+        $folder = Folders::findOrFail($id);
+
+        if($folder) {
+            $folder->delete();
+        }
+        
+        return redirect()->route('student-home')->with('folderDeleted', true);
+    }
+
+    // MOVING OF CLASS TO FOLDER
+    public function moveRoom(Request $request)
+    {
+        $request->validate([
+            'item_id' => 'required|integer',
+            'folder_id' => 'required',
+        ]);
+        
+        $room = StudentRoom::findOrFail($request->item_id);
+        
+        if ($request->folder_id === 'homepage') {
+            $room->folder_id = 0;
+            $room->save();
+
+            return redirect()->route('student-home')->with('roomMoved', true);
+        } else {
+            $folder = Folders::findOrFail($request->folder_id);
+            $room->folder_id = $request->folder_id;
+            $room->save();
+
+            return redirect()->route('student-folder', $folder->id)->with('roomMoved', true);
+        }        
     }
 
     // Form for Tracking Room in a Folder
@@ -352,24 +394,16 @@ class RoomStudentController extends Controller
         
         if ($room) {
             $studentID = Auth::id();
+            $user = User::where('id', $studentID)->first();
             
             $access = StudentRoom::where('room_id', $room->id)->where('student_id', $studentID)->first();
-
-            $request->validate([
-                'full_name' => [
-                    'required',
-                    'regex:/^[A-Z][a-z]+, [A-Z][a-z]+ [A-Z]\.( (II|III|ll|lll|Jr\.|Sr\.)?)?$/',
-                ],
-            ], [
-                'full_name.regex' => 'The Fullname is gegemon'
-            ]);
             
             if (!$access) {
                 StudentRoom::create([
                     'folder_id' => $id,
                     'room_id' => $room->id,
                     'student_id' => $studentID,
-                    'student_name' => $request->input('full_name'),
+                    'student_name' => $user->school_name,
                     'teacher_name' => $room->teacher_name,
                     'class_name' => $room->class_name,
                     'subject' => $room->subject,
@@ -382,7 +416,7 @@ class RoomStudentController extends Controller
                 $user->save();
             }
             
-            return redirect()->route('student-home');
+            return redirect()->route('student-folder', $id)->with('roomCreated', true);
             
         } else {
             return redirect()->route('track')->withErrors(['error' => 'Incorrect Track Code']);

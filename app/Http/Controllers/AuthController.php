@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Rooms;
-use App\Models\StudentRoom;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,7 +25,7 @@ class AuthController extends Controller
             'password.min' => 'Password must be at least 8 characters.',
             'password.regex' => 'Password requires A-Z, a-z & special char.',
         ]);
-        
+
 
         // Register
         $user = User::create($fields);
@@ -39,14 +37,14 @@ class AuthController extends Controller
         return redirect()->intended('/home');
     }
 
+    // Login User
     public function login(Request $request) {
-        // Validate input
+        // Valid User Input
         $fields = $request->validate([
             'email' => ['required', 'max:255', 'email'],
             'password' => ['required']
         ]);
     
-        // Attempt to authenticate user
         if (Auth::attempt($fields)) {
             $request->session()->regenerate();
             $user = Auth::user();
@@ -69,7 +67,7 @@ class AuthController extends Controller
     }
     
 
-    // Logout
+    // Logout User
     public function logout(Request $request) {
 
         Auth::logout();

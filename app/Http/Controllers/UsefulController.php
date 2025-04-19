@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\RoomHelper;
 use App\Http\Controllers\HelperFunctions;
 
 use App\Models\AttendanceTable;
@@ -97,19 +98,26 @@ class UsefulController extends Controller
     {
         $query = $request->get('query');
         $rooms = Rooms::orderBy('created_at', 'desc')->where('class_name', 'LIKE', "%{$query}%")->get();
+
+        $roomsWithUrls = $rooms->map(function ($room) {
+            $room->encoded_url = RoomHelper::generateRoomUrl($room);
+            return $room;
+        });
         
-        return response()->json($rooms);
+        return response()->json($roomsWithUrls);
     }
+
+    
 
     // SEARCH FUNCTIONALITY HERE! FOR STUDENTS SIDE!
     public function searchStudent(Request $request) {
-
         $query = $request->get('query');
         // $rooms = Rooms::orderBy('created_at', 'desc')->where('class_name', 'LIKE', "%{$query}%")->get();
         $roomStudent = StudentRoom::orderBy('created_at', 'desc')->where('class_name', 'LIKE', "%{$query}%")->get();
         
         return response()->json($roomStudent);
     }
+
 
     // Cancel Button
     public function choices() {
@@ -171,10 +179,12 @@ class UsefulController extends Controller
         $getUnit = RatingSheet::where('table_id', 'unit')->where('room_id', $decyptedRoomID)->first();
         $getSem = RatingSheet::where('table_id', 'semester')->where('room_id', $decyptedRoomID)->first();
 
+        $getRowOfTotal = RatingSheet::where('table_id', 'rowOfTotalScore')->where('room_id', $decyptedRoomID)->first();
+
         $getMidGr = RatingSheet::where('table_id', 'MidGr.')->where('room_id', $decyptedRoomID)->first();
         $getFinGr = RatingSheet::where('table_id', 'T.F.Gr.')->where('room_id', $decyptedRoomID)->first();
 
-        return view('records.sample', ['data' => $roomID, 'dataRatings' => $dataRatings, 'encodedID' => $encodedID, 'room' => $room, 'names' => $studentNames, 'name' => $studentName, 'teacher' => $teacherName, 'counts' => $count, 'selectedRow' => $selectedRow, 'presentColRow' => $presentColRow, 'usedFormula' => $formula, 'totalRowCol' => $totalRowCol, 'doneCheck' => $checkedCol, 'columnLabels' => $columnLabels, 'unit' => $getUnit, 'sem' => $getSem, 'getMidGr' => $getMidGr, 'getFinGr' => $getFinGr]);
+        return view('records.sample', ['data' => $roomID, 'dataRatings' => $dataRatings, 'encodedID' => $encodedID, 'room' => $room, 'names' => $studentNames, 'name' => $studentName, 'teacher' => $teacherName, 'counts' => $count, 'selectedRow' => $selectedRow, 'presentColRow' => $presentColRow, 'usedFormula' => $formula, 'totalRowCol' => $totalRowCol, 'doneCheck' => $checkedCol, 'columnLabels' => $columnLabels, 'unit' => $getUnit, 'sem' => $getSem, 'getMidGr' => $getMidGr, 'getFinGr' => $getFinGr, 'getRowOfTotal' => $getRowOfTotal]);
     }
 
     public function getFormulaForRating(Request $request) {
@@ -214,7 +224,7 @@ class UsefulController extends Controller
             ];
         })->toArray();
 
-        // TableRatings::insert($ratings);
+        TableRatings::insert($ratings);
 
         return response()->json(['message' => 'Formula applied successfully', 'data' => $ratings]);
     }
@@ -260,16 +270,14 @@ class UsefulController extends Controller
             ->first();
     
         if ($existingUnit) {
-            // If exists, update the column
             $existingUnit->update(['unit_column' => $unitValue]); 
         } else {
-            // If not exists, insert a new row
-            // RatingSheet::create([
-            //     'table_id' => $tableId,
-            //     'teacher_id' => $userId,
-            //     'room_id' => $roomId,
-            //     'column' => $unitValue
-            // ]);
+            RatingSheet::create([
+                'table_id' => $tableId,
+                'teacher_id' => $userId,
+                'room_id' => $roomId,
+                'column' => $unitValue
+            ]);
         }
 
         $students = StudentRoom::where('room_id', $roomId)->get();
@@ -299,19 +307,19 @@ class UsefulController extends Controller
         if ($grades) {
             foreach ($grades as $grade) {
 
-                // TableRatings::updateOrInsert(
-                //     [
-                //         'teacher_id' => $grade['teacher_id'],
-                //         'room_id' => $grade['room_id'],
-                //         'student_name' => trim($grade['student_name']),
-                //         'column' => trim($grade['column']),
-                //         'row' => $grade['row'],
-                //     ],
-                //     [
-                //         'content' => $grade['content'],
-                //     ]
+                TableRatings::updateOrInsert(
+                    [
+                        'teacher_id' => $grade['teacher_id'],
+                        'room_id' => $grade['room_id'],
+                        'student_name' => trim($grade['student_name']),
+                        'column' => trim($grade['column']),
+                        'row' => $grade['row'],
+                    ],
+                    [
+                        'content' => $grade['content'],
+                    ]
 
-                // );
+                );
             }
 
         }

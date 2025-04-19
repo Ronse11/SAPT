@@ -9,11 +9,14 @@ use App\Models\Folders;
 use App\Models\Rooms;
 use App\Models\StudentRoom;
 use App\Models\User;
+use App\Repositories\RoomRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class FoldersController extends Controller
 {
+
+
     public function index()
     {
         return view('choices.createFolder');
@@ -38,9 +41,9 @@ class FoldersController extends Controller
         ]);
 
         if($userRole->role === 'Teacher') {
-            return redirect()->route('teacher-home');
+            return redirect()->route('teacher-home')->with('folderCreated', true);
         } else {
-            return redirect()->route('student-home');
+            return redirect()->route('student-home')->with('folderCreated', true);
         }
 
     }
@@ -53,6 +56,7 @@ class FoldersController extends Controller
         $allRooms = Rooms::orderBy('created_at', 'desc')->where('teacher_id', $userId)->get();
         $classCount = Rooms::where('teacher_id', $userId)->count();
         $folderCount = Folders::where('user_id', $userId)->where('role', 'Teacher')->count();
+
 
         $roomsWithUrls = $rooms->map(function ($room) {
             $room->encoded_url = RoomHelper::generateRoomUrl($room);
@@ -74,8 +78,14 @@ class FoldersController extends Controller
         $classCount = StudentRoom::where('student_id', $userId)->count();
         $folderCount = Folders::where('user_id', $userId)->where('role', 'Student')->count();
 
-        $folders = Folders::where('user_id', $userId)->where('role', 'Student')->get();
+        $roomsWithUrls = $rooms->map(function ($room) {
+            $room->encoded_url = RoomHelper::generateRoomStudentUrl($room);
+            return $room;
+        });
 
-        return view('folders.studentFolders', ['rooms' => $rooms, 'folders' => $folders, 'classCount' => $classCount, 'folderCount' => $folderCount, 'allRooms' => $allRooms, 'folder_id' => $id]);
+        $folders = Folders::where('user_id', $userId)->where('role', 'Student')->get();
+        $folderName = Folders::where('user_id', $userId)->where('id', $id)->where('role', 'Student')->first();
+
+        return view('folders.studentFolders', ['roomsWithUrls' => $roomsWithUrls, 'folders' => $folders, 'classCount' => $classCount, 'folderCount' => $folderCount, 'allRooms' => $allRooms, 'folder_id' => $id, 'folderName' => $folderName]);
     }
 }

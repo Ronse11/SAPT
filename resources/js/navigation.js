@@ -38,11 +38,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
   toggle.addEventListener('click', () => {
 
-    headerHolder.classList.remove('pl-16');
+    headerHolder.classList.remove('sm:pl-16', 'pl-16');
     headerHolder.classList.add('pl-8');
-    contentBox.classList.remove('pl-16');
+    contentBox.classList.remove('cp:pl-16', 'pl-16');
     contentBox.classList.add('pl-8');
-    adjustPleft.classList.remove('pl-16');
+    adjustPleft.classList.remove('sm:pl-16', 'pl-16');
     adjustPleft.classList.add('pl-8');
     div.style.width = '100%';
     setTimeout(() => {
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const parentWidth = parseFloat(window.getComputedStyle(div.parentElement).width);
       const widthPercentage = (width / parentWidth) * 100;
 
-      const wid = widthPercentage - 82;
+      // const wid = widthPercentage - 82;
       wSearch.style.width = `19rem`;
       wSearch.classList.add('mr-16');
 
@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function adjustHeroWidth() {
   const hero = document.getElementById('hero');
-  if (window.innerWidth <= 375) {
+  if (window.innerWidth <= 1024) {
     hero.style.width = '100%';
   } else {
     hero.style.width = ''; // Reset to default if needed
@@ -241,3 +241,5 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 });
+
+

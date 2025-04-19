@@ -90,6 +90,7 @@ export default {
         "cp": "706px",
         "tablet": "1281px",
         "fade-text": "1197px",
+        "1025": "1025px",
       },
       backgroundColor: {
         bColor: "rgba(183, 191, 195, .7)",

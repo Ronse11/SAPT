@@ -9,6 +9,7 @@ class RoomStudentRepository
     public function getRoomsForStudent($userId, $folderId = null) 
     {
         $query = StudentRoom::orderBy('created_at', 'desc')
+                ->where('folder_id', 0)
                 ->where('student_id', $userId);
 
         if ($folderId !== null) {

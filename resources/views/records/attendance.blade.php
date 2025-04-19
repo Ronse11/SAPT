@@ -15,10 +15,10 @@
 </head>
 
 <body>
-    <section class=" w-screen h-screen grid grid-cols-6 grid-rows-15 gap-x-16 gap-y-0 tablet:grid-cols-16 cp:grid-cols-12 bg-bgcolor">
+    <section class=" w-screen h-screen grid grid-cols-6 grid-rows-15 gap-x-16 gap-y-0 tablet:grid-cols-16 cp:grid-cols-12 bg-bgcolor relative overflow-hidden">
 
         @php 
-            $totalColumn = $totalRowCol ? $totalRowCol->total_column : 26;
+            $totalColumn = $totalRowCol ? $totalRowCol->total_column : 40;
             $totalRow = $totalRowCol ? $totalRowCol->total_row : 40;
             
             $endingRow = 0;
@@ -35,6 +35,32 @@
             $allName2Null = collect($names)->every(fn($name) => empty($name->name_2));
             $name1Counter = 1;
         @endphp
+
+        {{-- ERROR APPLYING --}}
+        <div id="appliedError" class="absolute right-7 top-[13vh] flex items-center justify-center z-50 transition-all duration-500 ease-in-out opacity-0 pointer-events-none transform -translate-x-[-15rem]">
+            <div class="p-4 bg-red-50 rounded-sm border border-red-300 shadow-lg max-w-sm w-full pointer-events-none">
+                <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    <h1 class="messageError text-red-500 text-sm text-center">
+                    </h1>
+                </div>
+            </div>
+        </div>
+
+        {{-- SUCCESS APPLYING OF BUTTONS --}}
+        <div id="applied" class="absolute right-7 top-[13vh] flex items-center justify-center z-50 transition-all duration-500 ease-in-out opacity-0 pointer-events-none transform -translate-x-[-15rem]">
+            <div class="p-4 bg-green-50 rounded-sm border border-green-300 shadow-lg max-w-sm w-full pointer-events-none">
+                <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <h1 class="message text-green-500 text-sm text-center">
+                    </h1>
+                </div>
+            </div>
+        </div>
 
         <div class=" w-screen flex flex-col row-start-1 row-span-2 z-40">
             {{-- Header --}}
@@ -1008,9 +1034,10 @@
                                                 }
 
                                                 $textCondition = $row >= $selected && $row <= $endingRow && ( $allName2Null ? $col == $colCount+1 : $col == $colCount+2 );
+                                                $textConditions = $selected ? ( $allName2Null ? $col == $colCount+1 : $col == $colCount+2 ) : null;
 
                                             @endphp
-                                            <td id="cell" class=" h-auto text-14px student-cell cursor-cell border-t border-b border-l border-r border-t-cursor  border-b-cursor  border-l-cursor  border-r-cursor caret-transparent {{ $textCondition  ? 'text-start' : 'text-center' }}"
+                                            <td id="cell" class=" h-auto text-14px student-cell cursor-cell border-t border-b border-l border-r border-t-cursor  border-b-cursor  border-l-cursor  border-r-cursor caret-transparent {{ $textCondition  ? 'text-start' : 'text-center' }} {{ $textConditions  ? 'text-start bg-bgcolor sticky left-[2rem]' : '  ' }}"
                                                 contenteditable="true"
                                                 @if($col == 0 && $names->has($row - ($selectedRow->row ?? $totalRow+1)))
                                                     data-room-student="{{ $names[$row-$selected]->name_3 }}"
@@ -1040,13 +1067,15 @@
                                                             ? $names[$row - $selected]->name_1 
                                                             : $name1Counter++ }}
                                                     @elseif ($col == $colCount+1)
-                                                        {{-- If all name_2 are null, move name_3 to this column --}}
                                                         {{ $allName2Null ? ($names[$row - $selected]->name_3 ?? '') : ($names[$row - $selected]->name_2 ?? '') }}
-                                                    @elseif ($col == $colCount+2)
-                                                        {{-- If name_3 was moved, leave this column empty --}}
-                                                        {{ $allName2Null ? '' : ($names[$row - $selected]->name_3 ?? '') }}
+                                                    @elseif ($col == $colCount+2 && !$allName2Null)
+                                                        {{ $names[$row - $selected]->name_3 ?? '' }}
                                                     @else
-                                                        {{ $cell->content ?? '' }}
+                                                        @if (!empty($cell) && is_numeric($cell->content))
+                                                            {{ round($cell->content) }}
+                                                        @else
+                                                            {{ $cell->content ?? '' }}
+                                                        @endif
                                                     @endif
                                                 @else
                                                     {{ $cell->content ?? '' }}

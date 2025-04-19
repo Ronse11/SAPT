@@ -201,6 +201,9 @@ Route::middleware(['auth', 'no-cache'])->group(function() {
     Route::delete('/teacher-room/{id}', [RoomController::class, 'destroyRoom'])->name('teacherRoom.delete');
     Route::delete('/teacher-folder/{id}', [RoomController::class, 'destroyFolder'])->name('teacherFolder.delete');
     Route::delete('/student-room/{id}', [RoomStudentController::class, 'destroyRoom'])->name('studentRoom.delete');
+    Route::delete('/student-folder/{id}', [RoomStudentController::class, 'destroyFolder'])->name('studentFolder.delete');
+    Route::post('/teacher/room/move', [RoomController::class, 'moveRoom'])->name('teacherRoom.move');
+    Route::post('/student/room/move', [RoomStudentController::class, 'moveRoom'])->name('studentRoom.move');
 
     // DELETING NAME OF STUDENT IN PASTE ROOM
     Route::delete('/teacher-room/paste-form/delete-students', [RoomController::class, 'destroyStudentName'])->name('pasteRoom.delete');

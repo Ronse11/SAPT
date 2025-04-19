@@ -9,21 +9,16 @@ use App\Models\Invitations;
 use App\Models\Rooms;
 use App\Models\StudentNames;
 use App\Models\StudentRoom;
-use App\Models\TableAttitude;
-use App\Models\TableKnowledge;
-use App\Models\TableRatings;
-use App\Models\TableSkills;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 use App\DataTransferObjects\TeacherHomeData;
 use App\Helpers\RoomHelper;
 use App\Models\Notification;
 use App\Repositories\RoomRepository;
-
+use Illuminate\Support\Facades\Log;
 
 class RoomController extends Controller
 {
@@ -38,13 +33,11 @@ class RoomController extends Controller
     // Generate Code
     public function generateUniqueCode()
     {
-        // Will be the source of Code
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
 
         do {
             $randomCode = '';
-            // Generate random code in the format $$$-$$$-$$$
             for ($i = 0; $i < 11; $i++) {
                 if ($i == 3 || $i == 7) {
                     $randomCode .= '-';
@@ -81,14 +74,12 @@ class RoomController extends Controller
         $expiration = now()->addDays(7);
 
         $validated = $request->validate([
-            // 'folderId' => ['nullable', 'integer'],
             'class_name' => ['required'],
             'subject' => ['required'],
             'section' => ['required']
         ]);
             
             $room = Rooms::create([
-                // 'folder_id' => 1,
                 'teacher_id' => $userId,
                 'teacher_name' => $teacher->username,
                 'class_name' => $validated['class_name'],
@@ -114,13 +105,11 @@ class RoomController extends Controller
         return redirect()->route('teacher-home')->with(['roomCreated' => true, 'shareableLink' => $shareableLink]);
     }
 
-    // Storing Room with 1UP folder_id
     public function storeRoomFolder(Request $request, $id) {
 
         $userId = Auth::id();
         $roomCode = $this->generateUniqueCode();
         $teacher = User::where('id', $userId)->first();
-        // $teacherName = Rooms::where('room_code', $userId)->first();
     
         $validated = $request->validate([
             'class_name' => ['required'],
@@ -143,7 +132,7 @@ class RoomController extends Controller
             $user->role = $request->input('role');
             $user->save();
     
-        return redirect()->route('teacher-home')->with('roomCreated', true);
+        return redirect()->route('teacher-folder', $id)->with('roomCreated', true);
                 
     }
 
@@ -211,7 +200,6 @@ class RoomController extends Controller
         $encodedID = HelperFunctions::base64_url_encode($room->id);
 
         $inviteLink = Invitations::where('classroom_id', $decyptedRoomID)->first();
-        // $role = User::where('id', $id)->first();
         $role = $records ? User::where('id', $records->teacher_id)->first() : null;
 
         $shareableLink = $inviteLink ? route('share', ['token' => $inviteLink->token]) : null;
@@ -266,12 +254,18 @@ class RoomController extends Controller
     {
         // Find the item by ID
         $room = Rooms::findOrFail($id);
+        $folderId = $room->folder_id;
 
-        if($room) {
+        if($room && $folderId === 0) {
             $room->delete();
+
+            return redirect()->route('teacher-home')->with('roomDeleted', true);
+        } else {
+            $room->delete();
+            
+            return redirect()->route('teacher-folder', $folderId)->with('roomDeleted', true);
         }
-        
-        return redirect()->route('teacher-home')->with('roomDeleted', true);
+
     }
 
     // DELETION OF FOLDER
@@ -287,17 +281,37 @@ class RoomController extends Controller
         return redirect()->route('teacher-home')->with('roomDeleted', true);
     }
 
+    // MOVING OF CLASS TO FOLDER
+    public function moveRoom(Request $request)
+    {
+        $request->validate([
+            'item_id' => 'required|integer',
+            'folder_id' => 'required',
+        ]);
+        
+        $room = Rooms::findOrFail($request->item_id);
+        
+        if ($request->folder_id === 'homepage') {
+            $room->folder_id = 0;
+            $room->save();
+
+            return redirect()->route('teacher-home')->with('roomMoved', true);
+        } else {
+            $folder = Folders::findOrFail($request->folder_id);
+            $room->folder_id = $request->folder_id;
+            $room->save();
+
+            return redirect()->route('teacher-folder', $folder->id)->with('roomMoved', true);
+        }        
+    }
+
     public function destroyStudentName(Request $request)
     {
         try {
             $ids = $request->input('ids');
     
             if ($ids) {
-                // Perform deletion
                 $deleted = StudentNames::whereIn('id', $ids)->delete();
-    
-                // Log the result of the deletion
-                Log::info('Deletion result', ['deleted_count' => $deleted]);
     
                 if ($deleted) {
                     $message = count($ids) > 1 
@@ -312,7 +326,6 @@ class RoomController extends Controller
                 return redirect()->back()->with('error', 'No items selected');
             }
         } catch (\Exception $e) {
-            // Log the exception
             return redirect()->back()->with('error', 'An error occurred while deleting the items.');
         }
     }
